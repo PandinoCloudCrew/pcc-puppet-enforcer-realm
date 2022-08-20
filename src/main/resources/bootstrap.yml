@@ -1,0 +1,5 @@
+micronaut:
+  application:
+    name: pcc-puppet-enforcer-files
+  config-client:
+    enabled: true

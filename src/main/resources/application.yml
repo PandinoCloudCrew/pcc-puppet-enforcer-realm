@@ -1,0 +1,72 @@
+datasources:
+  default:
+    driverClassName: org.postgresql.Driver
+    db-type: postgresql
+    username: postgres
+    password: postgres
+    url: jdbc:postgresql://localhost:5432/postgres
+    pool-name: ${micronaut.application.name}-pool
+micronaut:
+  server:
+    port: 9090
+  metrics:
+    export:
+      cloudwatch:
+        enabled: false
+      prometheus:
+        enabled: true
+        descriptions: true
+        step: PT1M
+    enabled: true
+  security:
+    authentication: idtoken
+    intercept-url-map:
+      - access: isAnonymous()
+        pattern: /swagger/**
+      - access: isAnonymous()
+        pattern: /swagger-ui/**
+  router:
+    static-resources:
+      swagger:
+        paths: classpath:META-INF/swagger
+        mapping: /swagger/**
+      swagger-ui:
+        paths: classpath:META-INF/swagger/views/swagger-ui
+        mapping: /swagger-ui/**
+otel:
+  traces:
+    exporter: otlp,jaeger,logging
+    propagator: tracecontext, baggage, xray
+  exclusions:
+    - /health
+netty:
+  default:
+    allocator:
+      max-order: 3
+console:
+  enabled: true
+  addresses:
+    - /127.0.0.1
+    - /0:0:0:0:0:0:0:1
+  header-name: X-Console-Verify
+  header-value: 3c365c5f-d690-4f47-8a14-0e1dfd2b2c62
+jpa:
+  default:
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: update
+        connection:
+          url: ${datasources.default.url}
+          username: ${datasources.default.username}
+          password: ${datasources.default.password}
+    reactive: true
+vertx:
+  pg:
+    client:
+      port: 5432
+      maxSize: 5
+      database: postgres
+      user: ${datasources.default.username}
+      password: ${datasources.default.password}
+      host: localhost
