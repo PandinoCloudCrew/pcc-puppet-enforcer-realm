@@ -22,6 +22,7 @@ import reactor.core.scheduler.Schedulers;
 @Singleton
 @RequiredArgsConstructor
 public class OpenTaskRunner implements DeviceTaskRunner {
+
   private final ReactorHttpClient client;
 
   @Value("${fuimos.services.interaction}")
@@ -29,25 +30,30 @@ public class OpenTaskRunner implements DeviceTaskRunner {
 
   @Override
   public void run(UserDevicePresenter device, Message message) {
-    DeviceAction openAction = device.getTasks().get(TaskType.OPEN);
-    UserInteraction userInteraction =
-        UserInteraction.builder()
-            .id(Xid.string())
-            .messageId(message.getId())
-            .deviceId(device.getId())
-            .address(message.getAddress())
-            .taskType(openAction.getTaskType())
-            .createAt(message.getCreateDate())
-            .receivedAt(Instant.now())
-            .build();
+    device.getTasks().stream()
+        .filter(action -> TaskType.OPEN.equals(action.getTaskType()))
+        .findFirst()
+        .ifPresent(
+            deviceAction -> {
+              UserInteraction userInteraction =
+                  UserInteraction.builder()
+                      .id(Xid.string())
+                      .messageId(message.getId())
+                      .deviceId(device.getId())
+                      .address(message.getAddress())
+                      .taskType(deviceAction.getTaskType())
+                      .createAt(message.getCreateDate())
+                      .receivedAt(Instant.now())
+                      .build();
 
-    Flux<HttpResponse<ReceivedInteraction>> exchange =
-        client
-            .exchange(
-                HttpRequest.POST(webhookUrl, userInteraction),
-                Argument.of(ReceivedInteraction.class))
-            .subscribeOn(Schedulers.boundedElastic());
+              Flux<HttpResponse<ReceivedInteraction>> exchange =
+                  client
+                      .exchange(
+                          HttpRequest.POST(webhookUrl, userInteraction),
+                          Argument.of(ReceivedInteraction.class))
+                      .subscribeOn(Schedulers.boundedElastic());
 
-    exchange.log().subscribe();
+              exchange.log().subscribe();
+            });
   }
 }

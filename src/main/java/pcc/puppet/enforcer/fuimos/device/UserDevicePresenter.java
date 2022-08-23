@@ -3,7 +3,7 @@ package pcc.puppet.enforcer.fuimos.device;
 
 import io.micronaut.serde.annotation.Serdeable;
 import java.time.Instant;
-import java.util.Map;
+import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Singular;
@@ -22,7 +22,7 @@ public class UserDevicePresenter {
   private String audienceId;
   private NetworkCarrier carrier;
   private DeviceStatus status;
-  @Singular private Map<String, DeviceAction> tasks;
+  @Singular private List<DeviceAction> tasks;
   private Instant createDate;
   private Instant lastActiveDate;
 }

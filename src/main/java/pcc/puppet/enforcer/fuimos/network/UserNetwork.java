@@ -1,6 +1,8 @@
 /* Pandino Cloud Crew (C) 2022 */
 package pcc.puppet.enforcer.fuimos.network;
 
+import io.micronaut.tracing.annotation.ContinueSpan;
+import io.micronaut.tracing.annotation.SpanTag;
 import jakarta.inject.Singleton;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -23,6 +25,7 @@ import pcc.puppet.enforcer.fuimos.payload.UserInteraction;
 import pcc.puppet.enforcer.fuimos.task.DeviceAction;
 import pcc.puppet.enforcer.fuimos.task.TaskChannel;
 import pcc.puppet.enforcer.fuimos.task.TaskType;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -37,8 +40,11 @@ public class UserNetwork {
   private final Map<String, List<Message>> messages = new HashMap<>();
   private final Map<String, List<UserInteraction>> interactions = new HashMap<>();
 
+  @ContinueSpan
   public Mono<UserDevicePresenter> enroll(
-      String address, NetworkCarrier carrier, Optional<String> audienceId) {
+      @SpanTag("device.address") String address,
+      NetworkCarrier carrier,
+      Optional<String> audienceId) {
     DeviceAction openTask =
         DeviceAction.builder()
             .taskType(TaskType.OPEN)
@@ -52,7 +58,7 @@ public class UserNetwork {
             .address(address)
             .carrier(carrier)
             .audienceId(audienceId.orElse(dateFormat.format(LocalDate.now())))
-            .task(TaskType.OPEN.name(), openTask)
+            .task(openTask)
             .createDate(Instant.now())
             .build();
     UserDevice userDeviceEntity = deviceMapper.presenterToDomain(userDevice);
@@ -60,10 +66,17 @@ public class UserNetwork {
     return save.map(deviceMapper::domainToPresenter);
   }
 
-  public Mono<UserDevicePresenter> find(String address) {
+  @ContinueSpan
+  public Mono<UserDevicePresenter> find(@SpanTag("device.address") String address) {
     return deviceRepository.findByAddress(address).map(deviceMapper::domainToPresenter);
   }
 
+  @ContinueSpan
+  public Flux<UserDevicePresenter> findByAudience(@SpanTag("network.audience") String audienceId) {
+    return deviceRepository.findByAudienceId(audienceId).map(deviceMapper::domainToPresenter);
+  }
+
+  @ContinueSpan
   public void sendMessage(final UserDevicePresenter device, final Message message) {
     if (!messages.containsKey(device.getAddress())) {
       messages.put(device.getAddress(), new ArrayList<>());

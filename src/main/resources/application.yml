@@ -32,9 +32,20 @@ micronaut:
 otel:
   traces:
     exporter: otlp,jaeger,logging
-    propagator: tracecontext, baggage, xray
+    propagator: tracecontext, baggage
   exclusions:
     - /health
+  http:
+    client:
+      request-headers:
+        - X-From-Client-Request
+      response-headers:
+        - X-From-Client-Response
+    server:
+      request-headers:
+        - X-From-Server-Request
+      response-headers:
+        - X-From-Server-Response
 netty:
   default:
     allocator:

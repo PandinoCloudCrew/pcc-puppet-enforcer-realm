@@ -5,15 +5,21 @@ import com.github.shamil.Xid;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import io.micronaut.tracing.annotation.NewSpan;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
+import pcc.puppet.enforcer.fuimos.device.UserDevicePresenter;
+import pcc.puppet.enforcer.fuimos.input.command.AudienceCreateCommand;
 import pcc.puppet.enforcer.fuimos.network.NetworkCarrier;
 import pcc.puppet.enforcer.fuimos.network.UserNetwork;
+import pcc.puppet.enforcer.fuimos.output.event.AudienceCreateEvent;
 import pcc.puppet.enforcer.fuimos.payload.ReceivedInteraction;
 import pcc.puppet.enforcer.fuimos.payload.UserInteraction;
 import reactor.core.publisher.Flux;
@@ -24,9 +30,11 @@ import reactor.core.publisher.Mono;
 @Secured(SecurityRule.IS_ANONYMOUS)
 @RequiredArgsConstructor
 public class FuimosController {
+
   private final UserNetwork userNetwork;
   private final Faker faker = new Faker();
 
+  @NewSpan
   @Post(
       uri = "/interaction",
       produces = MediaType.APPLICATION_JSON,
@@ -38,6 +46,14 @@ public class FuimosController {
         .build();
   }
 
+  @NewSpan
+  @Get(uri = "/audience", produces = MediaType.APPLICATION_JSON)
+  public Flux<UserDevicePresenter> findAudienceDevices(
+      @QueryValue("audienceId") @NotNull String audienceId) {
+    return userNetwork.findByAudience(audienceId);
+  }
+
+  @NewSpan
   @Post(
       uri = "/audience",
       produces = MediaType.APPLICATION_JSON,
