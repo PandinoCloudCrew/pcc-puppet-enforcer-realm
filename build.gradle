@@ -23,19 +23,18 @@ dependencies {
     annotationProcessor("io.micronaut.security:micronaut-security-annotations")
     annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
     annotationProcessor("io.micronaut.tracing:micronaut-tracing-opentelemetry-annotation")
-    annotationProcessor('org.mapstruct:mapstruct-processor:1.5.2.Final')
+    annotationProcessor("org.mapstruct:mapstruct-processor:1.5.2.Final")
+    annotationProcessor("io.micronaut.data:micronaut-data-document-processor")
     implementation("com.agorapulse:micronaut-permissions:1.0.2-micronaut-3.0")
     implementation("com.agorapulse:micronaut-worker:1.2.1-micronaut-3.0")
     implementation("io.micronaut:micronaut-http-client")
     implementation("io.micronaut:micronaut-management")
-    implementation('com.github.0xshamil:java-xid:1.0.0')
-//    implementation("io.micronaut.aws:micronaut-aws-sdk-v2")
+    implementation("com.github.0xshamil:java-xid:1.0.0")
+    implementation("net.datafaker:datafaker:1.5.0")
     implementation("io.micronaut.beanvalidation:micronaut-hibernate-validator")
     implementation("io.micronaut.cache:micronaut-cache-caffeine")
-    implementation("io.micronaut.kubernetes:micronaut-kubernetes-discovery-client")
     implementation("io.micronaut.liquibase:micronaut-liquibase")
     implementation("io.micronaut.micrometer:micronaut-micrometer-core")
-//    implementation("io.micronaut.micrometer:micronaut-micrometer-registry-cloudwatch")
     implementation("io.micronaut.micrometer:micronaut-micrometer-registry-prometheus")
     implementation("io.micronaut.problem:micronaut-problem-json")
     implementation("io.micronaut.reactor:micronaut-reactor")
@@ -44,30 +43,20 @@ dependencies {
     implementation("io.micronaut.security:micronaut-security-jwt")
     implementation("io.micronaut.security:micronaut-security-oauth2")
     implementation("io.micronaut.serde:micronaut-serde-bson")
-    implementation("io.micronaut.sql:micronaut-hibernate-reactive")
-    implementation("io.micronaut.data:micronaut-data-hibernate-reactive")
-    implementation("io.micronaut.sql:micronaut-jdbc-hikari")
-    implementation("io.micronaut.sql:micronaut-vertx-pg-client")
+    implementation("io.micronaut.data:micronaut-data-mongodb")
+    implementation("io.micronaut.mongodb:micronaut-mongo-reactive")
+    implementation("jakarta.annotation:jakarta.annotation-api")
     implementation("io.micronaut.tracing:micronaut-tracing-opentelemetry-http")
     implementation("io.opentelemetry:opentelemetry-exporter-jaeger")
     implementation("io.opentelemetry:opentelemetry-exporter-logging")
     implementation("io.opentelemetry:opentelemetry-exporter-otlp")
-//    implementation("io.opentelemetry:opentelemetry-extension-aws")
-//    implementation("io.opentelemetry.contrib:opentelemetry-aws-xray")
-//    implementation("io.opentelemetry.instrumentation:opentelemetry-aws-sdk-2.2")
     implementation platform("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha:1.14.0-alpha")
     implementation("io.swagger.core.v3:swagger-annotations")
-    implementation("io.vertx:vertx-pg-client")
-    implementation('com.ongres.scram:client:2.1')
-    implementation("jakarta.annotation:jakarta.annotation-api")
-    implementation('org.mapstruct:mapstruct:1.5.2.Final')
-    compileOnly("org.projectlombok:lombok")
+    implementation("org.mapstruct:mapstruct:1.5.2.Final")
     runtimeOnly("ch.qos.logback:logback-classic")
-    runtimeOnly("org.postgresql:postgresql")
-    testImplementation("com.agorapulse:gru-micronaut:1.2.2")
+    runtimeOnly("org.mongodb:mongodb-driver-reactivestreams")
     testImplementation("org.awaitility:awaitility:4.2.0")
-    developmentOnly("com.agorapulse:micronaut-console:2.0.1-micronaut-3.0")
-    developmentOnly("org.codehaus.groovy:groovy")
+    compileOnly("org.projectlombok:lombok")
     compileOnly("org.graalvm.nativeimage:svm")
 
     implementation("io.micronaut:micronaut-validation")
@@ -107,9 +96,6 @@ micronaut {
         incremental(true)
         annotations("pcc.puppet.enforcer.*")
     }
-    testResources {
-        additionalModules.add("jdbc-postgresql")
-    }
 }
 
 
@@ -127,6 +113,6 @@ spotless {
         importOrder()
         removeUnusedImports()
         googleJavaFormat() // has its own section below
-        licenseHeader '/* Pandino Cloud Crew (C) $YEAR */' // or licenseHeaderFile
+        licenseHeader "/* Pandino Cloud Crew (C) 2022 */" // or licenseHeaderFile
     }
 }
