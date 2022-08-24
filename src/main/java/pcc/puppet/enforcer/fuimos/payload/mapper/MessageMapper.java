@@ -2,8 +2,8 @@
 package pcc.puppet.enforcer.fuimos.payload.mapper;
 
 import org.mapstruct.Mapper;
-import pcc.puppet.enforcer.fuimos.input.command.MessageSendCommand;
-import pcc.puppet.enforcer.fuimos.output.event.MessageSendEvent;
+import pcc.puppet.enforcer.fuimos.api.input.command.MessageSendCommand;
+import pcc.puppet.enforcer.fuimos.api.output.event.MessageSendEvent;
 import pcc.puppet.enforcer.fuimos.payload.Message;
 
 @Mapper

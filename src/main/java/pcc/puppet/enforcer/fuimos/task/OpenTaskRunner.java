@@ -10,11 +10,11 @@ import jakarta.inject.Singleton;
 import java.time.Instant;
 import lombok.extern.slf4j.Slf4j;
 import pcc.puppet.enforcer.fuimos.OId;
+import pcc.puppet.enforcer.fuimos.api.input.command.DeviceInteractionCreateCommand;
+import pcc.puppet.enforcer.fuimos.api.output.event.DeviceInteractionCreateEvent;
 import pcc.puppet.enforcer.fuimos.device.DeviceAction;
 import pcc.puppet.enforcer.fuimos.device.repository.UserDevice;
-import pcc.puppet.enforcer.fuimos.payload.DeviceInteraction;
 import pcc.puppet.enforcer.fuimos.payload.Message;
-import pcc.puppet.enforcer.fuimos.payload.ReceivedInteraction;
 import pcc.puppet.enforcer.fuimos.payload.property.InteractionDirection;
 import pcc.puppet.enforcer.fuimos.payload.property.InteractionPlan;
 import pcc.puppet.enforcer.fuimos.payload.property.InteractionSource;
@@ -41,8 +41,8 @@ public class OpenTaskRunner implements DeviceTaskRunner {
 
   @Override
   public void run(DeviceAction action, UserDevice device, Message message) {
-    DeviceInteraction deviceInteraction =
-        DeviceInteraction.builder()
+    DeviceInteractionCreateCommand deviceInteractionCreateCommand =
+        DeviceInteractionCreateCommand.builder()
             .id(OId.string())
             .messageId(message.getId())
             .deviceId(device.getId().toHexString())
@@ -56,14 +56,14 @@ public class OpenTaskRunner implements DeviceTaskRunner {
             .receivedAt(Instant.now())
             .build();
 
-    Flux<HttpResponse<ReceivedInteraction>> exchange =
+    Flux<HttpResponse<DeviceInteractionCreateEvent>> exchange =
         client
             .exchange(
-                HttpRequest.POST(webhookUrl, deviceInteraction)
+                HttpRequest.POST(webhookUrl, deviceInteractionCreateCommand)
                     .header("PLAN", action.getPlan().name())
                     .header("CHANNEL", action.getChannel().name())
                     .header("CALLER", this.getClass().getSimpleName()),
-                Argument.of(ReceivedInteraction.class))
+                Argument.of(DeviceInteractionCreateEvent.class))
             .subscribeOn(Schedulers.boundedElastic());
 
     exchange.log().subscribe();

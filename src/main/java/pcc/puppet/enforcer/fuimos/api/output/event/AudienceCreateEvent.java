@@ -1,5 +1,5 @@
 /* Pandino Cloud Crew (C) 2022 */
-package pcc.puppet.enforcer.fuimos.output.event;
+package pcc.puppet.enforcer.fuimos.api.output.event;
 
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.fuimos.device.UserDevicePresenter;
+import pcc.puppet.enforcer.fuimos.api.output.presenter.UserDevicePresenter;
 
 @Data
 @Builder

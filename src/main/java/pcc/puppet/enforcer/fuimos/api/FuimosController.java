@@ -1,5 +1,5 @@
 /* Pandino Cloud Crew (C) 2022 */
-package pcc.puppet.enforcer.fuimos.input;
+package pcc.puppet.enforcer.fuimos.api;
 
 import static pcc.puppet.enforcer.fuimos.network.UserEmulatorConsumer.DEVICE_MESSAGES;
 
@@ -22,17 +22,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
 import pcc.puppet.enforcer.fuimos.OId;
-import pcc.puppet.enforcer.fuimos.device.UserDevicePresenter;
-import pcc.puppet.enforcer.fuimos.input.command.AudienceCreateCommand;
-import pcc.puppet.enforcer.fuimos.input.command.MessageSendCommand;
+import pcc.puppet.enforcer.fuimos.api.input.command.AudienceCreateCommand;
+import pcc.puppet.enforcer.fuimos.api.input.command.DeviceInteractionCreateCommand;
+import pcc.puppet.enforcer.fuimos.api.input.command.MessageSendCommand;
+import pcc.puppet.enforcer.fuimos.api.output.event.AudienceCreateEvent;
+import pcc.puppet.enforcer.fuimos.api.output.event.DeviceInteractionCreateEvent;
+import pcc.puppet.enforcer.fuimos.api.output.event.MessageSendEvent;
+import pcc.puppet.enforcer.fuimos.api.output.presenter.UserDevicePresenter;
 import pcc.puppet.enforcer.fuimos.network.NetworkCarrier;
 import pcc.puppet.enforcer.fuimos.network.UserNetwork;
-import pcc.puppet.enforcer.fuimos.output.event.AudienceCreateEvent;
-import pcc.puppet.enforcer.fuimos.output.event.MessageSendEvent;
-import pcc.puppet.enforcer.fuimos.payload.DeviceInteraction;
 import pcc.puppet.enforcer.fuimos.payload.Message;
 import pcc.puppet.enforcer.fuimos.payload.MessageStatus;
-import pcc.puppet.enforcer.fuimos.payload.ReceivedInteraction;
 import pcc.puppet.enforcer.fuimos.payload.mapper.MessageMapper;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -53,12 +53,12 @@ public class FuimosController {
       uri = "/interaction",
       produces = MediaType.APPLICATION_JSON,
       consumes = MediaType.APPLICATION_JSON)
-  public ReceivedInteraction receivedInteraction(
-      @Valid @NonNull @Body DeviceInteraction deviceInteraction) {
-    log.info("{}", deviceInteraction);
-    return ReceivedInteraction.builder()
+  public DeviceInteractionCreateEvent receivedInteraction(
+      @Valid @NonNull @Body DeviceInteractionCreateCommand deviceInteractionCreateCommand) {
+    log.info("{}", deviceInteractionCreateCommand);
+    return DeviceInteractionCreateEvent.builder()
         .id(OId.string())
-        .interactionId(deviceInteraction.getId())
+        .interactionId(deviceInteractionCreateCommand.getId())
         .build();
   }
 

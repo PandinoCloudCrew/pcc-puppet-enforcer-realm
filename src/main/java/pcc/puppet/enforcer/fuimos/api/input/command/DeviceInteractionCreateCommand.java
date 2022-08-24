@@ -1,5 +1,5 @@
 /* Pandino Cloud Crew (C) 2022 */
-package pcc.puppet.enforcer.fuimos.payload;
+package pcc.puppet.enforcer.fuimos.api.input.command;
 
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
@@ -15,7 +15,7 @@ import pcc.puppet.enforcer.fuimos.payload.property.InteractionSource;
 @Data
 @Builder
 @Serdeable
-public class DeviceInteraction {
+public class DeviceInteractionCreateCommand {
   @NonNull private String id;
   @NonNull private String messageId;
   @NonNull private String deviceId;

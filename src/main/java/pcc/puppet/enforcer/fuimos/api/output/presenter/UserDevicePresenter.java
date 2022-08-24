@@ -1,5 +1,5 @@
 /* Pandino Cloud Crew (C) 2022 */
-package pcc.puppet.enforcer.fuimos.device;
+package pcc.puppet.enforcer.fuimos.api.output.presenter;
 
 import io.micronaut.serde.annotation.Serdeable;
 import java.time.Instant;
@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Singular;
 import org.bson.types.ObjectId;
+import pcc.puppet.enforcer.fuimos.device.DeviceAction;
+import pcc.puppet.enforcer.fuimos.device.DeviceStatus;
 import pcc.puppet.enforcer.fuimos.network.NetworkCarrier;
 
 @Data
