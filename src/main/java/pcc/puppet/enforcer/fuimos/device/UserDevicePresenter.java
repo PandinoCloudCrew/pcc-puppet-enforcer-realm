@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.Singular;
 import org.bson.types.ObjectId;
 import pcc.puppet.enforcer.fuimos.network.NetworkCarrier;
-import pcc.puppet.enforcer.fuimos.task.DeviceAction;
 
 @Data
 @Builder

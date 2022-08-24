@@ -52,3 +52,6 @@ netty:
       max-order: 3
 mongodb:
   uri: mongodb://pcc:123456789@localhost:27017/fuimos
+worker:
+  queue-type: local
+  enabled: true

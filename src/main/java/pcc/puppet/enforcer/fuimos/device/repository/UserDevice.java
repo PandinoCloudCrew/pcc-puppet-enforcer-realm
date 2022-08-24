@@ -8,14 +8,15 @@ import io.micronaut.data.annotation.GeneratedValue;
 import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.Index;
 import io.micronaut.data.annotation.MappedEntity;
+import io.micronaut.data.annotation.Version;
 import io.micronaut.serde.annotation.Serdeable;
 import java.time.Instant;
 import java.util.List;
 import lombok.Data;
 import org.bson.types.ObjectId;
+import pcc.puppet.enforcer.fuimos.device.DeviceAction;
 import pcc.puppet.enforcer.fuimos.device.DeviceStatus;
 import pcc.puppet.enforcer.fuimos.network.NetworkCarrier;
-import pcc.puppet.enforcer.fuimos.task.DeviceAction;
 
 @Data
 @Serdeable
@@ -39,4 +40,5 @@ public class UserDevice {
 
   @DateCreated @AutoPopulated private Instant createdAt;
   @DateCreated @AutoPopulated private Instant updatedAt;
+  @Version @AutoPopulated private Integer version;
 }

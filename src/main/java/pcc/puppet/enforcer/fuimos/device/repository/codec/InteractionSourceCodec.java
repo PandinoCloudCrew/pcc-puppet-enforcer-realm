@@ -7,25 +7,25 @@ import org.bson.BsonWriter;
 import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
-import pcc.puppet.enforcer.fuimos.task.TaskType;
+import pcc.puppet.enforcer.fuimos.payload.property.InteractionSource;
 
 @Singleton
-public class TaskTypeCodec implements Codec<TaskType> {
+public class InteractionSourceCodec implements Codec<InteractionSource> {
 
   @Override
-  public TaskType decode(BsonReader reader, DecoderContext decoderContext) {
+  public InteractionSource decode(BsonReader reader, DecoderContext decoderContext) {
     String enumString = reader.readString();
-    return TaskType.valueOf(enumString);
+    return InteractionSource.valueOf(enumString);
   }
 
   @Override
-  public void encode(BsonWriter writer, TaskType value, EncoderContext encoderContext) {
+  public void encode(BsonWriter writer, InteractionSource value, EncoderContext encoderContext) {
     String enumString = value.name();
     writer.writeString(enumString);
   }
 
   @Override
-  public Class<TaskType> getEncoderClass() {
-    return TaskType.class;
+  public Class<InteractionSource> getEncoderClass() {
+    return InteractionSource.class;
   }
 }
