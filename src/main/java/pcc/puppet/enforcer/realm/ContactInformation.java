@@ -13,28 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.fuimos.payload;
+package pcc.puppet.enforcer.realm;
 
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.data.annotation.AutoPopulated;
-import io.micronaut.data.annotation.Id;
-import io.micronaut.data.annotation.MappedEntity;
-import io.micronaut.data.annotation.Version;
 import io.micronaut.serde.annotation.Serdeable;
-import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
 @Serdeable
-@MappedEntity(value = "message")
-public class Message {
-  @Id private String id;
-  @NonNull private String address;
-  @NonNull private String payload;
-  private MessageStatus status;
-  @NonNull private Instant createDate;
-  private Instant processingDate;
-  @Version @AutoPopulated private Integer version;
+public class ContactInformation {
+  private String firstName;
+  private String lastName;
+  private String phoneNumber;
+  private String email;
+  private String zoneId;
+  private String locale;
+  private String currency;
 }

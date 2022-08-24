@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.fuimos.payload;
+package pcc.puppet.enforcer.realm;
 
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.data.annotation.AutoPopulated;
@@ -24,17 +24,23 @@ import io.micronaut.serde.annotation.Serdeable;
 import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
+import org.bson.types.ObjectId;
 
 @Data
 @Builder
 @Serdeable
-@MappedEntity(value = "message")
-public class Message {
-  @Id private String id;
-  @NonNull private String address;
-  @NonNull private String payload;
-  private MessageStatus status;
-  @NonNull private Instant createDate;
-  private Instant processingDate;
-  @Version @AutoPopulated private Integer version;
+@MappedEntity(value = "member")
+public class Member {
+  @Id private ObjectId id;
+  @NonNull private ObjectId organizationId;
+  @NonNull private ObjectId departmentId;
+  @NonNull private String username;
+  @NonNull private String password;
+  @NonNull private String location;
+  @NonNull private ContactInformation contact;
+  @NonNull private String createdBy;
+  @NonNull private Instant createdAt;
+  private String updatedBy;
+  private Instant updatedAt;
+  @Version @AutoPopulated private String version;
 }
