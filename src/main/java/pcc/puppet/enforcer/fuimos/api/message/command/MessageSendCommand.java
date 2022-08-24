@@ -1,5 +1,5 @@
 /* Pandino Cloud Crew (C) 2022 */
-package pcc.puppet.enforcer.fuimos.api.input.command;
+package pcc.puppet.enforcer.fuimos.api.message.command;
 
 import io.micronaut.serde.annotation.Serdeable;
 import lombok.Builder;

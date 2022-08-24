@@ -10,8 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import pcc.puppet.enforcer.fuimos.OId;
-import pcc.puppet.enforcer.fuimos.api.output.presenter.UserDevicePresenter;
+import pcc.puppet.enforcer.fuimos.api.audience.presenter.UserDevicePresenter;
 import pcc.puppet.enforcer.fuimos.device.DeviceAction;
 import pcc.puppet.enforcer.fuimos.device.DeviceStatus;
 import pcc.puppet.enforcer.fuimos.device.mapper.UserDeviceMapper;
@@ -19,6 +18,7 @@ import pcc.puppet.enforcer.fuimos.device.repository.UserDevice;
 import pcc.puppet.enforcer.fuimos.device.repository.UserDeviceRepository;
 import pcc.puppet.enforcer.fuimos.payload.property.InteractionChannel;
 import pcc.puppet.enforcer.fuimos.payload.property.InteractionPlan;
+import pcc.puppet.enforcer.fuimos.util.OId;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

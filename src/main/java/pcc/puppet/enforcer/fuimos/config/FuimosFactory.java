@@ -1,5 +1,5 @@
 /* Pandino Cloud Crew (C) 2022 */
-package pcc.puppet.enforcer.fuimos;
+package pcc.puppet.enforcer.fuimos.config;
 
 import io.micronaut.context.annotation.Factory;
 import jakarta.inject.Singleton;

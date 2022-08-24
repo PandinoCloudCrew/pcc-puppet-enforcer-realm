@@ -1,5 +1,5 @@
 /* Pandino Cloud Crew (C) 2022 */
-package pcc.puppet.enforcer.fuimos.api;
+package pcc.puppet.enforcer.fuimos.api.audience;
 
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.MediaType;
@@ -16,9 +16,9 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
-import pcc.puppet.enforcer.fuimos.api.input.command.AudienceCreateCommand;
-import pcc.puppet.enforcer.fuimos.api.output.event.AudienceCreateEvent;
-import pcc.puppet.enforcer.fuimos.api.output.presenter.UserDevicePresenter;
+import pcc.puppet.enforcer.fuimos.api.audience.command.AudienceCreateCommand;
+import pcc.puppet.enforcer.fuimos.api.audience.event.AudienceCreateEvent;
+import pcc.puppet.enforcer.fuimos.api.audience.presenter.UserDevicePresenter;
 import pcc.puppet.enforcer.fuimos.network.NetworkCarrier;
 import pcc.puppet.enforcer.fuimos.network.UserNetwork;
 import reactor.core.publisher.Flux;

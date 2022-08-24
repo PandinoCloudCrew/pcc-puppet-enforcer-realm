@@ -1,5 +1,5 @@
 /* Pandino Cloud Crew (C) 2022 */
-package pcc.puppet.enforcer.fuimos.api.output.presenter;
+package pcc.puppet.enforcer.fuimos.api.audience.presenter;
 
 import io.micronaut.serde.annotation.Serdeable;
 import java.time.Instant;

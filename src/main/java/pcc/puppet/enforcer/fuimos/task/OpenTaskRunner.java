@@ -9,15 +9,15 @@ import io.micronaut.reactor.http.client.ReactorHttpClient;
 import jakarta.inject.Singleton;
 import java.time.Instant;
 import lombok.extern.slf4j.Slf4j;
-import pcc.puppet.enforcer.fuimos.OId;
-import pcc.puppet.enforcer.fuimos.api.input.command.DeviceInteractionCreateCommand;
-import pcc.puppet.enforcer.fuimos.api.output.event.DeviceInteractionCreateEvent;
+import pcc.puppet.enforcer.fuimos.api.interaction.command.DeviceInteractionCreateCommand;
+import pcc.puppet.enforcer.fuimos.api.interaction.event.DeviceInteractionCreateEvent;
 import pcc.puppet.enforcer.fuimos.device.DeviceAction;
 import pcc.puppet.enforcer.fuimos.device.repository.UserDevice;
 import pcc.puppet.enforcer.fuimos.payload.Message;
 import pcc.puppet.enforcer.fuimos.payload.property.InteractionDirection;
 import pcc.puppet.enforcer.fuimos.payload.property.InteractionPlan;
 import pcc.puppet.enforcer.fuimos.payload.property.InteractionSource;
+import pcc.puppet.enforcer.fuimos.util.OId;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 

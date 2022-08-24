@@ -1,5 +1,5 @@
 /* Pandino Cloud Crew (C) 2022 */
-package pcc.puppet.enforcer.fuimos.api;
+package pcc.puppet.enforcer.fuimos.api.interaction;
 
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.MediaType;
@@ -12,9 +12,9 @@ import io.micronaut.tracing.annotation.NewSpan;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import pcc.puppet.enforcer.fuimos.OId;
-import pcc.puppet.enforcer.fuimos.api.input.command.DeviceInteractionCreateCommand;
-import pcc.puppet.enforcer.fuimos.api.output.event.DeviceInteractionCreateEvent;
+import pcc.puppet.enforcer.fuimos.api.interaction.command.DeviceInteractionCreateCommand;
+import pcc.puppet.enforcer.fuimos.api.interaction.event.DeviceInteractionCreateEvent;
+import pcc.puppet.enforcer.fuimos.util.OId;
 
 @Slf4j
 @Controller("/fuimos/interaction")
