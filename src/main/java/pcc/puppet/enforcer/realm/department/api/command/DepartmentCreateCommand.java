@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.organization.api;
+package pcc.puppet.enforcer.realm.department.api.command;
 
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.serde.annotation.Serdeable;
+import javax.validation.Valid;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.ContactInformation;
+import pcc.puppet.enforcer.realm.common.ContactInformation;
 
 @Data
 @Builder
 @Serdeable
-public class OrganizationPresenter {
-  private String id;
-  private String parentId;
-  private String name;
-  private String location;
-  private ContactInformation contact;
-  private String createdBy;
-  private String createdAt;
-  private Integer version;
+public class DepartmentCreateCommand {
+  @Nullable private String parentId;
+  @NonNull private String organizationId;
+  @NonNull private String name;
+  @NonNull private String location;
+  @NonNull @Valid private ContactInformation contact;
 }

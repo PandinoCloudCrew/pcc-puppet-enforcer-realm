@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.organization;
+package pcc.puppet.enforcer.realm.department.domain;
 
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
@@ -26,15 +26,16 @@ import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
 import org.bson.types.ObjectId;
-import pcc.puppet.enforcer.realm.ContactInformation;
+import pcc.puppet.enforcer.realm.common.ContactInformation;
 
 @Data
 @Builder
 @Serdeable
-@MappedEntity(value = "organization")
-public class Organization {
+@MappedEntity(value = "department")
+public class Department {
   @Id private ObjectId id;
   @Nullable private ObjectId parentId;
+  @NonNull private ObjectId organizationId;
   @NonNull private String name;
   @NonNull private String location;
   @NonNull private ContactInformation contact;

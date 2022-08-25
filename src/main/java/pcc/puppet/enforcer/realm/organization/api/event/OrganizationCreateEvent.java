@@ -18,7 +18,7 @@ package pcc.puppet.enforcer.realm.organization.api.event;
 import io.micronaut.serde.annotation.Serdeable;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.ContactInformation;
+import pcc.puppet.enforcer.realm.common.ContactInformation;
 
 @Data
 @Builder

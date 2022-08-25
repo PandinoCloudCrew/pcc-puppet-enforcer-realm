@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm;
+package pcc.puppet.enforcer.realm.organization.domain;
 
 import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;
@@ -30,18 +31,16 @@ import pcc.puppet.enforcer.realm.common.ContactInformation;
 @Data
 @Builder
 @Serdeable
-@MappedEntity(value = "member")
-public class Member {
+@MappedEntity(value = "organization")
+public class Organization {
   @Id private ObjectId id;
-  @NonNull private ObjectId organizationId;
-  @NonNull private ObjectId departmentId;
-  @NonNull private String username;
-  @NonNull private String password;
+  @Nullable private ObjectId parentId;
+  @NonNull private String name;
   @NonNull private String location;
   @NonNull private ContactInformation contact;
   @NonNull private String createdBy;
   @NonNull private Instant createdAt;
-  private String updatedBy;
-  private Instant updatedAt;
-  @Version @AutoPopulated private String version;
+  @Nullable private String updatedBy;
+  @Nullable private Instant updatedAt;
+  @Version @AutoPopulated private Integer version;
 }

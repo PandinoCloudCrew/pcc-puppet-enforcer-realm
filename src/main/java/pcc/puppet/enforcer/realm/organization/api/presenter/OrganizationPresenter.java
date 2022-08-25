@@ -13,15 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.organization.repository;
+package pcc.puppet.enforcer.realm.organization.api.presenter;
 
-import io.micronaut.data.mongodb.annotation.MongoRepository;
-import io.micronaut.data.repository.reactive.ReactorPageableRepository;
-import org.bson.types.ObjectId;
-import pcc.puppet.enforcer.realm.organization.domain.Organization;
-import reactor.core.publisher.Flux;
+import io.micronaut.serde.annotation.Serdeable;
+import lombok.Builder;
+import lombok.Data;
+import pcc.puppet.enforcer.realm.common.ContactInformation;
 
-@MongoRepository
-public interface OrganizationRepository extends ReactorPageableRepository<Organization, ObjectId> {
-  Flux<Organization> findByParentId(ObjectId parentId);
+@Data
+@Builder
+@Serdeable
+public class OrganizationPresenter {
+  private String id;
+  private String parentId;
+  private String name;
+  private String location;
+  private ContactInformation contact;
+  private String createdBy;
+  private String createdAt;
+  private Integer version;
 }

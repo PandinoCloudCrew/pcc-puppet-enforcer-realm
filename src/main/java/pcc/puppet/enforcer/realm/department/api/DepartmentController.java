@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.organization.api;
+package pcc.puppet.enforcer.realm.department.api;
 
+import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.ORGANIZATION;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
 import io.micronaut.core.annotation.NonNull;
@@ -32,41 +33,44 @@ import io.micronaut.tracing.annotation.SpanTag;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import pcc.puppet.enforcer.realm.organization.api.command.OrganizationCreateCommand;
-import pcc.puppet.enforcer.realm.organization.api.event.OrganizationCreateEvent;
-import pcc.puppet.enforcer.realm.organization.api.presenter.OrganizationPresenter;
-import pcc.puppet.enforcer.realm.organization.service.OrganizationService;
+import pcc.puppet.enforcer.realm.department.api.command.DepartmentCreateCommand;
+import pcc.puppet.enforcer.realm.department.api.event.DepartmentCreateEvent;
+import pcc.puppet.enforcer.realm.department.api.presenter.DepartmentPresenter;
+import pcc.puppet.enforcer.realm.department.service.DepartmentService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
-@Controller("/realm/organization")
+@Controller("/realm/department")
 @Secured(SecurityRule.IS_ANONYMOUS)
 @RequiredArgsConstructor
-public class OrganizationController {
-  private final OrganizationService organizationService;
+public class DepartmentController {
+  private final DepartmentService departmentService;
 
   @NewSpan
   @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-  public Mono<OrganizationCreateEvent> organizationCreate(
+  public Mono<DepartmentCreateEvent> DepartmentCreate(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
-      @NonNull @Valid @Body OrganizationCreateCommand createCommand) {
-    return organizationService.create(requester, createCommand);
+      @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
+      @NonNull @Valid @Body DepartmentCreateCommand createCommand) {
+    return departmentService.create(requester, createCommand);
   }
 
   @NewSpan
   @Get(produces = MediaType.APPLICATION_JSON)
-  public Mono<OrganizationPresenter> findOrganization(
+  public Mono<DepartmentPresenter> findDepartment(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
-      @SpanTag @NonNull @QueryValue("organizationId") String organizationId) {
-    return organizationService.findById(requester, organizationId);
+      @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
+      @SpanTag @NonNull @QueryValue("departmentId") String departmentId) {
+    return departmentService.findById(requester, departmentId);
   }
 
   @NewSpan
   @Get(uri = "child", produces = MediaType.APPLICATION_JSON)
-  public Flux<OrganizationPresenter> findChildOrganizations(
+  public Flux<DepartmentPresenter> findChildDepartments(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
-      @SpanTag @NonNull @QueryValue("organizationId") String organizationId) {
-    return organizationService.findByParentId(requester, organizationId);
+      @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
+      @SpanTag @NonNull @QueryValue("departmentId") String departmentId) {
+    return departmentService.findByParentId(requester, departmentId);
   }
 }

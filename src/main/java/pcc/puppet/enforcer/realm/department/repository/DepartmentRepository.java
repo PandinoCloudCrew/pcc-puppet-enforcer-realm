@@ -13,21 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm;
+package pcc.puppet.enforcer.realm.department.repository;
 
-import io.micronaut.serde.annotation.Serdeable;
-import lombok.Builder;
-import lombok.Data;
+import io.micronaut.data.mongodb.annotation.MongoRepository;
+import io.micronaut.data.repository.reactive.ReactorPageableRepository;
+import org.bson.types.ObjectId;
+import pcc.puppet.enforcer.realm.department.domain.Department;
+import reactor.core.publisher.Flux;
 
-@Data
-@Builder
-@Serdeable
-public class ContactInformation {
-  private String firstName;
-  private String lastName;
-  private String phoneNumber;
-  private String email;
-  private String zoneId;
-  private String locale;
-  private String currency;
+@MongoRepository
+public interface DepartmentRepository extends ReactorPageableRepository<Department, ObjectId> {
+  Flux<Department> findByParentId(ObjectId parentId);
 }

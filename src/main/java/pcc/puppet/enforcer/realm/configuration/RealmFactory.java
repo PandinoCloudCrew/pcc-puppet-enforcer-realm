@@ -18,6 +18,7 @@ package pcc.puppet.enforcer.realm.configuration;
 import io.micronaut.context.annotation.Factory;
 import jakarta.inject.Singleton;
 import org.mapstruct.factory.Mappers;
+import pcc.puppet.enforcer.realm.department.mapper.DepartmentMapper;
 import pcc.puppet.enforcer.realm.organization.mapper.OrganizationMapper;
 
 @Factory
@@ -25,5 +26,10 @@ public class RealmFactory {
   @Singleton
   public OrganizationMapper organizationMapper() {
     return Mappers.getMapper(OrganizationMapper.class);
+  }
+
+  @Singleton
+  public DepartmentMapper departmentMapper() {
+    return Mappers.getMapper(DepartmentMapper.class);
   }
 }

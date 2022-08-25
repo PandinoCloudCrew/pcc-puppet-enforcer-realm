@@ -13,29 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.organization.mapper;
+package pcc.puppet.enforcer.realm.department.mapper;
 
 import org.bson.types.ObjectId;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import pcc.puppet.enforcer.realm.organization.api.command.OrganizationCreateCommand;
-import pcc.puppet.enforcer.realm.organization.api.event.OrganizationCreateEvent;
-import pcc.puppet.enforcer.realm.organization.api.presenter.OrganizationPresenter;
-import pcc.puppet.enforcer.realm.organization.domain.Organization;
+import pcc.puppet.enforcer.realm.department.api.command.DepartmentCreateCommand;
+import pcc.puppet.enforcer.realm.department.api.event.DepartmentCreateEvent;
+import pcc.puppet.enforcer.realm.department.api.presenter.DepartmentPresenter;
+import pcc.puppet.enforcer.realm.department.domain.Department;
 
 @Mapper(imports = ObjectId.class)
-public interface OrganizationMapper {
-
+public interface DepartmentMapper {
   @Mapping(target = "parentId", expression = "java(new ObjectId(command.getParentId()))")
-  Organization commandToDomain(OrganizationCreateCommand command);
+  @Mapping(
+      target = "organizationId",
+      expression = "java(new ObjectId(command.getOrganizationId()))")
+  Department commandToDomain(DepartmentCreateCommand command);
 
   @Mapping(target = "id", expression = "java(command.getId().toHexString())")
   @Mapping(target = "parentId", expression = "java(command.getParentId().toHexString())")
+  @Mapping(
+      target = "organizationId",
+      expression = "java(command.getOrganizationId().toHexString())")
   @Mapping(source = "createdAt", target = "createdAt", dateFormat = "yyyy-MM-dd hh:mm:ss")
-  OrganizationCreateEvent domainToEvent(Organization command);
+  DepartmentCreateEvent domainToEvent(Department command);
 
   @Mapping(target = "id", expression = "java(command.getId().toHexString())")
   @Mapping(target = "parentId", expression = "java(command.getParentId().toHexString())")
+  @Mapping(
+      target = "organizationId",
+      expression = "java(command.getOrganizationId().toHexString())")
   @Mapping(source = "createdAt", target = "createdAt", dateFormat = "yyyy-MM-dd hh:mm:ss")
-  OrganizationPresenter domainToPresenter(Organization command);
+  DepartmentPresenter domainToPresenter(Department command);
 }

@@ -13,35 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm;
+package pcc.puppet.enforcer.realm.department.api.event;
 
 import io.micronaut.core.annotation.NonNull;
-import io.micronaut.data.annotation.AutoPopulated;
-import io.micronaut.data.annotation.Id;
-import io.micronaut.data.annotation.MappedEntity;
-import io.micronaut.data.annotation.Version;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.serde.annotation.Serdeable;
-import java.time.Instant;
+import javax.validation.Valid;
 import lombok.Builder;
 import lombok.Data;
-import org.bson.types.ObjectId;
 import pcc.puppet.enforcer.realm.common.ContactInformation;
 
 @Data
 @Builder
 @Serdeable
-@MappedEntity(value = "member")
-public class Member {
-  @Id private ObjectId id;
-  @NonNull private ObjectId organizationId;
-  @NonNull private ObjectId departmentId;
-  @NonNull private String username;
-  @NonNull private String password;
+public class DepartmentCreateEvent {
+  @NonNull private String id;
+  @Nullable private String parentId;
+  @NonNull private String organizationId;
+  @NonNull private String name;
   @NonNull private String location;
-  @NonNull private ContactInformation contact;
-  @NonNull private String createdBy;
-  @NonNull private Instant createdAt;
-  private String updatedBy;
-  private Instant updatedAt;
-  @Version @AutoPopulated private String version;
+  @NonNull private String createdAt;
+  @NonNull @Valid private ContactInformation contact;
 }

@@ -13,15 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.organization.repository;
+package pcc.puppet.enforcer.realm.department.service;
 
-import io.micronaut.data.mongodb.annotation.MongoRepository;
-import io.micronaut.data.repository.reactive.ReactorPageableRepository;
-import org.bson.types.ObjectId;
-import pcc.puppet.enforcer.realm.organization.domain.Organization;
+import pcc.puppet.enforcer.realm.department.api.command.DepartmentCreateCommand;
+import pcc.puppet.enforcer.realm.department.api.event.DepartmentCreateEvent;
+import pcc.puppet.enforcer.realm.department.api.presenter.DepartmentPresenter;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-@MongoRepository
-public interface OrganizationRepository extends ReactorPageableRepository<Organization, ObjectId> {
-  Flux<Organization> findByParentId(ObjectId parentId);
+public interface DepartmentService {
+
+  Mono<DepartmentCreateEvent> create(String requester, DepartmentCreateCommand createCommand);
+
+  Mono<DepartmentPresenter> findById(String requester, String departmentId);
+
+  Flux<DepartmentPresenter> findByParentId(String requester, String departmentId);
 }

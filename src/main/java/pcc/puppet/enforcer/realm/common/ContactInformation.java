@@ -13,14 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.organization.mapper;
+package pcc.puppet.enforcer.realm.common;
 
-import org.mapstruct.Mapper;
-import pcc.puppet.enforcer.realm.ContactInformation;
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.serde.annotation.Serdeable;
+import lombok.Builder;
+import lombok.Data;
 
-@Mapper
-public interface ContactInformationMapper {
-  ContactInformation commandToDomain(ContactInformation command);
-
-  ContactInformation domainToEvent(ContactInformation command);
+@Data
+@Builder
+@Serdeable
+public class ContactInformation {
+  @NonNull private String firstName;
+  @NonNull private String lastName;
+  @NonNull private String phoneNumber;
+  @NonNull private String email;
+  @NonNull private String zoneId;
+  @NonNull private String locale;
+  @NonNull private String currency;
 }

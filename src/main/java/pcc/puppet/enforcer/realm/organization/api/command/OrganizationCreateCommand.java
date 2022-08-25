@@ -15,17 +15,20 @@
  */
 package pcc.puppet.enforcer.realm.organization.api.command;
 
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.serde.annotation.Serdeable;
+import javax.validation.Valid;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.ContactInformation;
+import pcc.puppet.enforcer.realm.common.ContactInformation;
 
 @Data
 @Builder
 @Serdeable
 public class OrganizationCreateCommand {
-  private String name;
-  private String parentId;
-  private String location;
-  private ContactInformation contact;
+  @NonNull private String name;
+  @Nullable private String parentId;
+  @NonNull private String location;
+  @NonNull @Valid private ContactInformation contact;
 }
