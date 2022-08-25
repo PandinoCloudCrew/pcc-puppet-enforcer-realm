@@ -23,7 +23,7 @@ import io.micronaut.runtime.Micronaut;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 
-@OpenAPIDefinition(info = @Info(title = "files", version = "0.0"))
+@OpenAPIDefinition(info = @Info(title = "pcc-puppet-enforcer-realm", version = "0.0"))
 public class Application {
   /**
    * Entry point for app

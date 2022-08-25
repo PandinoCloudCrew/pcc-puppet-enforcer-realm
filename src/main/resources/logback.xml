@@ -10,6 +10,7 @@
     </appender>
     <logger name="com.agorapulse.worker.Job" level="WARN" />
     <logger name="io.micronaut.http.client" level="TRACE" />
+    <logger name="io.micronaut.tracing" level="TRACE" />
     <root level="info">
         <appender-ref ref="STDOUT" />
     </root>

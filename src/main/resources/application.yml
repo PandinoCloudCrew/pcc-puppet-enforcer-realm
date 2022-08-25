@@ -3,17 +3,17 @@ fuimos:
     interaction: http://localhost:${micronaut.server.port}/fuimos/interaction
     message: http://localhost:${micronaut.server.port}/fuimos/message
 micronaut:
+  application:
+    name: pcc-puppet-enforcer-realm
   server:
-    port: 9090
+    port: 9900
   metrics:
+    enabled: true
     export:
-      cloudwatch:
-        enabled: false
       prometheus:
         enabled: true
         descriptions: true
         step: PT1M
-    enabled: true
   security:
     authentication: idtoken
     intercept-url-map:
@@ -30,22 +30,13 @@ micronaut:
         paths: classpath:META-INF/swagger/views/swagger-ui
         mapping: /swagger-ui/**
 otel:
+  service:
+    name: ${micronaut.application.name}
   traces:
     exporter: otlp,jaeger,logging
     propagator: tracecontext, baggage
   exclusions:
     - /health
-  http:
-    client:
-      request-headers:
-        - X-From-Client-Request
-      response-headers:
-        - X-From-Client-Response
-    server:
-      request-headers:
-        - X-From-Server-Request
-      response-headers:
-        - X-From-Server-Response
 netty:
   default:
     allocator:
