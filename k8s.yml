@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "files"
+  name: "pcc-puppet-enforcer-realm"
 spec:
   selector:
     matchLabels:
-      app: "files"
+      app: "pcc-puppet-enforcer-realm"
   template:
     metadata:
       labels:
-        app: "files"
+        app: "pcc-puppet-enforcer-realm"
     spec:
       containers:
-        - name: "files"
+        - name: "pcc-puppet-enforcer-realm"
           image: "gcr.io/files/jib-image"
           ports:
             - name: http
@@ -34,10 +34,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: "files"
+  name: "pcc-puppet-enforcer-realm"
 spec:
   selector:
-    app: "files"
+    app: "pcc-puppet-enforcer-realm"
   type: LoadBalancer
   ports:
     - protocol: "TCP"

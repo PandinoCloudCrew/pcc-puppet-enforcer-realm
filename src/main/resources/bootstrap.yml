@@ -1,5 +1,7 @@
 micronaut:
   application:
-    name: pcc-puppet-enforcer-files
+    name: pcc-puppet-enforcer-realm
   config-client:
+    enabled: false
+  otel:
     enabled: true
