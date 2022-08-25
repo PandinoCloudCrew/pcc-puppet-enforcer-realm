@@ -158,22 +158,3 @@ jacocoTestReport {
         }))
     }
 }
-
-jacocoTestCoverageVerification {
-    afterEvaluate {
-        classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it,
-                    exclude: ["Application.class"])
-        }))
-    }
-    violationRules {
-        rule {
-            element = "BUNDLE"
-            limit {
-                counter = "LINE"
-                value = "COVEREDRATIO"
-                minimum = 0.85
-            }
-        }
-    }
-}
