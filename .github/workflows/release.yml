@@ -24,7 +24,6 @@ jobs:
           sudo pip install yq
           jq --version
           yq --version
-          rm package.json
       - name: Install gitmoji-semver
         run: |
           git clone https://github.com/nkmr-jp/gitmoji-semver -b v2.0.1
