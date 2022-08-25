@@ -1,5 +1,8 @@
 name: GraalVM CE CI
-on: [push, pull_request]
+on:
+  release:
+    types:
+      - deleted
 jobs:
   build:
     runs-on: ubuntu-latest
