@@ -1,8 +1,6 @@
 name: GraalVM CE CI
 on:
-  release:
-    types:
-      - deleted
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,6 +18,8 @@ jobs:
         uses: DeLaGuardo/setup-graalvm@3.1
         with:
           graalvm-version: 22.2.0.java17
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
       - name: Install Native Image
         run: gu install native-image
       - name: Docker login
@@ -34,5 +34,5 @@ jobs:
           DOCKER_REGISTRY_URL: ${{ secrets.DOCKER_REGISTRY_URL }}
           TESTCONTAINERS_RYUK_DISABLED: true
         run: |
-          export DOCKER_IMAGE=`echo "${DOCKER_REGISTRY_URL}/${DOCKER_REPOSITORY_PATH}/files" | sed -e 's#//#/#' -e 's#^/##'`
+          export DOCKER_IMAGE=`echo "${DOCKER_REGISTRY_URL}/${DOCKER_REPOSITORY_PATH}/pcc-puppet-enforcer-realm-native" | sed -e 's#//#/#' -e 's#^/##'`
           ./gradlew check dockerPushNative --no-daemon
