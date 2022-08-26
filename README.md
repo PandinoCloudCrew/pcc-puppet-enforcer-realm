@@ -1,3 +1,11 @@
+# Code Health
+| SonarCloud                                                                                                                                                                                            | CodeScene                                                                                                                            |
+|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
+| [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pcc-puppet-enforcer-realm&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=pcc-puppet-enforcer-realm) | [![CodeScene general](https://codescene.io/images/analyzed-by-codescene-badge.svg)](https://codescene.io/projects/29004)             |
+| [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=pcc-puppet-enforcer-realm&metric=coverage)](https://sonarcloud.io/summary/new_code?id=pcc-puppet-enforcer-realm)                | [![CodeScene Code Health](https://codescene.io/projects/29004/status-badges/code-health)](https://codescene.io/projects/29004)       |
+| [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=pcc-puppet-enforcer-realm&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=pcc-puppet-enforcer-realm)       | [![CodeScene System Mastery](https://codescene.io/projects/29004/status-badges/system-mastery)](https://codescene.io/projects/29004) |
+| [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=pcc-puppet-enforcer-realm&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=pcc-puppet-enforcer-realm)          | [![CodeScene Missed Goals](https://codescene.io/projects/29004/status-badges/missed-goals)](https://codescene.io/projects/29004)     |
+
 ## Micronaut 3.6.1 Documentation
 
 - [User Guide](https://docs.micronaut.io/3.6.1/guide/index.html)
@@ -14,7 +22,8 @@ Workflow file: [`.github/workflows/gradle.yml`](.github/workflows/gradle.yml)
 For pushes to the `master` branch, the workflow will:
 1. Setup the build environment with respect to the selected java/graalvm version.
 2. Login to docker registry based on provided configuration.
-3. Build, tag and push Docker image with Micronaut application to the Docker container image.
+3. Build, tag and push Docker image 
+4. with Micronaut application to the Docker container image.
 
 ### Dependencies on other GitHub Actions
 - [Docker login](`https://github.com/docker/login-action`)(`docker/login`)
