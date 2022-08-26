@@ -13,35 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm;
+package pcc.puppet.enforcer.realm.member.api.presenter;
 
 import io.micronaut.core.annotation.NonNull;
-import io.micronaut.data.annotation.AutoPopulated;
-import io.micronaut.data.annotation.Id;
-import io.micronaut.data.annotation.MappedEntity;
-import io.micronaut.data.annotation.Version;
 import io.micronaut.serde.annotation.Serdeable;
-import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
-import org.bson.types.ObjectId;
 import pcc.puppet.enforcer.realm.common.ContactInformation;
 
 @Data
 @Builder
 @Serdeable
-@MappedEntity(value = "member")
-public class Member {
-  @Id private ObjectId id;
-  @NonNull private ObjectId organizationId;
-  @NonNull private ObjectId departmentId;
+public class MemberPresenter {
+  @NonNull private String id;
+  @NonNull private String organizationId;
+  @NonNull private String departmentId;
   @NonNull private String username;
-  @NonNull private String password;
   @NonNull private String location;
   @NonNull private ContactInformation contact;
-  @NonNull private String createdBy;
-  @NonNull private Instant createdAt;
-  private String updatedBy;
-  private Instant updatedAt;
-  @Version @AutoPopulated private String version;
+  @NonNull private String createdAt;
+  @NonNull private Integer version;
 }

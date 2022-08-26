@@ -19,6 +19,7 @@ import io.micronaut.context.annotation.Factory;
 import jakarta.inject.Singleton;
 import org.mapstruct.factory.Mappers;
 import pcc.puppet.enforcer.realm.department.mapper.DepartmentMapper;
+import pcc.puppet.enforcer.realm.member.mapper.MemberMapper;
 import pcc.puppet.enforcer.realm.organization.mapper.OrganizationMapper;
 
 @Factory
@@ -31,5 +32,10 @@ public class RealmFactory {
   @Singleton
   public DepartmentMapper departmentMapper() {
     return Mappers.getMapper(DepartmentMapper.class);
+  }
+
+  @Singleton
+  public MemberMapper memberMapper() {
+    return Mappers.getMapper(MemberMapper.class);
   }
 }

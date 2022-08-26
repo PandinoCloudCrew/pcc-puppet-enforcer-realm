@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.department.api;
+package pcc.puppet.enforcer.realm.member.api;
 
+import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.DEPARTMENT;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.ORGANIZATION;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
+import com.agorapulse.permissions.RequiresPermission;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
@@ -33,44 +35,61 @@ import io.micronaut.tracing.annotation.SpanTag;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import pcc.puppet.enforcer.realm.department.api.command.DepartmentCreateCommand;
-import pcc.puppet.enforcer.realm.department.api.event.DepartmentCreateEvent;
-import pcc.puppet.enforcer.realm.department.api.presenter.DepartmentPresenter;
-import pcc.puppet.enforcer.realm.department.service.DepartmentService;
+import pcc.puppet.enforcer.realm.member.api.command.MemberCreateCommand;
+import pcc.puppet.enforcer.realm.member.api.event.MemberCreateEvent;
+import pcc.puppet.enforcer.realm.member.api.presenter.MemberPresenter;
+import pcc.puppet.enforcer.realm.member.service.MemberService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
-@Controller("/realm/department")
+@Controller("/realm/member")
 @Secured(SecurityRule.IS_ANONYMOUS)
 @RequiredArgsConstructor
-public class DepartmentController {
-  private final DepartmentService departmentService;
+public class MemberController {
+  private final MemberService memberService;
 
   @NewSpan
   @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-  public Mono<DepartmentCreateEvent> departmentCreate(
+  @RequiresPermission("member-controller::member-create")
+  public Mono<MemberCreateEvent> memberCreate(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
       @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
-      @NonNull @Valid @Body DepartmentCreateCommand createCommand) {
-    return departmentService.create(requester, createCommand);
+      @SpanTag(DEPARTMENT) @NonNull @Header(DEPARTMENT) String departmentId,
+      @NonNull @Valid @Body MemberCreateCommand createCommand) {
+    return memberService.create(requester, createCommand);
   }
 
   @NewSpan
   @Get(produces = MediaType.APPLICATION_JSON)
-  public Mono<DepartmentPresenter> findDepartment(
+  @RequiresPermission("member-controller::find-member")
+  public Mono<MemberPresenter> findMember(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
       @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
-      @SpanTag @NonNull @QueryValue("departmentId") String departmentId) {
-    return departmentService.findById(requester, departmentId);
+      @SpanTag(DEPARTMENT) @NonNull @Header(DEPARTMENT) String departmentId,
+      @SpanTag @NonNull @QueryValue("memberId") String memberId) {
+    return memberService.findById(requester, memberId);
   }
 
   @NewSpan
-  @Get(uri = "child", produces = MediaType.APPLICATION_JSON)
-  public Flux<DepartmentPresenter> findChildDepartments(
+  @Get(uri = "child/organization", produces = MediaType.APPLICATION_JSON)
+  @RequiresPermission("member-controller::find-child-organization-members")
+  public Flux<MemberPresenter> findChildOrganizationMembers(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
       @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
-      @SpanTag @NonNull @QueryValue("departmentId") String departmentId) {
-    return departmentService.findByParentId(requester, departmentId);
+      @SpanTag(DEPARTMENT) @NonNull @Header(DEPARTMENT) String departmentId,
+      @SpanTag @NonNull @QueryValue("id") String id) {
+    return memberService.findByOrganizationId(requester, id);
+  }
+
+  @NewSpan
+  @Get(uri = "child/department", produces = MediaType.APPLICATION_JSON)
+  @RequiresPermission("member-controller::find-child-department-members")
+  public Flux<MemberPresenter> findChildDepartmentMembers(
+      @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
+      @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
+      @SpanTag(DEPARTMENT) @NonNull @Header(DEPARTMENT) String departmentId,
+      @SpanTag @NonNull @QueryValue("id") String id) {
+    return memberService.findByDepartmentId(requester, id);
   }
 }
