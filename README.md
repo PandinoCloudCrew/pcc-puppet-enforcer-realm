@@ -43,44 +43,15 @@ Specifics on how to configure public cloud docker registries like DockerHub, Goo
 Oracle Cloud Infrastructure Registry (OCIR) and many more can be found in [docker/login-action](https://github.com/docker/login-action)
 documentation.
 
-#### DockerHub
-
-- `DOCKER_USERNAME` - DockerHub username
-- `DOCKER_PASSWORD` - DockerHub password or personal access token
-- `DOCKER_REPOSITORY_PATH` - DockerHub organization or the username in case of personal registry
-- `DOCKER_REGISTRY_URL` - No need to configure for DockerHub
-
-> See [docker/login-action for DockerHub](https://github.com/docker/login-action#dockerhub)
-
 #### Google Container Registry (GCR)
 Create service account with permission to edit GCR or use predefined Storage Admin role.
 
 - `DOCKER_USERNAME` - set exactly to `_json_key`
 - `DOCKER_PASSWORD` - content of the service account json key file
-- `DOCKER_REPOSITORY_PATH` - `<project-id>/foo`
+- `DOCKER_REPOSITORY_PATH` - `<project-id>/pcc-puppet-enforcer-realm`
 - `DOCKER_REGISTRY_URL` - `gcr.io`
 
 > See [docker/login-action for GCR](https://github.com/docker/login-action#google-container-registry-gcr)
-
-#### AWS Elastic Container Registry (ECR)
-Create IAM user with permission to push to ECR (or use AmazonEC2ContainerRegistryFullAccess role).
-
-- `DOCKER_USERNAME` - access key ID
-- `DOCKER_PASSWORD` - secret access key
-- `DOCKER_REPOSITORY_PATH` - no need to set
-- `DOCKER_REGISTRY_URL` - set to `<aws-account-number>.dkr.ecr.<region>.amazonaws.com`
-
-> See [docker/login-action for ECR](https://github.com/docker/login-action#aws-elastic-container-registry-ecr)
-
-#### Oracle Infrastructure Cloud Registry (OCIR)
-[Create auth token](https://www.oracle.com/webfolder/technetwork/tutorials/obe/oci/registry/index.html#GetanAuthToken) for authentication.
-
-- `DOCKER_USERNAME` - username in format `<tenancy>/<username>`
-- `DOCKER_PASSWORD` - account auth token
-- `DOCKER_REPOSITORY_PATH` - `<tenancy>/<registry>/foo`
-- `DOCKER_REGISTRY_URL` - set to `<region>.ocir.io`
-
-> See [docker/login-action for OCIR](https://github.com/docker/login-action#oci-oracle-cloud-infrastructure-registry-ocir)
 
 
 ## Push GraalVM Native Image To Docker Registry Workflow
@@ -111,44 +82,15 @@ Specifics on how to configure public cloud docker registries like DockerHub, Goo
 Oracle Cloud Infrastructure Registry (OCIR) and many more can be found in [docker/login-action](https://github.com/docker/login-action)
 documentation.
 
-#### DockerHub
-
-- `DOCKER_USERNAME` - DockerHub username
-- `DOCKER_PASSWORD` - DockerHub password or personal access token
-- `DOCKER_REPOSITORY_PATH` - DockerHub organization or the username in case of personal registry
-- `DOCKER_REGISTRY_URL` - No need to configure for DockerHub
-
-> See [docker/login-action for DockerHub](https://github.com/docker/login-action#dockerhub)
-
 #### Google Container Registry (GCR)
 Create service account with permission to edit GCR or use predefined Storage Admin role.
 
 - `DOCKER_USERNAME` - set exactly to `_json_key`
 - `DOCKER_PASSWORD` - content of the service account json key file
-- `DOCKER_REPOSITORY_PATH` - `<project-id>/foo`
+- `DOCKER_REPOSITORY_PATH` - `<project-id>/pcc-puppet-enforcer-realm`
 - `DOCKER_REGISTRY_URL` - `gcr.io`
 
 > See [docker/login-action for GCR](https://github.com/docker/login-action#google-container-registry-gcr)
-
-#### AWS Elastic Container Registry (ECR)
-Create IAM user with permission to push to ECR (or use AmazonEC2ContainerRegistryFullAccess role).
-
-- `DOCKER_USERNAME` - access key ID
-- `DOCKER_PASSWORD` - secret access key
-- `DOCKER_REPOSITORY_PATH` - no need to set
-- `DOCKER_REGISTRY_URL` - set to `<aws-account-number>.dkr.ecr.<region>.amazonaws.com`
-
-> See [docker/login-action for ECR](https://github.com/docker/login-action#aws-elastic-container-registry-ecr)
-
-#### Oracle Infrastructure Cloud Registry (OCIR)
-[Create auth token](https://www.oracle.com/webfolder/technetwork/tutorials/obe/oci/registry/index.html#GetanAuthToken) for authentication.
-
-- `DOCKER_USERNAME` - username in format `<tenancy>/<username>`
-- `DOCKER_PASSWORD` - account auth token
-- `DOCKER_REPOSITORY_PATH` - `<tenancy>/<registry>/foo`
-- `DOCKER_REGISTRY_URL` - set to `<region>.ocir.io`
-
-> See [docker/login-action for OCIR](https://github.com/docker/login-action#oci-oracle-cloud-infrastructure-registry-ocir)
 
 
 - [Jib Gradle Plugin](https://plugins.gradle.org/plugin/com.google.cloud.tools.jib)
