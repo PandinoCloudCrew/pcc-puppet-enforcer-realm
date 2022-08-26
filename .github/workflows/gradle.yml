@@ -36,5 +36,6 @@ jobs:
           DOCKER_REGISTRY_URL: ${{ secrets.DOCKER_REGISTRY_URL }}
           TESTCONTAINERS_RYUK_DISABLED: true
         run: |
+          git status
           export DOCKER_IMAGE=`echo "${DOCKER_REGISTRY_URL}/${DOCKER_REPOSITORY_PATH}/pcc-puppet-enforcer-realm" | sed -e 's#//#/#' -e 's#^/##'`
           ./gradlew check dockerPush --no-daemon
