@@ -2,14 +2,15 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("com.diffplug.spotless") version "6.9.1"
     id("io.micronaut.application") version "3.5.1"
-//    id("com.google.cloud.tools.jib") version "2.8.0"
+    id("com.google.cloud.tools.jib") version "2.8.0"
     id("org.asciidoctor.jvm.convert") version "3.3.2"
 //    id("io.micronaut.test-resources") version "3.5.1"
+    id("com.palantir.git-version") version "0.15.0"
     id("org.sonarqube") version "3.0"
     id("jacoco")
 }
 
-version = "0.1"
+version = gitVersion()
 group = "pcc.puppet.enforcer"
 
 apply from: "gradle/asciidoc.gradle"
@@ -83,11 +84,11 @@ tasks {
     dockerBuildNative {
         images = ["${System.env.DOCKER_IMAGE ?: project.name}:$project.version"]
     }
-//    jib {
-//        to {
-//            image = "gcr.io/myapp/jib-image"
-//        }
-//    }
+    jib {
+        to {
+            image = "${System.env.DOCKER_IMAGE ?: 'gcr.io/myapp/jib-image'}:$project.version"
+        }
+    }
 }
 graalvmNative.toolchainDetection = false
 micronaut {
