@@ -18,6 +18,8 @@ jobs:
         uses: DeLaGuardo/setup-graalvm@3.1
         with:
           graalvm-version: 22.2.0.java17
+      - name: Ignore Gradlew changes
+        run: git update-index --assume-unchanged gradlew
       - name: Make gradlew executable
         run: chmod +x ./gradlew
       - name: Install Native Image
