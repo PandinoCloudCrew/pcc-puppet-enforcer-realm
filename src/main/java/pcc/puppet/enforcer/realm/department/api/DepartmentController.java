@@ -49,7 +49,7 @@ public class DepartmentController {
 
   @NewSpan
   @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-  public Mono<DepartmentCreateEvent> DepartmentCreate(
+  public Mono<DepartmentCreateEvent> departmentCreate(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
       @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
       @NonNull @Valid @Body DepartmentCreateCommand createCommand) {
