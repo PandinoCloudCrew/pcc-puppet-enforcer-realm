@@ -104,9 +104,9 @@ micronaut {
 configurations.all {
     resolutionStrategy.dependencySubstitution {
         substitute(module("io.micronaut:micronaut-jackson-core"))
-                .using(module("io.micronaut.serde:micronaut-serde-bson:1.3.0"))
+                .using(module("io.micronaut.serde:micronaut-serde-bson:1.3.2"))
         substitute(module("io.micronaut:micronaut-jackson-databind"))
-                .using(module("io.micronaut.serde:micronaut-serde-bson:1.3.0"))
+                .using(module("io.micronaut.serde:micronaut-serde-bson:1.3.2"))
     }
 }
 
