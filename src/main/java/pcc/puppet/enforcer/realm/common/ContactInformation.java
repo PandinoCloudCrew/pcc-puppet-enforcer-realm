@@ -19,16 +19,59 @@ import io.micronaut.core.annotation.NonNull;
 import io.micronaut.serde.annotation.Serdeable;
 import lombok.Builder;
 import lombok.Data;
+import pcc.puppet.enforcer.realm.common.generator.CityNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.CountryNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.CurrencyCodeStrategy;
+import pcc.puppet.enforcer.realm.common.generator.EmailStrategy;
+import pcc.puppet.enforcer.realm.common.generator.FirstNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.JobPositionStrategy;
+import pcc.puppet.enforcer.realm.common.generator.LastNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.LocaleStrategy;
+import pcc.puppet.enforcer.realm.common.generator.PhoneNumberStrategy;
+import pcc.puppet.enforcer.realm.common.generator.TimeZoneStrategy;
+import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
 @Serdeable
 public class ContactInformation {
-  @NonNull private String firstName;
-  @NonNull private String lastName;
-  @NonNull private String phoneNumber;
-  @NonNull private String email;
-  @NonNull private String zoneId;
-  @NonNull private String locale;
-  @NonNull private String currency;
+  @NonNull
+  @PodamStrategyValue(FirstNameStrategy.class)
+  private String firstName;
+
+  @NonNull
+  @PodamStrategyValue(LastNameStrategy.class)
+  private String lastName;
+
+  @NonNull
+  @PodamStrategyValue(PhoneNumberStrategy.class)
+  private String phoneNumber;
+
+  @NonNull
+  @PodamStrategyValue(EmailStrategy.class)
+  private String email;
+
+  @NonNull
+  @PodamStrategyValue(JobPositionStrategy.class)
+  private String position;
+
+  @NonNull
+  @PodamStrategyValue(TimeZoneStrategy.class)
+  private String zoneId;
+
+  @NonNull
+  @PodamStrategyValue(LocaleStrategy.class)
+  private String locale;
+
+  @NonNull
+  @PodamStrategyValue(CountryNameStrategy.class)
+  private String country;
+
+  @NonNull
+  @PodamStrategyValue(CityNameStrategy.class)
+  private String city;
+
+  @NonNull
+  @PodamStrategyValue(CurrencyCodeStrategy.class)
+  private String currency;
 }

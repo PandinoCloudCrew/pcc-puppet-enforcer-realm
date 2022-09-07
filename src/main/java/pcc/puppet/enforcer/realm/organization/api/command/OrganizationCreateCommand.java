@@ -22,13 +22,41 @@ import javax.validation.Valid;
 import lombok.Builder;
 import lombok.Data;
 import pcc.puppet.enforcer.realm.common.ContactInformation;
+import pcc.puppet.enforcer.realm.common.generator.AddressStrategy;
+import pcc.puppet.enforcer.realm.common.generator.CityNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.CompanyNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.CountryNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.ObjectIdStrategy;
+import pcc.puppet.enforcer.realm.common.generator.TaxIdStrategy;
+import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
 @Serdeable
 public class OrganizationCreateCommand {
-  @NonNull private String name;
-  @Nullable private String parentId;
-  @NonNull private String location;
+  @NonNull
+  @PodamStrategyValue(CompanyNameStrategy.class)
+  private String name;
+
+  @Nullable
+  @PodamStrategyValue(ObjectIdStrategy.class)
+  private String parentId;
+
+  @NonNull
+  @PodamStrategyValue(AddressStrategy.class)
+  private String location;
+
+  @NonNull
+  @PodamStrategyValue(CountryNameStrategy.class)
+  private String country;
+
+  @NonNull
+  @PodamStrategyValue(CityNameStrategy.class)
+  private String city;
+
+  @NonNull
+  @PodamStrategyValue(TaxIdStrategy.class)
+  private String taxId;
+
   @NonNull @Valid private ContactInformation contact;
 }

@@ -27,16 +27,47 @@ import lombok.Builder;
 import lombok.Data;
 import org.bson.types.ObjectId;
 import pcc.puppet.enforcer.realm.common.ContactInformation;
+import pcc.puppet.enforcer.realm.common.generator.AddressStrategy;
+import pcc.puppet.enforcer.realm.common.generator.CityNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.CompanyNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.CountryNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.ObjectIdStrategy;
+import pcc.puppet.enforcer.realm.common.generator.TaxIdStrategy;
+import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
 @Serdeable
 @MappedEntity(value = "organization")
 public class Organization {
-  @Id private ObjectId id;
-  @Nullable private ObjectId parentId;
-  @NonNull private String name;
-  @NonNull private String location;
+  @Id
+  @PodamStrategyValue(ObjectIdStrategy.class)
+  private ObjectId id;
+
+  @Nullable
+  @PodamStrategyValue(ObjectIdStrategy.class)
+  private ObjectId parentId;
+
+  @NonNull
+  @PodamStrategyValue(CompanyNameStrategy.class)
+  private String name;
+
+  @NonNull
+  @PodamStrategyValue(AddressStrategy.class)
+  private String location;
+
+  @NonNull
+  @PodamStrategyValue(CountryNameStrategy.class)
+  private String country;
+
+  @NonNull
+  @PodamStrategyValue(CityNameStrategy.class)
+  private String city;
+
+  @NonNull
+  @PodamStrategyValue(TaxIdStrategy.class)
+  private String taxId;
+
   @NonNull private ContactInformation contact;
   @NonNull private String createdBy;
   @NonNull private Instant createdAt;
