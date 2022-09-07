@@ -16,60 +16,45 @@
 package pcc.puppet.enforcer.realm.organization.api;
 
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
-import static pcc.puppet.enforcer.realm.organization.api.OrganizationController.BASE_PATH;
 
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.QueryValue;
-import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.rules.SecurityRule;
+import io.micronaut.http.client.annotation.Client;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.annotation.SpanTag;
 import javax.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import pcc.puppet.enforcer.realm.organization.api.command.OrganizationCreateCommand;
 import pcc.puppet.enforcer.realm.organization.api.event.OrganizationCreateEvent;
 import pcc.puppet.enforcer.realm.organization.api.presenter.OrganizationPresenter;
-import pcc.puppet.enforcer.realm.organization.service.OrganizationService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Slf4j
-@Controller(BASE_PATH)
-@Secured(SecurityRule.IS_ANONYMOUS)
-@RequiredArgsConstructor
-public class OrganizationController implements OrganizationOperations {
-
-  public static final String BASE_PATH = "/realm/organization";
-  private final OrganizationService organizationService;
+@Client(OrganizationController.BASE_PATH)
+public interface OrganizationClient extends OrganizationOperations {
 
   @NewSpan
+  @Override
   @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-  public Mono<OrganizationCreateEvent> organizationCreate(
+  Mono<OrganizationCreateEvent> organizationCreate(
       @NonNull @SpanTag(REQUESTER) @Header(REQUESTER) String requester,
-      @NonNull @Valid @Body OrganizationCreateCommand createCommand) {
-    return organizationService.create(requester, createCommand);
-  }
+      @NonNull @Body @Valid OrganizationCreateCommand createCommand);
 
   @NewSpan
-  @Get(produces = MediaType.APPLICATION_JSON)
-  public Mono<OrganizationPresenter> findOrganization(
-      @NonNull @SpanTag(REQUESTER) @Header(REQUESTER) String requester,
-      @NonNull @SpanTag @QueryValue("organizationId") String organizationId) {
-    return organizationService.findById(requester, organizationId);
-  }
+  @Override
+  @Get(consumes = MediaType.APPLICATION_JSON)
+  Mono<OrganizationPresenter> findOrganization(
+      @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
+      @SpanTag @NonNull @QueryValue("organizationId") String organizationId);
 
   @NewSpan
-  @Get(uri = "child", produces = MediaType.APPLICATION_JSON)
-  public Flux<OrganizationPresenter> findChildOrganizations(
-      @NonNull @SpanTag(REQUESTER) @Header(REQUESTER) String requester,
-      @NonNull  @SpanTag @QueryValue("organizationId") String organizationId) {
-    return organizationService.findByParentId(requester, organizationId);
-  }
+  @Override
+  @Get(uri = "child", consumes = MediaType.APPLICATION_JSON)
+  Flux<OrganizationPresenter> findChildOrganizations(
+      @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
+      @SpanTag @NonNull @QueryValue("organizationId") String organizationId);
 }
