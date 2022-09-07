@@ -1,0 +1,7 @@
+micronaut:
+  application:
+    name: test-pcc-puppet-enforcer-realm
+  config-client:
+    enabled: false
+  otel:
+    enabled: false

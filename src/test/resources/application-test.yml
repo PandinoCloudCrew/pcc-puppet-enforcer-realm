@@ -1,0 +1,14 @@
+micronaut:
+  application:
+    name: test-pcc-puppet-enforcer-realm
+  server:
+    port: -1
+    netty:
+      access-logger:
+        enabled: true
+        loggerName: HTTP_ACCESS_LOGGER
+        log-format: "%h %r %s %b"
+  metrics:
+    enabled: false
+mongodb:
+  uri: mongodb://pcc:123456789@localhost:27017/fuimos
