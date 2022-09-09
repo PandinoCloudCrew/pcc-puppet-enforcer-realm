@@ -25,6 +25,6 @@ public class CompanyNameStrategy implements AttributeStrategy<String> {
 
   @Override
   public String getValue(Class<?> attrType, List<Annotation> attrAnnotations) {
-    return String.format("%s", faker.company().name());
+    return faker.company().name();
   }
 }

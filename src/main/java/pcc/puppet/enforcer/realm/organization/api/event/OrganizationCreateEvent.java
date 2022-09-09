@@ -20,7 +20,7 @@ import io.micronaut.core.annotation.Nullable;
 import io.micronaut.serde.annotation.Serdeable;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.common.ContactInformation;
+import pcc.puppet.enforcer.realm.common.contact.event.CreateContactInformationEvent;
 import pcc.puppet.enforcer.realm.common.generator.AddressStrategy;
 import pcc.puppet.enforcer.realm.common.generator.CityNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.CompanyNameStrategy;
@@ -62,7 +62,7 @@ public class OrganizationCreateEvent {
   @PodamStrategyValue(TaxIdStrategy.class)
   private String taxId;
 
-  @NonNull private ContactInformation contact;
+  @NonNull private CreateContactInformationEvent contactId;
 
   private String createdAt;
 }

@@ -21,7 +21,7 @@ import io.micronaut.serde.annotation.Serdeable;
 import javax.validation.Valid;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.common.ContactInformation;
+import pcc.puppet.enforcer.realm.common.contact.command.CreateContactInformationCommand;
 import pcc.puppet.enforcer.realm.common.generator.AddressStrategy;
 import pcc.puppet.enforcer.realm.common.generator.CityNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.CompanyNameStrategy;
@@ -58,5 +58,5 @@ public class OrganizationCreateCommand {
   @PodamStrategyValue(TaxIdStrategy.class)
   private String taxId;
 
-  @NonNull @Valid private ContactInformation contact;
+  @NonNull @Valid private CreateContactInformationCommand contactId;
 }

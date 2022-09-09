@@ -13,23 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.department.mapper;
+package pcc.puppet.enforcer.realm.common.contact.mapper;
 
-import org.bson.types.ObjectId;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import pcc.puppet.enforcer.realm.department.api.command.DepartmentCreateCommand;
-import pcc.puppet.enforcer.realm.department.api.event.DepartmentCreateEvent;
-import pcc.puppet.enforcer.realm.department.api.presenter.DepartmentPresenter;
-import pcc.puppet.enforcer.realm.department.domain.Department;
+import pcc.puppet.enforcer.realm.common.contact.ContactInformation;
+import pcc.puppet.enforcer.realm.common.contact.command.CreateContactInformationCommand;
+import pcc.puppet.enforcer.realm.common.contact.event.CreateContactInformationEvent;
+import pcc.puppet.enforcer.realm.common.contact.presenter.ContactInformationPresenter;
 
-@Mapper(imports = ObjectId.class)
-public interface DepartmentMapper {
-  Department commandToDomain(DepartmentCreateCommand command);
-
-  @Mapping(source = "createdAt", target = "createdAt", dateFormat = "yyyy-MM-dd hh:mm:ss")
-  DepartmentCreateEvent domainToEvent(Department command);
+@Mapper
+public interface ContactInformationMapper {
+  ContactInformation commandToDomain(CreateContactInformationCommand command);
 
   @Mapping(source = "createdAt", target = "createdAt", dateFormat = "yyyy-MM-dd hh:mm:ss")
-  DepartmentPresenter domainToPresenter(Department command);
+  CreateContactInformationEvent domainToEvent(ContactInformation command);
+
+  ContactInformationPresenter domainToPresenter(ContactInformation command);
 }

@@ -69,7 +69,7 @@ public class OrganizationController implements OrganizationOperations {
   @Get(uri = "child", produces = MediaType.APPLICATION_JSON)
   public Flux<OrganizationPresenter> findChildOrganizations(
       @NonNull @SpanTag(REQUESTER) @Header(REQUESTER) String requester,
-      @NonNull  @SpanTag @QueryValue("organizationId") String organizationId) {
+      @NonNull @SpanTag @QueryValue("organizationId") String organizationId) {
     return organizationService.findByParentId(requester, organizationId);
   }
 }

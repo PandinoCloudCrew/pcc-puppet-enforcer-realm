@@ -21,7 +21,6 @@ import jakarta.inject.Singleton;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
 import pcc.puppet.enforcer.realm.member.api.command.MemberCreateCommand;
 import pcc.puppet.enforcer.realm.member.api.event.MemberCreateEvent;
 import pcc.puppet.enforcer.realm.member.api.presenter.MemberPresenter;
@@ -52,22 +51,20 @@ public class MemberServiceImpl implements MemberService {
   @NewSpan
   @Override
   public Mono<MemberPresenter> findById(@SpanTag String requester, @SpanTag String memberId) {
-    return repository.findById(new ObjectId(memberId)).map(mapper::domainToPresenter);
+    return repository.findById(memberId).map(mapper::domainToPresenter);
   }
 
   @NewSpan
   @Override
   public Flux<MemberPresenter> findByOrganizationId(
       @SpanTag String requester, @SpanTag String organizationId) {
-    return repository
-        .findByOrganizationId(new ObjectId(organizationId))
-        .map(mapper::domainToPresenter);
+    return repository.findByOrganizationId(organizationId).map(mapper::domainToPresenter);
   }
 
   @NewSpan
   @Override
   public Flux<MemberPresenter> findByDepartmentId(
       @SpanTag String requester, @SpanTag String departmentId) {
-    return repository.findByDepartmentId(new ObjectId(departmentId)).map(mapper::domainToPresenter);
+    return repository.findByDepartmentId(departmentId).map(mapper::domainToPresenter);
   }
 }

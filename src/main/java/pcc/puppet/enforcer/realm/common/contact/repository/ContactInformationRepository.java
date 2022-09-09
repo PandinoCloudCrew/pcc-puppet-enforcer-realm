@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.common.generator;
+package pcc.puppet.enforcer.realm.common.contact.repository;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
-import net.datafaker.Faker;
-import uk.co.jemos.podam.common.AttributeStrategy;
+import io.micronaut.data.model.query.builder.sql.Dialect;
+import io.micronaut.data.r2dbc.annotation.R2dbcRepository;
+import io.micronaut.data.repository.reactive.ReactorPageableRepository;
+import pcc.puppet.enforcer.realm.common.contact.ContactInformation;
+import reactor.core.publisher.Mono;
 
-public class CityNameStrategy implements AttributeStrategy<String> {
-  private final Faker faker = new Faker();
+@R2dbcRepository(dialect = Dialect.POSTGRES)
+public interface ContactInformationRepository
+    extends ReactorPageableRepository<ContactInformation, String> {
 
-  @Override
-  public String getValue(Class<?> attrType, List<Annotation> attrAnnotations) {
-    return faker.address().cityName();
-  }
+  Mono<ContactInformation> findByOwnerId(String organizationId);
 }

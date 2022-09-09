@@ -25,6 +25,6 @@ public class LastNameStrategy implements AttributeStrategy<String> {
 
   @Override
   public String getValue(Class<?> attrType, List<Annotation> attrAnnotations) {
-    return String.format("%s", faker.name().lastName());
+    return faker.name().lastName();
   }
 }

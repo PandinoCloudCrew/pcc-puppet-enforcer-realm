@@ -25,21 +25,22 @@ import io.micronaut.serde.annotation.Serdeable;
 import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
-import org.bson.types.ObjectId;
-import pcc.puppet.enforcer.realm.common.ContactInformation;
+import pcc.puppet.enforcer.realm.common.contact.ContactInformation;
 
 @Data
 @Builder
 @Serdeable
 @MappedEntity(value = "member")
 public class Member {
-  @Id private ObjectId id;
-  @NonNull private ObjectId organizationId;
-  @NonNull private ObjectId departmentId;
+  @Id private String id;
+  @NonNull private String organizationId;
+  @NonNull private String departmentId;
   @NonNull private String username;
   @NonNull private String password;
   @NonNull private String location;
+
   @NonNull private ContactInformation contact;
+
   @NonNull private String createdBy;
   @NonNull private Instant createdAt;
   @Nullable private String updatedBy;

@@ -25,6 +25,6 @@ public class CountryNameStrategy implements AttributeStrategy<String> {
 
   @Override
   public String getValue(Class<?> attrType, List<Annotation> attrAnnotations) {
-    return String.format("%s", faker.country().name());
+    return faker.country().name();
   }
 }

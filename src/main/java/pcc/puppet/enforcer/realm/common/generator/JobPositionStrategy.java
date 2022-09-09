@@ -25,6 +25,6 @@ public class JobPositionStrategy implements AttributeStrategy<String> {
 
   @Override
   public String getValue(Class<?> attrType, List<Annotation> attrAnnotations) {
-    return String.format("%s", faker.job().position());
+    return faker.job().position();
   }
 }

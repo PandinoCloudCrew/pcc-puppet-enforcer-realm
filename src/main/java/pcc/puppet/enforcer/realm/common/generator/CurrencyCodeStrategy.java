@@ -25,6 +25,6 @@ public class CurrencyCodeStrategy implements AttributeStrategy<String> {
 
   @Override
   public String getValue(Class<?> attrType, List<Annotation> attrAnnotations) {
-    return String.format("%s", faker.country().currencyCode());
+    return faker.country().currencyCode();
   }
 }

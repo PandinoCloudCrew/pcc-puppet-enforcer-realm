@@ -25,6 +25,6 @@ public class TaxIdStrategy implements AttributeStrategy<String> {
 
   @Override
   public String getValue(Class<?> attrType, List<Annotation> attrAnnotations) {
-    return String.format("%s", faker.idNumber().ssnValid());
+    return faker.idNumber().ssnValid();
   }
 }

@@ -25,6 +25,6 @@ public class PhoneNumberStrategy implements AttributeStrategy<String> {
 
   @Override
   public String getValue(Class<?> attrType, List<Annotation> attrAnnotations) {
-    return String.format("%s", faker.phoneNumber().cellPhone());
+    return faker.phoneNumber().cellPhone();
   }
 }

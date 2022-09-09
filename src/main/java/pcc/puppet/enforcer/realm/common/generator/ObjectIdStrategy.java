@@ -23,6 +23,6 @@ import uk.co.jemos.podam.common.AttributeStrategy;
 public class ObjectIdStrategy implements AttributeStrategy<String> {
   @Override
   public String getValue(Class<?> attrType, List<Annotation> attrAnnotations) {
-    return String.format("%s", ObjectId.get().toHexString());
+    return ObjectId.get().toHexString();
   }
 }

@@ -28,7 +28,9 @@ public interface OrganizationOperations {
   Mono<OrganizationCreateEvent> organizationCreate(
       @NonNull String requester, @NonNull @Valid OrganizationCreateCommand createCommand);
 
-  Mono<OrganizationPresenter> findOrganization(@NonNull String requester, @NonNull String organizationId);
+  Mono<OrganizationPresenter> findOrganization(
+      @NonNull String requester, @NonNull String organizationId);
 
-  Flux<OrganizationPresenter> findChildOrganizations(@NonNull String requester, @NonNull String organizationId);
+  Flux<OrganizationPresenter> findChildOrganizations(
+      @NonNull String requester, @NonNull String organizationId);
 }

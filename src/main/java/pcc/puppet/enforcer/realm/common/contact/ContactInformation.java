@@ -13,10 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.common;
+package pcc.puppet.enforcer.realm.common.contact;
 
 import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
+import io.micronaut.data.annotation.AutoPopulated;
+import io.micronaut.data.annotation.Id;
+import io.micronaut.data.annotation.MappedEntity;
+import io.micronaut.data.annotation.Version;
 import io.micronaut.serde.annotation.Serdeable;
+import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
 import pcc.puppet.enforcer.realm.common.generator.CityNameStrategy;
@@ -27,6 +33,7 @@ import pcc.puppet.enforcer.realm.common.generator.FirstNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.JobPositionStrategy;
 import pcc.puppet.enforcer.realm.common.generator.LastNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.LocaleStrategy;
+import pcc.puppet.enforcer.realm.common.generator.ObjectIdStrategy;
 import pcc.puppet.enforcer.realm.common.generator.PhoneNumberStrategy;
 import pcc.puppet.enforcer.realm.common.generator.TimeZoneStrategy;
 import uk.co.jemos.podam.common.PodamStrategyValue;
@@ -34,7 +41,16 @@ import uk.co.jemos.podam.common.PodamStrategyValue;
 @Data
 @Builder
 @Serdeable
+@MappedEntity(value = "contact_information")
 public class ContactInformation {
+
+  @Id
+  @NonNull
+  @PodamStrategyValue(ObjectIdStrategy.class)
+  private String id;
+
+  @NonNull private String ownerId;
+
   @NonNull
   @PodamStrategyValue(FirstNameStrategy.class)
   private String firstName;
@@ -74,4 +90,10 @@ public class ContactInformation {
   @NonNull
   @PodamStrategyValue(CurrencyCodeStrategy.class)
   private String currency;
+
+  @NonNull private String createdBy;
+  @NonNull private Instant createdAt;
+  @Nullable private String updatedBy;
+  @Nullable private Instant updatedAt;
+  @Version @AutoPopulated private Integer version;
 }

@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.common.generator;
+package pcc.puppet.enforcer.realm.common.contact.service;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
-import net.datafaker.Faker;
-import uk.co.jemos.podam.common.AttributeStrategy;
+import pcc.puppet.enforcer.realm.common.contact.ContactInformation;
+import pcc.puppet.enforcer.realm.common.contact.command.CreateContactInformationCommand;
+import reactor.core.publisher.Mono;
 
-public class CityNameStrategy implements AttributeStrategy<String> {
-  private final Faker faker = new Faker();
+public interface ContactInformationService {
 
-  @Override
-  public String getValue(Class<?> attrType, List<Annotation> attrAnnotations) {
-    return faker.address().cityName();
-  }
+  Mono<ContactInformation> save(
+      String requester, String ownerId, CreateContactInformationCommand command);
+
+  Mono<ContactInformation> findById(String contactInformationId);
+
+  Mono<ContactInformation> findByOrganizationId(String ownerId);
 }

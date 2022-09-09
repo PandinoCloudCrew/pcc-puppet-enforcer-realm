@@ -25,6 +25,6 @@ public class TimeZoneStrategy implements AttributeStrategy<String> {
 
   @Override
   public String getValue(Class<?> attrType, List<Annotation> attrAnnotations) {
-    return String.format("%s", faker.address().timeZone());
+    return faker.address().timeZone();
   }
 }

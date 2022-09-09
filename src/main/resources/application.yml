@@ -42,8 +42,36 @@ netty:
   default:
     allocator:
       max-order: 3
-mongodb:
-  uri: mongodb://pcc:123456789@localhost:27017/fuimos
 worker:
   queue-type: local
   enabled: true
+flyway:
+  enabled: true
+  datasources:
+    default:
+      enabled: true
+      url: 'jdbc:postgresql://localhost:5432/pcc_realm'
+      username: postgres
+      password: postgres
+      baseline-on-migrate: true
+      baseline-version: 0
+      locations:
+        - classpath:migration
+
+datasources:
+  default:
+    pooled: true
+    jmxExport: true
+    dbCreate: none
+    url: 'jdbc:postgresql://localhost:5432/pcc_realm'
+    dialect: postgres
+    username: postgres
+    password: postgres
+
+r2dbc:
+  datasources:
+    default:
+      url: 'r2dbc:postgresql://localhost:5432/pcc_realm'
+      dialect: postgres
+      username: postgres
+      password: postgres
