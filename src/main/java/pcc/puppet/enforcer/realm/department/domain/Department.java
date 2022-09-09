@@ -20,12 +20,19 @@ import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;
+import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.annotation.Version;
+import io.micronaut.data.model.DataType;
 import io.micronaut.serde.annotation.Serdeable;
 import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
 import pcc.puppet.enforcer.realm.common.contact.ContactInformation;
+import pcc.puppet.enforcer.realm.common.contact.repository.converter.ContactInformationConverter;
+import pcc.puppet.enforcer.realm.common.generator.CompanyDepartmentStrategy;
+import pcc.puppet.enforcer.realm.common.generator.InternalAddressStrategy;
+import pcc.puppet.enforcer.realm.common.generator.ObjectIdStrategy;
+import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
@@ -33,17 +40,39 @@ import pcc.puppet.enforcer.realm.common.contact.ContactInformation;
 @MappedEntity(value = "department")
 public class Department {
 
-  @Id private String id;
-  @Nullable private String parentId;
-  @NonNull private String organizationId;
-  @NonNull private String name;
-  @NonNull private String location;
+  @Id
+  @NonNull
+  @PodamStrategyValue(ObjectIdStrategy.class)
+  private String id;
 
-  @NonNull private ContactInformation contact;
+  @Nullable
+  @PodamStrategyValue(ObjectIdStrategy.class)
+  private String parentId;
+
+  @NonNull
+  @PodamStrategyValue(ObjectIdStrategy.class)
+  private String organizationId;
+
+  @NonNull
+  @PodamStrategyValue(CompanyDepartmentStrategy.class)
+  private String name;
+
+  @NonNull
+  @PodamStrategyValue(InternalAddressStrategy.class)
+  private String location;
+
+  @NonNull
+  @TypeDef(type = DataType.STRING, converter = ContactInformationConverter.class)
+  private ContactInformation contactId;
 
   @NonNull private String createdBy;
   @NonNull private Instant createdAt;
   @Nullable private String updatedBy;
   @Nullable private Instant updatedAt;
   @Version @AutoPopulated private Integer version;
+
+  public Department setContact(ContactInformation contactInformation) {
+    this.contactId = contactInformation;
+    return this;
+  }
 }

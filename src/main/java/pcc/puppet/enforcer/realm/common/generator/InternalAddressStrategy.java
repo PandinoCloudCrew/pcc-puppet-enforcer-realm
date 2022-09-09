@@ -13,15 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.department.repository;
+package pcc.puppet.enforcer.realm.common.generator;
 
-import io.micronaut.data.model.query.builder.sql.Dialect;
-import io.micronaut.data.r2dbc.annotation.R2dbcRepository;
-import io.micronaut.data.repository.reactive.ReactorPageableRepository;
-import pcc.puppet.enforcer.realm.department.domain.Department;
-import reactor.core.publisher.Flux;
+import java.lang.annotation.Annotation;
+import java.util.List;
+import net.datafaker.Faker;
+import uk.co.jemos.podam.common.AttributeStrategy;
 
-@R2dbcRepository(dialect = Dialect.POSTGRES)
-public interface DepartmentRepository extends ReactorPageableRepository<Department, String> {
-  Flux<Department> findByParentId(String parentId);
+public class InternalAddressStrategy implements AttributeStrategy<String> {
+  private final Faker faker = new Faker();
+
+  @Override
+  public String getValue(Class<?> attrType, List<Annotation> attrAnnotations) {
+    return faker.address().secondaryAddress();
+  }
 }

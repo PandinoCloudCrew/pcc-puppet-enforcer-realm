@@ -18,6 +18,7 @@ package pcc.puppet.enforcer.realm.common;
 import io.micronaut.core.annotation.Introspected;
 import lombok.experimental.UtilityClass;
 import org.bson.types.ObjectId;
+import pcc.puppet.enforcer.realm.department.api.command.DepartmentCreateCommand;
 import pcc.puppet.enforcer.realm.organization.api.command.OrganizationCreateCommand;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
@@ -34,6 +35,10 @@ public class DomainFactory {
 
   public OrganizationCreateCommand organizationCreateCommand() {
     return getPojoWithFullData(OrganizationCreateCommand.class);
+  }
+
+  public DepartmentCreateCommand departmentCreateCommand() {
+    return getPojoWithFullData(DepartmentCreateCommand.class);
   }
 
   private <T> T getPojoWithFullData(Class<T> classType) {
