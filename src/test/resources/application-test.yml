@@ -10,6 +10,11 @@ micronaut:
         log-format: "%h %r %s %b"
   metrics:
     enabled: false
+    export:
+      prometheus:
+        enabled: false
+  otel:
+    enabled: false
 flyway:
   enabled: true
   datasources:

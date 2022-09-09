@@ -21,60 +21,39 @@ import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.QueryValue;
-import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.annotation.SpanTag;
 import javax.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import pcc.puppet.enforcer.realm.department.api.command.DepartmentCreateCommand;
 import pcc.puppet.enforcer.realm.department.api.event.DepartmentCreateEvent;
 import pcc.puppet.enforcer.realm.department.api.presenter.DepartmentPresenter;
-import pcc.puppet.enforcer.realm.department.service.DepartmentService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Slf4j
-@Controller(DepartmentController.BASE_PATH)
-@Secured(SecurityRule.IS_ANONYMOUS)
-@RequiredArgsConstructor
-public class DepartmentController implements DepartmentOperations {
-  public static final String BASE_PATH = "/realm/department";
-  private final DepartmentService departmentService;
+public interface DepartmentOperations {
 
-  @Override
   @NewSpan
   @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-  public Mono<DepartmentCreateEvent> departmentCreate(
+  Mono<DepartmentCreateEvent> departmentCreate(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
       @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
-      @NonNull @Valid @Body DepartmentCreateCommand createCommand) {
-    return departmentService.create(requester, createCommand);
-  }
+      @NonNull @Valid @Body DepartmentCreateCommand createCommand);
 
-  @Override
   @NewSpan
   @Get(produces = MediaType.APPLICATION_JSON)
-  public Mono<DepartmentPresenter> findDepartment(
+  Mono<DepartmentPresenter> findDepartment(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
       @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
-      @SpanTag @NonNull @QueryValue("departmentId") String departmentId) {
-    return departmentService.findById(requester, departmentId);
-  }
+      @SpanTag @NonNull @QueryValue("departmentId") String departmentId);
 
-  @Override
   @NewSpan
   @Get(uri = "child", produces = MediaType.APPLICATION_JSON)
-  public Flux<DepartmentPresenter> findChildDepartments(
+  Flux<DepartmentPresenter> findChildDepartments(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
       @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
-      @SpanTag @NonNull @QueryValue("departmentId") String departmentId) {
-    return departmentService.findByParentId(requester, departmentId);
-  }
+      @SpanTag @NonNull @QueryValue("departmentId") String departmentId);
 }

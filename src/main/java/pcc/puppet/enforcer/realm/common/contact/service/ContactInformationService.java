@@ -26,5 +26,5 @@ public interface ContactInformationService {
 
   Mono<ContactInformation> findById(String contactInformationId);
 
-  Mono<ContactInformation> findByOrganizationId(String ownerId);
+  Mono<ContactInformation> findByOwnerId(String ownerId);
 }

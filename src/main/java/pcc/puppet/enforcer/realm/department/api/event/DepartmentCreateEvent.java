@@ -21,7 +21,7 @@ import io.micronaut.serde.annotation.Serdeable;
 import javax.validation.Valid;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.common.contact.ContactInformation;
+import pcc.puppet.enforcer.realm.common.contact.event.CreateContactInformationEvent;
 
 @Data
 @Builder
@@ -33,5 +33,5 @@ public class DepartmentCreateEvent {
   @NonNull private String name;
   @NonNull private String location;
   @NonNull private String createdAt;
-  @NonNull @Valid private ContactInformation contact;
+  @NonNull @Valid private CreateContactInformationEvent contactId;
 }

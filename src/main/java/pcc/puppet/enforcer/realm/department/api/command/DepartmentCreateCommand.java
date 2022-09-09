@@ -21,15 +21,32 @@ import io.micronaut.serde.annotation.Serdeable;
 import javax.validation.Valid;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.common.contact.ContactInformation;
+import pcc.puppet.enforcer.realm.common.contact.command.CreateContactInformationCommand;
+import pcc.puppet.enforcer.realm.common.generator.CompanyDepartmentStrategy;
+import pcc.puppet.enforcer.realm.common.generator.InternalAddressStrategy;
+import pcc.puppet.enforcer.realm.common.generator.ObjectIdStrategy;
+import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
 @Serdeable
 public class DepartmentCreateCommand {
-  @Nullable private String parentId;
-  @NonNull private String organizationId;
-  @NonNull private String name;
-  @NonNull private String location;
-  @NonNull @Valid private ContactInformation contact;
+
+  @Nullable
+  @PodamStrategyValue(ObjectIdStrategy.class)
+  private String parentId;
+
+  @NonNull
+  @PodamStrategyValue(ObjectIdStrategy.class)
+  private String organizationId;
+
+  @NonNull
+  @PodamStrategyValue(CompanyDepartmentStrategy.class)
+  private String name;
+
+  @NonNull
+  @PodamStrategyValue(InternalAddressStrategy.class)
+  private String location;
+
+  @NonNull @Valid private CreateContactInformationCommand contactId;
 }

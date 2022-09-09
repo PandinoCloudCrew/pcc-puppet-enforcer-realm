@@ -13,15 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.department.repository;
+package pcc.puppet.enforcer.realm.common;
 
-import io.micronaut.data.model.query.builder.sql.Dialect;
-import io.micronaut.data.r2dbc.annotation.R2dbcRepository;
-import io.micronaut.data.repository.reactive.ReactorPageableRepository;
-import pcc.puppet.enforcer.realm.department.domain.Department;
-import reactor.core.publisher.Flux;
+import java.time.Instant;
+import pcc.puppet.enforcer.realm.common.format.DateFormat;
 
-@R2dbcRepository(dialect = Dialect.POSTGRES)
-public interface DepartmentRepository extends ReactorPageableRepository<Department, String> {
-  Flux<Department> findByParentId(String parentId);
+public class InstantMapper {
+
+  public String asString(Instant timestamp) {
+    return DateFormat.FORMATTER.format(timestamp);
+  }
+
+  public Instant asInstant(String timestamp) {
+    return Instant.from(DateFormat.FORMATTER.parse(timestamp));
+  }
 }

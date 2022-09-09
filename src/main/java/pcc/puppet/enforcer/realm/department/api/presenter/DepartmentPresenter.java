@@ -21,7 +21,7 @@ import io.micronaut.serde.annotation.Serdeable;
 import javax.validation.Valid;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.common.contact.ContactInformation;
+import pcc.puppet.enforcer.realm.common.contact.presenter.ContactInformationPresenter;
 
 @Data
 @Builder
@@ -32,7 +32,7 @@ public class DepartmentPresenter {
   @NonNull private String organizationId;
   @NonNull private String name;
   @NonNull private String location;
-  @NonNull @Valid private ContactInformation contact;
+  @NonNull @Valid private ContactInformationPresenter contactId;
   @NonNull private String createdBy;
   @NonNull private String createdAt;
   @NonNull private Integer version;

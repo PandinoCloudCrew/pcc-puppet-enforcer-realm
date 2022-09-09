@@ -64,7 +64,7 @@ public class DefaultOrganizationService implements OrganizationService {
   public Mono<OrganizationPresenter> findById(
       @SpanTag String requester, @SpanTag String organizationId) {
     return contactInformationService
-        .findByOrganizationId(organizationId)
+        .findByOwnerId(organizationId)
         .flatMap(
             contactInformation ->
                 repository
