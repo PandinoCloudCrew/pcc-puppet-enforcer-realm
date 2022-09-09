@@ -53,7 +53,7 @@ public class DefaultContactInformationService implements ContactInformationServi
 
   @NewSpan
   @Override
-  public Mono<ContactInformation> findByOrganizationId(String ownerId) {
+  public Mono<ContactInformation> findByOwnerId(String ownerId) {
     return repository.findByOwnerId(ownerId);
   }
 }

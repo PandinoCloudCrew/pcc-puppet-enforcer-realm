@@ -16,17 +16,16 @@
 package pcc.puppet.enforcer.realm.common.contact.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import pcc.puppet.enforcer.realm.common.InstantMapper;
 import pcc.puppet.enforcer.realm.common.contact.ContactInformation;
 import pcc.puppet.enforcer.realm.common.contact.command.CreateContactInformationCommand;
 import pcc.puppet.enforcer.realm.common.contact.event.CreateContactInformationEvent;
 import pcc.puppet.enforcer.realm.common.contact.presenter.ContactInformationPresenter;
 
-@Mapper
+@Mapper(uses = InstantMapper.class)
 public interface ContactInformationMapper {
   ContactInformation commandToDomain(CreateContactInformationCommand command);
 
-  @Mapping(source = "createdAt", target = "createdAt", dateFormat = "yyyy-MM-dd hh:mm:ss")
   CreateContactInformationEvent domainToEvent(ContactInformation command);
 
   ContactInformationPresenter domainToPresenter(ContactInformation command);

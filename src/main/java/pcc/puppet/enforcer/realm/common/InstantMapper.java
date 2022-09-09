@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.common.contact.service;
+package pcc.puppet.enforcer.realm.common;
 
-import pcc.puppet.enforcer.realm.common.contact.ContactInformation;
-import pcc.puppet.enforcer.realm.common.contact.command.CreateContactInformationCommand;
-import reactor.core.publisher.Mono;
+import java.time.Instant;
+import pcc.puppet.enforcer.realm.common.format.DateFormat;
 
-public interface ContactInformationService {
+public class InstantMapper {
 
-  Mono<ContactInformation> save(
-      String requester, String ownerId, CreateContactInformationCommand command);
+  public String asString(Instant timestamp) {
+    return DateFormat.FORMATTER.format(timestamp);
+  }
 
-  Mono<ContactInformation> findById(String contactInformationId);
-
-  Mono<ContactInformation> findByOwnerId(String ownerId);
+  public Instant asInstant(String timestamp) {
+    return Instant.from(DateFormat.FORMATTER.parse(timestamp));
+  }
 }

@@ -17,7 +17,6 @@ package pcc.puppet.enforcer.realm.common.contact.event;
 
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.serde.annotation.Serdeable;
-import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
 import pcc.puppet.enforcer.realm.common.generator.CityNameStrategy;
@@ -84,5 +83,5 @@ public class CreateContactInformationEvent {
   @PodamStrategyValue(CurrencyCodeStrategy.class)
   private String currency;
 
-  @NonNull private Instant createdAt;
+  @NonNull private String createdAt;
 }

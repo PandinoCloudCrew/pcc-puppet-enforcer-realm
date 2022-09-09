@@ -15,21 +15,19 @@
  */
 package pcc.puppet.enforcer.realm.department.mapper;
 
-import org.bson.types.ObjectId;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import pcc.puppet.enforcer.realm.common.InstantMapper;
+import pcc.puppet.enforcer.realm.common.contact.mapper.ContactInformationMapper;
 import pcc.puppet.enforcer.realm.department.api.command.DepartmentCreateCommand;
 import pcc.puppet.enforcer.realm.department.api.event.DepartmentCreateEvent;
 import pcc.puppet.enforcer.realm.department.api.presenter.DepartmentPresenter;
 import pcc.puppet.enforcer.realm.department.domain.Department;
 
-@Mapper(imports = ObjectId.class)
+@Mapper(uses = {ContactInformationMapper.class, InstantMapper.class})
 public interface DepartmentMapper {
   Department commandToDomain(DepartmentCreateCommand command);
 
-  @Mapping(source = "createdAt", target = "createdAt", dateFormat = "yyyy-MM-dd hh:mm:ss")
   DepartmentCreateEvent domainToEvent(Department command);
 
-  @Mapping(source = "createdAt", target = "createdAt", dateFormat = "yyyy-MM-dd hh:mm:ss")
   DepartmentPresenter domainToPresenter(Department command);
 }

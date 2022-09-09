@@ -16,21 +16,19 @@
 package pcc.puppet.enforcer.realm.organization.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import pcc.puppet.enforcer.realm.common.InstantMapper;
 import pcc.puppet.enforcer.realm.common.contact.mapper.ContactInformationMapper;
 import pcc.puppet.enforcer.realm.organization.api.command.OrganizationCreateCommand;
 import pcc.puppet.enforcer.realm.organization.api.event.OrganizationCreateEvent;
 import pcc.puppet.enforcer.realm.organization.api.presenter.OrganizationPresenter;
 import pcc.puppet.enforcer.realm.organization.domain.Organization;
 
-@Mapper(uses = ContactInformationMapper.class)
+@Mapper(uses = {ContactInformationMapper.class, InstantMapper.class})
 public interface OrganizationMapper {
 
   Organization commandToDomain(OrganizationCreateCommand command);
 
-  @Mapping(source = "createdAt", target = "createdAt", dateFormat = "yyyy-MM-dd hh:mm:ss")
   OrganizationCreateEvent domainToEvent(Organization command);
 
-  @Mapping(source = "createdAt", target = "createdAt", dateFormat = "yyyy-MM-dd hh:mm:ss")
   OrganizationPresenter domainToPresenter(Organization command);
 }
