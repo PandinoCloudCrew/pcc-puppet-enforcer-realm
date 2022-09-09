@@ -27,7 +27,7 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
       - name: Docker login
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           registry: ${{ secrets.DOCKER_REGISTRY_URL }}
           username: ${{ secrets.DOCKER_USERNAME }}
