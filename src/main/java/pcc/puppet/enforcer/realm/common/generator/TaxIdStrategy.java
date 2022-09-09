@@ -13,14 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.common.mapper;
+package pcc.puppet.enforcer.realm.common.generator;
 
-import org.mapstruct.Mapper;
-import pcc.puppet.enforcer.realm.common.ContactInformation;
+import java.lang.annotation.Annotation;
+import java.util.List;
+import net.datafaker.Faker;
+import uk.co.jemos.podam.common.AttributeStrategy;
 
-@Mapper
-public interface ContactInformationMapper {
-  ContactInformation commandToDomain(ContactInformation command);
+public class TaxIdStrategy implements AttributeStrategy<String> {
+  private final Faker faker = new Faker();
 
-  ContactInformation domainToEvent(ContactInformation command);
+  @Override
+  public String getValue(Class<?> attrType, List<Annotation> attrAnnotations) {
+    return faker.idNumber().ssnValid();
+  }
 }

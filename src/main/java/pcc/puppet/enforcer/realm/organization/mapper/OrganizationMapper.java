@@ -15,27 +15,22 @@
  */
 package pcc.puppet.enforcer.realm.organization.mapper;
 
-import org.bson.types.ObjectId;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import pcc.puppet.enforcer.realm.common.contact.mapper.ContactInformationMapper;
 import pcc.puppet.enforcer.realm.organization.api.command.OrganizationCreateCommand;
 import pcc.puppet.enforcer.realm.organization.api.event.OrganizationCreateEvent;
 import pcc.puppet.enforcer.realm.organization.api.presenter.OrganizationPresenter;
 import pcc.puppet.enforcer.realm.organization.domain.Organization;
 
-@Mapper(imports = ObjectId.class)
+@Mapper(uses = ContactInformationMapper.class)
 public interface OrganizationMapper {
 
-  @Mapping(target = "parentId", expression = "java(new ObjectId(command.getParentId()))")
   Organization commandToDomain(OrganizationCreateCommand command);
 
-  @Mapping(target = "id", expression = "java(command.getId().toHexString())")
-  @Mapping(target = "parentId", expression = "java(command.getParentId().toHexString())")
   @Mapping(source = "createdAt", target = "createdAt", dateFormat = "yyyy-MM-dd hh:mm:ss")
   OrganizationCreateEvent domainToEvent(Organization command);
 
-  @Mapping(target = "id", expression = "java(command.getId().toHexString())")
-  @Mapping(target = "parentId", expression = "java(command.getParentId().toHexString())")
   @Mapping(source = "createdAt", target = "createdAt", dateFormat = "yyyy-MM-dd hh:mm:ss")
   OrganizationPresenter domainToPresenter(Organization command);
 }

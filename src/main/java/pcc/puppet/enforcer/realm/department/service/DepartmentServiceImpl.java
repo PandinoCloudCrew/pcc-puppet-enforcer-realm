@@ -21,7 +21,6 @@ import jakarta.inject.Singleton;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
 import pcc.puppet.enforcer.realm.department.api.command.DepartmentCreateCommand;
 import pcc.puppet.enforcer.realm.department.api.event.DepartmentCreateEvent;
 import pcc.puppet.enforcer.realm.department.api.presenter.DepartmentPresenter;
@@ -52,13 +51,13 @@ public class DepartmentServiceImpl implements DepartmentService {
   @Override
   public Mono<DepartmentPresenter> findById(
       @SpanTag String requester, @SpanTag String departmentId) {
-    return repository.findById(new ObjectId(departmentId)).map(mapper::domainToPresenter);
+    return repository.findById(departmentId).map(mapper::domainToPresenter);
   }
 
   @NewSpan
   @Override
   public Flux<DepartmentPresenter> findByParentId(
       @SpanTag String requester, @SpanTag String departmentId) {
-    return repository.findByParentId(new ObjectId(departmentId)).map(mapper::domainToPresenter);
+    return repository.findByParentId(departmentId).map(mapper::domainToPresenter);
   }
 }

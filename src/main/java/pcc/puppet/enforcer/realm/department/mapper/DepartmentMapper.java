@@ -25,25 +25,11 @@ import pcc.puppet.enforcer.realm.department.domain.Department;
 
 @Mapper(imports = ObjectId.class)
 public interface DepartmentMapper {
-  @Mapping(target = "parentId", expression = "java(new ObjectId(command.getParentId()))")
-  @Mapping(
-      target = "organizationId",
-      expression = "java(new ObjectId(command.getOrganizationId()))")
   Department commandToDomain(DepartmentCreateCommand command);
 
-  @Mapping(target = "id", expression = "java(command.getId().toHexString())")
-  @Mapping(target = "parentId", expression = "java(command.getParentId().toHexString())")
-  @Mapping(
-      target = "organizationId",
-      expression = "java(command.getOrganizationId().toHexString())")
   @Mapping(source = "createdAt", target = "createdAt", dateFormat = "yyyy-MM-dd hh:mm:ss")
   DepartmentCreateEvent domainToEvent(Department command);
 
-  @Mapping(target = "id", expression = "java(command.getId().toHexString())")
-  @Mapping(target = "parentId", expression = "java(command.getParentId().toHexString())")
-  @Mapping(
-      target = "organizationId",
-      expression = "java(command.getOrganizationId().toHexString())")
   @Mapping(source = "createdAt", target = "createdAt", dateFormat = "yyyy-MM-dd hh:mm:ss")
   DepartmentPresenter domainToPresenter(Department command);
 }

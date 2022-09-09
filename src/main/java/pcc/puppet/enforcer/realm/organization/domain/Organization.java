@@ -20,27 +20,69 @@ import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;
+import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.annotation.Version;
+import io.micronaut.data.model.DataType;
 import io.micronaut.serde.annotation.Serdeable;
 import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
-import org.bson.types.ObjectId;
-import pcc.puppet.enforcer.realm.common.ContactInformation;
+import pcc.puppet.enforcer.realm.common.contact.ContactInformation;
+import pcc.puppet.enforcer.realm.common.contact.repository.converter.ContactInformationConverter;
+import pcc.puppet.enforcer.realm.common.generator.AddressStrategy;
+import pcc.puppet.enforcer.realm.common.generator.CityNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.CompanyNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.CountryNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.ObjectIdStrategy;
+import pcc.puppet.enforcer.realm.common.generator.TaxIdStrategy;
+import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
 @Serdeable
 @MappedEntity(value = "organization")
 public class Organization {
-  @Id private ObjectId id;
-  @Nullable private ObjectId parentId;
-  @NonNull private String name;
-  @NonNull private String location;
-  @NonNull private ContactInformation contact;
+  @Id
+  @NonNull
+  @PodamStrategyValue(ObjectIdStrategy.class)
+  private String id;
+
+  @Nullable
+  @PodamStrategyValue(ObjectIdStrategy.class)
+  private String parentId;
+
+  @NonNull
+  @PodamStrategyValue(CompanyNameStrategy.class)
+  private String name;
+
+  @NonNull
+  @PodamStrategyValue(AddressStrategy.class)
+  private String location;
+
+  @NonNull
+  @PodamStrategyValue(CountryNameStrategy.class)
+  private String country;
+
+  @NonNull
+  @PodamStrategyValue(CityNameStrategy.class)
+  private String city;
+
+  @NonNull
+  @PodamStrategyValue(TaxIdStrategy.class)
+  private String taxId;
+
+  @NonNull
+  @TypeDef(type = DataType.STRING, converter = ContactInformationConverter.class)
+  private ContactInformation contactId;
+
   @NonNull private String createdBy;
   @NonNull private Instant createdAt;
   @Nullable private String updatedBy;
   @Nullable private Instant updatedAt;
   @Version @AutoPopulated private Integer version;
+
+  public Organization setContact(ContactInformation contactInformation) {
+    this.contactId = contactInformation;
+    return this;
+  }
 }

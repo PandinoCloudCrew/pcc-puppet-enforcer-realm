@@ -1,17 +1,28 @@
-<configuration>
-
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+<configuration>T
+    <appender class="ch.qos.logback.core.ConsoleAppender" name="STDOUT">
         <withJansi>false</withJansi>
-        <!-- encoders are assigned the type
-             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
         <encoder>
-            <pattern>%cyan(%d{HH:mm:ss.SSS}) %gray([%thread]) %highlight(%-5level) %magenta(%logger{36}) - %msg%n</pattern>
+            <pattern>
+                [%X{stack}] [%X{originator}] [%X{owner}] [%X{userId}] [%X{trackId}] [%-5p] [%t] [%d{yyyy-MM-dd HH:mm:ss.SSS}] [%logger{15}] [%m]%n
+            </pattern>
         </encoder>
     </appender>
-    <logger name="com.agorapulse.worker.Job" level="WARN" />
-    <logger name="io.micronaut.http.client" level="TRACE" />
-    <logger name="io.micronaut.tracing" level="TRACE" />
-    <root level="info">
-        <appender-ref ref="STDOUT" />
+    <logger level="ERROR" name="io.netty"/>
+    <logger level="ERROR" name="io.micronaut.core.reflect"/>
+    <logger level="ERROR" name="io.micronaut.core.beans"/>
+    <logger level="INFO" name="io.micronaut.context"/>
+    <logger level="ERROR" name="io.micronaut.http"/>
+    <logger level="DEBUG" name="io.micrometer.elastic"/>
+    <logger level="INFO" name="io.micronaut.discovery"/>
+    <logger level="WARN" name="software.amazon.awssdk"/>
+    <logger level="WARN" name="software.amazon.awssdk.request"/>
+    <logger level="WARN" name="com.amazonaws.request"/>
+    <logger level="WARN" name="com.amazonaws"/>
+    <logger level="WARN" name="org.apache.http"/>
+    <logger level="DEBUG" name="puppet.enforcer"/>
+    <logger level="DEBUG" name="HTTP_ACCESS_LOGGER"/>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

@@ -16,6 +16,7 @@
 package pcc.puppet.enforcer.realm.organization.api;
 
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
+import static pcc.puppet.enforcer.realm.organization.api.OrganizationController.BASE_PATH;
 
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.MediaType;
@@ -40,16 +41,18 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
-@Controller("/realm/organization")
+@Controller(BASE_PATH)
 @Secured(SecurityRule.IS_ANONYMOUS)
 @RequiredArgsConstructor
-public class OrganizationController {
+public class OrganizationController implements OrganizationOperations {
+
+  public static final String BASE_PATH = "/realm/organization";
   private final OrganizationService organizationService;
 
   @NewSpan
   @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
   public Mono<OrganizationCreateEvent> organizationCreate(
-      @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
+      @NonNull @SpanTag(REQUESTER) @Header(REQUESTER) String requester,
       @NonNull @Valid @Body OrganizationCreateCommand createCommand) {
     return organizationService.create(requester, createCommand);
   }
@@ -57,16 +60,16 @@ public class OrganizationController {
   @NewSpan
   @Get(produces = MediaType.APPLICATION_JSON)
   public Mono<OrganizationPresenter> findOrganization(
-      @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
-      @SpanTag @NonNull @QueryValue("organizationId") String organizationId) {
+      @NonNull @SpanTag(REQUESTER) @Header(REQUESTER) String requester,
+      @NonNull @SpanTag @QueryValue("organizationId") String organizationId) {
     return organizationService.findById(requester, organizationId);
   }
 
   @NewSpan
   @Get(uri = "child", produces = MediaType.APPLICATION_JSON)
   public Flux<OrganizationPresenter> findChildOrganizations(
-      @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
-      @SpanTag @NonNull @QueryValue("organizationId") String organizationId) {
+      @NonNull @SpanTag(REQUESTER) @Header(REQUESTER) String requester,
+      @NonNull @SpanTag @QueryValue("organizationId") String organizationId) {
     return organizationService.findByParentId(requester, organizationId);
   }
 }

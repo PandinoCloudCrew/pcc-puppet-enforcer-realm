@@ -21,7 +21,8 @@ import jakarta.inject.Singleton;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
+import pcc.puppet.enforcer.realm.common.DomainFactory;
+import pcc.puppet.enforcer.realm.common.contact.service.ContactInformationService;
 import pcc.puppet.enforcer.realm.organization.api.command.OrganizationCreateCommand;
 import pcc.puppet.enforcer.realm.organization.api.event.OrganizationCreateEvent;
 import pcc.puppet.enforcer.realm.organization.api.presenter.OrganizationPresenter;
@@ -34,31 +35,59 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Singleton
 @RequiredArgsConstructor
-public class OrganizationServiceImpl implements OrganizationService {
+public class DefaultOrganizationService implements OrganizationService {
+
   private final OrganizationMapper mapper;
   private final OrganizationRepository repository;
+  private final ContactInformationService contactInformationService;
 
   @NewSpan
   @Override
   public Mono<OrganizationCreateEvent> create(
       @SpanTag String requester, OrganizationCreateCommand createCommand) {
     Organization organization = mapper.commandToDomain(createCommand);
+    organization.setId(DomainFactory.id());
     organization.setCreatedBy(requester);
     organization.setCreatedAt(Instant.now());
-    return repository.save(organization).map(mapper::domainToEvent);
+    return contactInformationService
+        .save(requester, organization.getId(), createCommand.getContactId())
+        .flatMap(
+            contactInformation -> {
+              organization.setContactId(contactInformation);
+              return repository.save(organization);
+            })
+        .map(mapper::domainToEvent);
   }
 
   @NewSpan
   @Override
   public Mono<OrganizationPresenter> findById(
       @SpanTag String requester, @SpanTag String organizationId) {
-    return repository.findById(new ObjectId(organizationId)).map(mapper::domainToPresenter);
+    return contactInformationService
+        .findByOrganizationId(organizationId)
+        .flatMap(
+            contactInformation ->
+                repository
+                    .findById(organizationId)
+                    .map(
+                        organization -> {
+                          organization.setContactId(contactInformation);
+                          return organization;
+                        })
+                    .map(mapper::domainToPresenter));
   }
 
   @NewSpan
   @Override
   public Flux<OrganizationPresenter> findByParentId(
       @SpanTag String requester, @SpanTag String organizationId) {
-    return repository.findByParentId(new ObjectId(organizationId)).map(mapper::domainToPresenter);
+    return repository
+        .findByParentId(organizationId)
+        .flatMap(
+            organization ->
+                contactInformationService
+                    .findById(organization.getContactId().getId())
+                    .map(organization::setContact))
+        .map(mapper::domainToPresenter);
   }
 }

@@ -15,13 +15,12 @@
  */
 package pcc.puppet.enforcer.realm.department.repository;
 
-import io.micronaut.data.mongodb.annotation.MongoRepository;
+import io.micronaut.data.r2dbc.annotation.R2dbcRepository;
 import io.micronaut.data.repository.reactive.ReactorPageableRepository;
-import org.bson.types.ObjectId;
 import pcc.puppet.enforcer.realm.department.domain.Department;
 import reactor.core.publisher.Flux;
 
-@MongoRepository
-public interface DepartmentRepository extends ReactorPageableRepository<Department, ObjectId> {
-  Flux<Department> findByParentId(ObjectId parentId);
+@R2dbcRepository
+public interface DepartmentRepository extends ReactorPageableRepository<Department, String> {
+  Flux<Department> findByParentId(String parentId);
 }

@@ -18,7 +18,7 @@ package pcc.puppet.enforcer.realm.organization.api.presenter;
 import io.micronaut.serde.annotation.Serdeable;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.common.ContactInformation;
+import pcc.puppet.enforcer.realm.common.contact.presenter.ContactInformationPresenter;
 
 @Data
 @Builder
@@ -28,7 +28,10 @@ public class OrganizationPresenter {
   private String parentId;
   private String name;
   private String location;
-  private ContactInformation contact;
+  private String country;
+  private String city;
+  private String taxId;
+  private ContactInformationPresenter contactId;
   private String createdBy;
   private String createdAt;
   private Integer version;

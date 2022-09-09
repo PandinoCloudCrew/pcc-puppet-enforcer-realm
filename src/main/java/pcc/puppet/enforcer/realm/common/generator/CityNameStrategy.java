@@ -13,22 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.common;
+package pcc.puppet.enforcer.realm.common.generator;
 
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.serde.annotation.Serdeable;
-import lombok.Builder;
-import lombok.Data;
+import java.lang.annotation.Annotation;
+import java.util.List;
+import net.datafaker.Faker;
+import uk.co.jemos.podam.common.AttributeStrategy;
 
-@Data
-@Builder
-@Serdeable
-public class ContactInformation {
-  @NonNull private String firstName;
-  @NonNull private String lastName;
-  @NonNull private String phoneNumber;
-  @NonNull private String email;
-  @NonNull private String zoneId;
-  @NonNull private String locale;
-  @NonNull private String currency;
+public class CityNameStrategy implements AttributeStrategy<String> {
+  private final Faker faker = new Faker();
+
+  @Override
+  public String getValue(Class<?> attrType, List<Annotation> attrAnnotations) {
+    return faker.address().cityName();
+  }
 }

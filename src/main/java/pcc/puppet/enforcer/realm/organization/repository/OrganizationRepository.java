@@ -15,13 +15,14 @@
  */
 package pcc.puppet.enforcer.realm.organization.repository;
 
-import io.micronaut.data.mongodb.annotation.MongoRepository;
+import io.micronaut.data.model.query.builder.sql.Dialect;
+import io.micronaut.data.r2dbc.annotation.R2dbcRepository;
 import io.micronaut.data.repository.reactive.ReactorPageableRepository;
-import org.bson.types.ObjectId;
 import pcc.puppet.enforcer.realm.organization.domain.Organization;
 import reactor.core.publisher.Flux;
 
-@MongoRepository
-public interface OrganizationRepository extends ReactorPageableRepository<Organization, ObjectId> {
-  Flux<Organization> findByParentId(ObjectId parentId);
+@R2dbcRepository(dialect = Dialect.POSTGRES)
+public interface OrganizationRepository extends ReactorPageableRepository<Organization, String> {
+
+  Flux<Organization> findByParentId(String parentId);
 }
