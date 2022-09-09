@@ -18,12 +18,14 @@ package pcc.puppet.enforcer.realm.organization.api;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import pcc.puppet.enforcer.realm.common.DomainFactory;
+import pcc.puppet.enforcer.realm.common.format.DateFormat;
 import pcc.puppet.enforcer.realm.organization.api.command.OrganizationCreateCommand;
 import pcc.puppet.enforcer.realm.organization.api.event.OrganizationCreateEvent;
 import pcc.puppet.enforcer.realm.organization.api.presenter.OrganizationPresenter;
@@ -41,6 +43,10 @@ class OrganizationControllerTest {
     OrganizationCreateEvent createEventResponse =
         client.organizationCreate(REQUESTER_ID, createCommand).block();
     assertNotNull(createEventResponse);
+    assertNotNull(createEventResponse.getId());
+    assertNotNull(createEventResponse.getCreatedAt());
+    assertTrue(DateFormat.isValid(createEventResponse.getCreatedAt()));
+    assertTrue(DateFormat.isValid(createEventResponse.getContactId().getCreatedAt()));
     assertEquals(createCommand.getParentId(), createEventResponse.getParentId());
     assertEquals(createCommand.getName(), createEventResponse.getName());
     assertEquals(createCommand.getLocation(), createEventResponse.getLocation());
@@ -83,6 +89,8 @@ class OrganizationControllerTest {
     OrganizationPresenter organizationPresenter =
         client.findOrganization(REQUESTER_ID, createEventResponse.getId()).block();
     assertNotNull(organizationPresenter);
+    assertEquals(createEventResponse.getId(), organizationPresenter.getId());
+    assertEquals(createEventResponse.getCreatedAt(), organizationPresenter.getCreatedAt());
     assertEquals(createEventResponse.getParentId(), organizationPresenter.getParentId());
     assertEquals(createEventResponse.getName(), organizationPresenter.getName());
     assertEquals(createEventResponse.getLocation(), organizationPresenter.getLocation());
