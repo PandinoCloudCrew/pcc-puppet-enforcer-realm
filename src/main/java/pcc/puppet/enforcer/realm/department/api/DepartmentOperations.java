@@ -15,19 +15,7 @@
  */
 package pcc.puppet.enforcer.realm.department.api;
 
-import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.ORGANIZATION;
-import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
-
 import io.micronaut.core.annotation.NonNull;
-import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Header;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.QueryValue;
-import io.micronaut.tracing.annotation.NewSpan;
-import io.micronaut.tracing.annotation.SpanTag;
-import javax.validation.Valid;
 import pcc.puppet.enforcer.realm.department.api.command.DepartmentCreateCommand;
 import pcc.puppet.enforcer.realm.department.api.event.DepartmentCreateEvent;
 import pcc.puppet.enforcer.realm.department.api.presenter.DepartmentPresenter;
@@ -36,24 +24,14 @@ import reactor.core.publisher.Mono;
 
 public interface DepartmentOperations {
 
-  @NewSpan
-  @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
   Mono<DepartmentCreateEvent> departmentCreate(
-      @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
-      @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
-      @NonNull @Valid @Body DepartmentCreateCommand createCommand);
+      @NonNull String requester,
+      @NonNull String organizationId,
+      @NonNull DepartmentCreateCommand createCommand);
 
-  @NewSpan
-  @Get(produces = MediaType.APPLICATION_JSON)
   Mono<DepartmentPresenter> findDepartment(
-      @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
-      @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
-      @SpanTag @NonNull @QueryValue("departmentId") String departmentId);
+      @NonNull String requester, @NonNull String organizationId, @NonNull String departmentId);
 
-  @NewSpan
-  @Get(uri = "child", produces = MediaType.APPLICATION_JSON)
   Flux<DepartmentPresenter> findChildDepartments(
-      @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
-      @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
-      @SpanTag @NonNull @QueryValue("departmentId") String departmentId);
+      @NonNull String requester, @NonNull String organizationId, @NonNull String departmentId);
 }

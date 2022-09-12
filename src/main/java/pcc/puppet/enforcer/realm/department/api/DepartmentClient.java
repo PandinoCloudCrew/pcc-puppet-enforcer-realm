@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.department;
+package pcc.puppet.enforcer.realm.department.api;
 
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.ORGANIZATION;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
@@ -24,20 +24,17 @@ import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.annotation.SpanTag;
 import javax.validation.Valid;
-import pcc.puppet.enforcer.realm.department.api.DepartmentController;
-import pcc.puppet.enforcer.realm.department.api.DepartmentOperations;
 import pcc.puppet.enforcer.realm.department.api.command.DepartmentCreateCommand;
 import pcc.puppet.enforcer.realm.department.api.event.DepartmentCreateEvent;
 import pcc.puppet.enforcer.realm.department.api.presenter.DepartmentPresenter;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Client(DepartmentController.BASE_PATH)
+@Client("${micronaut.http.services.department.path}")
 public interface DepartmentClient extends DepartmentOperations {
 
   @Override
@@ -50,7 +47,7 @@ public interface DepartmentClient extends DepartmentOperations {
 
   @Override
   @NewSpan
-  @Get(consumes = MediaType.APPLICATION_JSON)
+  @Get(uri = "/{departmentId}", consumes = MediaType.APPLICATION_JSON)
   Mono<DepartmentPresenter> findDepartment(
       @NonNull @SpanTag(REQUESTER) @Header(REQUESTER) String requester,
       @NonNull @SpanTag(ORGANIZATION) @Header(ORGANIZATION) String organizationId,
@@ -58,9 +55,9 @@ public interface DepartmentClient extends DepartmentOperations {
 
   @Override
   @NewSpan
-  @Get(uri = "child", consumes = MediaType.APPLICATION_JSON)
+  @Get(uri = "/{departmentId}/child", consumes = MediaType.APPLICATION_JSON)
   Flux<DepartmentPresenter> findChildDepartments(
       @NonNull @SpanTag(REQUESTER) @Header(REQUESTER) String requester,
       @NonNull @SpanTag(ORGANIZATION) @Header(ORGANIZATION) String organizationId,
-      @SpanTag @NonNull @QueryValue("departmentId") String departmentId);
+      @SpanTag @NonNull String departmentId);
 }

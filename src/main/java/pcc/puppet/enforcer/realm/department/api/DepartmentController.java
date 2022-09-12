@@ -25,7 +25,6 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.tracing.annotation.NewSpan;
@@ -41,11 +40,10 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
-@Controller(DepartmentController.BASE_PATH)
+@Controller("${micronaut.http.services.department.path}")
 @Secured(SecurityRule.IS_ANONYMOUS)
 @RequiredArgsConstructor
 public class DepartmentController implements DepartmentOperations {
-  public static final String BASE_PATH = "/realm/department";
   private final DepartmentService departmentService;
 
   @Override
@@ -60,21 +58,21 @@ public class DepartmentController implements DepartmentOperations {
 
   @Override
   @NewSpan
-  @Get(produces = MediaType.APPLICATION_JSON)
+  @Get(uri = "/{departmentId}", produces = MediaType.APPLICATION_JSON)
   public Mono<DepartmentPresenter> findDepartment(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
       @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
-      @SpanTag @NonNull @QueryValue("departmentId") String departmentId) {
+      @SpanTag @NonNull String departmentId) {
     return departmentService.findById(requester, departmentId);
   }
 
   @Override
   @NewSpan
-  @Get(uri = "child", produces = MediaType.APPLICATION_JSON)
+  @Get(uri = "/{departmentId}/child", produces = MediaType.APPLICATION_JSON)
   public Flux<DepartmentPresenter> findChildDepartments(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
       @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
-      @SpanTag @NonNull @QueryValue("departmentId") String departmentId) {
+      @SpanTag @NonNull String departmentId) {
     return departmentService.findByParentId(requester, departmentId);
   }
 }
