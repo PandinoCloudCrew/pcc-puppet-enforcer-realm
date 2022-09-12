@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.common;
+package pcc.puppet.enforcer.realm.common.generator;
 
 import io.micronaut.core.annotation.Introspected;
 import lombok.experimental.UtilityClass;
 import org.bson.types.ObjectId;
 import pcc.puppet.enforcer.realm.department.api.command.DepartmentCreateCommand;
+import pcc.puppet.enforcer.realm.member.api.command.MemberCreateCommand;
 import pcc.puppet.enforcer.realm.organization.api.command.OrganizationCreateCommand;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
@@ -39,6 +40,10 @@ public class DomainFactory {
 
   public DepartmentCreateCommand departmentCreateCommand() {
     return getPojoWithFullData(DepartmentCreateCommand.class);
+  }
+
+  public MemberCreateCommand memberCreateCommand() {
+    return getPojoWithFullData(MemberCreateCommand.class);
   }
 
   private <T> T getPojoWithFullData(Class<T> classType) {
