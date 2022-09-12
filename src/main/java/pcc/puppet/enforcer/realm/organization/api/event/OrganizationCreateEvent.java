@@ -21,12 +21,12 @@ import io.micronaut.serde.annotation.Serdeable;
 import lombok.Builder;
 import lombok.Data;
 import pcc.puppet.enforcer.realm.common.contact.event.CreateContactInformationEvent;
-import pcc.puppet.enforcer.realm.common.generator.AddressStrategy;
-import pcc.puppet.enforcer.realm.common.generator.CityNameStrategy;
-import pcc.puppet.enforcer.realm.common.generator.CompanyNameStrategy;
-import pcc.puppet.enforcer.realm.common.generator.CountryNameStrategy;
-import pcc.puppet.enforcer.realm.common.generator.ObjectIdStrategy;
-import pcc.puppet.enforcer.realm.common.generator.TaxIdStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.AddressStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.CityNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.CompanyNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.CountryNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.ObjectIdStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.TaxIdStrategy;
 import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data

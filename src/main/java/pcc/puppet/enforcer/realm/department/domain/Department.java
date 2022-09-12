@@ -29,9 +29,9 @@ import lombok.Builder;
 import lombok.Data;
 import pcc.puppet.enforcer.realm.common.contact.ContactInformation;
 import pcc.puppet.enforcer.realm.common.contact.repository.converter.ContactInformationConverter;
-import pcc.puppet.enforcer.realm.common.generator.CompanyDepartmentStrategy;
-import pcc.puppet.enforcer.realm.common.generator.InternalAddressStrategy;
-import pcc.puppet.enforcer.realm.common.generator.ObjectIdStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.CompanyDepartmentStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.InternalAddressStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.ObjectIdStrategy;
 import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data

@@ -19,16 +19,16 @@ import io.micronaut.core.annotation.NonNull;
 import io.micronaut.serde.annotation.Serdeable;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.common.generator.CityNameStrategy;
-import pcc.puppet.enforcer.realm.common.generator.CountryNameStrategy;
-import pcc.puppet.enforcer.realm.common.generator.CurrencyCodeStrategy;
-import pcc.puppet.enforcer.realm.common.generator.EmailStrategy;
-import pcc.puppet.enforcer.realm.common.generator.FirstNameStrategy;
-import pcc.puppet.enforcer.realm.common.generator.JobPositionStrategy;
-import pcc.puppet.enforcer.realm.common.generator.LastNameStrategy;
-import pcc.puppet.enforcer.realm.common.generator.LocaleStrategy;
-import pcc.puppet.enforcer.realm.common.generator.PhoneNumberStrategy;
-import pcc.puppet.enforcer.realm.common.generator.TimeZoneStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.CityNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.CountryNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.CurrencyCodeStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.EmailStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.FirstNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.JobPositionStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.LastNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.LocaleStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.PhoneNumberStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.TimeZoneStrategy;
 import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data

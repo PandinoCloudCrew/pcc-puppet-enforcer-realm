@@ -16,8 +16,8 @@
 package pcc.puppet.enforcer.realm.department.mapper;
 
 import org.mapstruct.Mapper;
-import pcc.puppet.enforcer.realm.common.InstantMapper;
 import pcc.puppet.enforcer.realm.common.contact.mapper.ContactInformationMapper;
+import pcc.puppet.enforcer.realm.common.mapper.InstantMapper;
 import pcc.puppet.enforcer.realm.department.api.command.DepartmentCreateCommand;
 import pcc.puppet.enforcer.realm.department.api.event.DepartmentCreateEvent;
 import pcc.puppet.enforcer.realm.department.api.presenter.DepartmentPresenter;

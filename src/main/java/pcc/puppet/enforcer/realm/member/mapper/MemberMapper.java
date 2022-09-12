@@ -16,8 +16,8 @@
 package pcc.puppet.enforcer.realm.member.mapper;
 
 import org.mapstruct.Mapper;
-import pcc.puppet.enforcer.realm.common.InstantMapper;
 import pcc.puppet.enforcer.realm.common.contact.mapper.ContactInformationMapper;
+import pcc.puppet.enforcer.realm.common.mapper.InstantMapper;
 import pcc.puppet.enforcer.realm.member.api.command.MemberCreateCommand;
 import pcc.puppet.enforcer.realm.member.api.event.MemberCreateEvent;
 import pcc.puppet.enforcer.realm.member.api.presenter.MemberPresenter;

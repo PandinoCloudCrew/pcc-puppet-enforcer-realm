@@ -16,8 +16,8 @@
 package pcc.puppet.enforcer.realm.organization.mapper;
 
 import org.mapstruct.Mapper;
-import pcc.puppet.enforcer.realm.common.InstantMapper;
 import pcc.puppet.enforcer.realm.common.contact.mapper.ContactInformationMapper;
+import pcc.puppet.enforcer.realm.common.mapper.InstantMapper;
 import pcc.puppet.enforcer.realm.organization.api.command.OrganizationCreateCommand;
 import pcc.puppet.enforcer.realm.organization.api.event.OrganizationCreateEvent;
 import pcc.puppet.enforcer.realm.organization.api.presenter.OrganizationPresenter;

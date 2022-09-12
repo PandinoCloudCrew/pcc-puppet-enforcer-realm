@@ -16,11 +16,11 @@
 package pcc.puppet.enforcer.realm.common.contact.mapper;
 
 import org.mapstruct.Mapper;
-import pcc.puppet.enforcer.realm.common.InstantMapper;
 import pcc.puppet.enforcer.realm.common.contact.ContactInformation;
 import pcc.puppet.enforcer.realm.common.contact.command.CreateContactInformationCommand;
 import pcc.puppet.enforcer.realm.common.contact.event.CreateContactInformationEvent;
 import pcc.puppet.enforcer.realm.common.contact.presenter.ContactInformationPresenter;
+import pcc.puppet.enforcer.realm.common.mapper.InstantMapper;
 
 @Mapper(uses = InstantMapper.class)
 public interface ContactInformationMapper {
