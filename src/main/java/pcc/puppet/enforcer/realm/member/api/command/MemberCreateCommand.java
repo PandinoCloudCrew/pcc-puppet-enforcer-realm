@@ -19,16 +19,31 @@ import io.micronaut.core.annotation.NonNull;
 import io.micronaut.serde.annotation.Serdeable;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.common.contact.ContactInformation;
+import pcc.puppet.enforcer.realm.common.contact.command.CreateContactInformationCommand;
+import pcc.puppet.enforcer.realm.common.generator.values.ObjectIdStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.PasswordStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.UsernameStrategy;
+import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
 @Serdeable
 public class MemberCreateCommand {
-  @NonNull private String organizationId;
-  @NonNull private String departmentId;
-  @NonNull private String username;
-  @NonNull private String password;
-  @NonNull private String location;
-  @NonNull private ContactInformation contact;
+  @NonNull
+  @PodamStrategyValue(ObjectIdStrategy.class)
+  private String organizationId;
+
+  @NonNull
+  @PodamStrategyValue(ObjectIdStrategy.class)
+  private String departmentId;
+
+  @NonNull
+  @PodamStrategyValue(UsernameStrategy.class)
+  private String username;
+
+  @NonNull
+  @PodamStrategyValue(PasswordStrategy.class)
+  private String password;
+
+  @NonNull private CreateContactInformationCommand contactId;
 }

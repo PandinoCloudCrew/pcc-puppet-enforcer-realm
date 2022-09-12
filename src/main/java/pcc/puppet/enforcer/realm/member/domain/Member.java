@@ -20,12 +20,15 @@ import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;
+import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.annotation.Version;
+import io.micronaut.data.model.DataType;
 import io.micronaut.serde.annotation.Serdeable;
 import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
 import pcc.puppet.enforcer.realm.common.contact.ContactInformation;
+import pcc.puppet.enforcer.realm.common.contact.repository.converter.ContactInformationConverter;
 
 @Data
 @Builder
@@ -37,13 +40,19 @@ public class Member {
   @NonNull private String departmentId;
   @NonNull private String username;
   @NonNull private String password;
-  @NonNull private String location;
 
-  @NonNull private ContactInformation contact;
+  @NonNull
+  @TypeDef(type = DataType.STRING, converter = ContactInformationConverter.class)
+  private ContactInformation contactId;
 
   @NonNull private String createdBy;
   @NonNull private Instant createdAt;
   @Nullable private String updatedBy;
   @Nullable private Instant updatedAt;
   @Version @AutoPopulated private Integer version;
+
+  public Member setContact(ContactInformation contactInformation) {
+    this.contactId = contactInformation;
+    return this;
+  }
 }

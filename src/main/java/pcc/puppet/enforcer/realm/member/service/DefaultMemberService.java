@@ -21,6 +21,8 @@ import jakarta.inject.Singleton;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import pcc.puppet.enforcer.realm.common.contact.service.ContactInformationService;
+import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import pcc.puppet.enforcer.realm.member.api.command.MemberCreateCommand;
 import pcc.puppet.enforcer.realm.member.api.event.MemberCreateEvent;
 import pcc.puppet.enforcer.realm.member.api.presenter.MemberPresenter;
@@ -33,38 +35,72 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Singleton
 @RequiredArgsConstructor
-public class MemberServiceImpl implements MemberService {
+public class DefaultMemberService implements MemberService {
 
   private final MemberRepository repository;
   private final MemberMapper mapper;
+  private final ContactInformationService contactInformationService;
 
   @NewSpan
   @Override
   public Mono<MemberCreateEvent> create(
       @SpanTag String requester, MemberCreateCommand createCommand) {
     Member member = mapper.commandToDomain(createCommand);
+    member.setId(DomainFactory.id());
     member.setCreatedBy(requester);
     member.setCreatedAt(Instant.now());
-    return repository.save(member).map(mapper::domainToEvent);
+    return contactInformationService
+        .save(requester, member.getId(), createCommand.getContactId())
+        .flatMap(
+            contactInformation -> {
+              member.setContactId(contactInformation);
+              return repository.save(member);
+            })
+        .map(mapper::domainToEvent);
   }
 
   @NewSpan
   @Override
   public Mono<MemberPresenter> findById(@SpanTag String requester, @SpanTag String memberId) {
-    return repository.findById(memberId).map(mapper::domainToPresenter);
+    return contactInformationService
+        .findByOwnerId(memberId)
+        .flatMap(
+            contactInformation ->
+                repository
+                    .findById(memberId)
+                    .map(
+                        member -> {
+                          member.setContactId(contactInformation);
+                          return member;
+                        })
+                    .map(mapper::domainToPresenter));
   }
 
   @NewSpan
   @Override
   public Flux<MemberPresenter> findByOrganizationId(
       @SpanTag String requester, @SpanTag String organizationId) {
-    return repository.findByOrganizationId(organizationId).map(mapper::domainToPresenter);
+    return repository
+        .findByOrganizationId(organizationId)
+        .flatMap(
+            member ->
+                contactInformationService
+                    .findById(member.getContactId().getId())
+                    .map(member::setContact))
+        .map(mapper::domainToPresenter);
   }
 
   @NewSpan
   @Override
   public Flux<MemberPresenter> findByDepartmentId(
       @SpanTag String requester, @SpanTag String departmentId) {
-    return repository.findByDepartmentId(departmentId).map(mapper::domainToPresenter);
+    return repository
+        .findByDepartmentId(departmentId)
+        .flatMap(
+            member ->
+                contactInformationService
+                    .findById(member.getContactId().getId())
+                    .map(member::setContact))
+        .map(mapper::domainToPresenter);
   }
 }

@@ -19,7 +19,7 @@ import io.micronaut.core.annotation.NonNull;
 import io.micronaut.serde.annotation.Serdeable;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.common.contact.ContactInformation;
+import pcc.puppet.enforcer.realm.common.contact.event.CreateContactInformationEvent;
 
 @Data
 @Builder
@@ -29,8 +29,6 @@ public class MemberCreateEvent {
   @NonNull private String organizationId;
   @NonNull private String departmentId;
   @NonNull private String username;
-  @NonNull private String password;
-  @NonNull private String location;
   @NonNull private String createdAt;
-  @NonNull private ContactInformation contact;
+  @NonNull private CreateContactInformationEvent contactId;
 }

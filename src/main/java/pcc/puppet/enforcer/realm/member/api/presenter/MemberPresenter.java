@@ -19,7 +19,7 @@ import io.micronaut.core.annotation.NonNull;
 import io.micronaut.serde.annotation.Serdeable;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.common.contact.ContactInformation;
+import pcc.puppet.enforcer.realm.common.contact.presenter.ContactInformationPresenter;
 
 @Data
 @Builder
@@ -29,8 +29,7 @@ public class MemberPresenter {
   @NonNull private String organizationId;
   @NonNull private String departmentId;
   @NonNull private String username;
-  @NonNull private String location;
-  @NonNull private ContactInformation contact;
+  @NonNull private ContactInformationPresenter contactId;
   @NonNull private String createdAt;
   @NonNull private Integer version;
 }
