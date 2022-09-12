@@ -19,13 +19,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static pcc.puppet.enforcer.realm.TestDomainGenerator.REQUESTER_ID;
 
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import pcc.puppet.enforcer.realm.common.DomainFactory;
+import pcc.puppet.enforcer.realm.TestDomainGenerator;
 import pcc.puppet.enforcer.realm.common.format.DateFormat;
+import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import pcc.puppet.enforcer.realm.organization.api.command.OrganizationCreateCommand;
 import pcc.puppet.enforcer.realm.organization.api.event.OrganizationCreateEvent;
 import pcc.puppet.enforcer.realm.organization.api.presenter.OrganizationPresenter;
@@ -34,8 +36,7 @@ import pcc.puppet.enforcer.realm.organization.api.presenter.OrganizationPresente
 class OrganizationControllerTest {
 
   @Inject private OrganizationClient client;
-
-  private final String REQUESTER_ID = "yesid.bocanegra@pandino.co";
+  @Inject private TestDomainGenerator generator;
 
   @Test
   void organizationCreate_ShouldSucceedWithCleanData_ReturnHttpOkWithDetails() {
@@ -82,9 +83,7 @@ class OrganizationControllerTest {
 
   @Test
   void findOrganization_OnFoundOrganization_ShouldReturnOk() {
-    OrganizationCreateCommand createCommand = DomainFactory.organizationCreateCommand();
-    OrganizationCreateEvent createEventResponse =
-        client.organizationCreate(REQUESTER_ID, createCommand).block();
+    OrganizationCreateEvent createEventResponse = generator.organization();
     assertNotNull(createEventResponse);
     OrganizationPresenter organizationPresenter =
         client.findOrganization(REQUESTER_ID, createEventResponse.getId()).block();
@@ -132,15 +131,11 @@ class OrganizationControllerTest {
   @Test
   void findChildOrganizations_OnFoundChildOrganizations_ShouldReturnArrayOk() {
     String organizationId = DomainFactory.id();
-    OrganizationCreateCommand createCommandFirst = DomainFactory.organizationCreateCommand();
-    createCommandFirst.setParentId(organizationId);
-    OrganizationCreateEvent createEventResponseFirst =
-        client.organizationCreate(REQUESTER_ID, createCommandFirst).block();
+
+    OrganizationCreateEvent createEventResponseFirst = generator.organization(organizationId);
     assertNotNull(createEventResponseFirst);
-    OrganizationCreateCommand createCommandSecond = DomainFactory.organizationCreateCommand();
-    createCommandSecond.setParentId(organizationId);
-    OrganizationCreateEvent createEventResponseSecond =
-        client.organizationCreate(REQUESTER_ID, createCommandSecond).block();
+
+    OrganizationCreateEvent createEventResponseSecond = generator.organization(organizationId);
     assertNotNull(createEventResponseSecond);
 
     List<OrganizationPresenter> childOrganizations =
