@@ -13,24 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.common.generator;
+package pcc.puppet.enforcer.realm.common.generator.values;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
 import net.datafaker.Faker;
 import uk.co.jemos.podam.common.AttributeStrategy;
 
-public class EmailStrategy implements AttributeStrategy<String> {
+public class CityNameStrategy implements AttributeStrategy<String> {
   private final Faker faker = new Faker();
 
   @Override
   public String getValue(Class<?> attrType, List<Annotation> attrAnnotations) {
-    return String.format(
-        "%s.%s@%s",
-        faker.name().firstName(),
-        faker.name().lastName(),
-        faker
-            .domain()
-            .firstLevelDomain(faker.company().name().toLowerCase().replaceAll("\s", ".")));
+    return faker.address().cityName();
   }
 }

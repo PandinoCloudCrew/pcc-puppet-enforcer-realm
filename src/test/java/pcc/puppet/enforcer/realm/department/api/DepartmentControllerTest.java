@@ -19,35 +19,28 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static pcc.puppet.enforcer.realm.TestDomainGenerator.REQUESTER_ID;
 
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import pcc.puppet.enforcer.realm.common.DomainFactory;
+import pcc.puppet.enforcer.realm.TestDomainGenerator;
 import pcc.puppet.enforcer.realm.common.format.DateFormat;
-import pcc.puppet.enforcer.realm.department.DepartmentClient;
+import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import pcc.puppet.enforcer.realm.department.api.command.DepartmentCreateCommand;
 import pcc.puppet.enforcer.realm.department.api.event.DepartmentCreateEvent;
 import pcc.puppet.enforcer.realm.department.api.presenter.DepartmentPresenter;
-import pcc.puppet.enforcer.realm.organization.api.OrganizationClient;
-import pcc.puppet.enforcer.realm.organization.api.command.OrganizationCreateCommand;
 import pcc.puppet.enforcer.realm.organization.api.event.OrganizationCreateEvent;
 
 @MicronautTest
 class DepartmentControllerTest {
   @Inject private DepartmentClient client;
-
-  @Inject private OrganizationClient organizationClient;
-
-  private final String REQUESTER_ID = "yesid.bocanegra@pandino.co";
+  @Inject private TestDomainGenerator generator;
 
   @Test
   void departmentCreate_GivenValidParameters_ShouldReturnOk() {
-    OrganizationCreateCommand organizationCreateCommand = DomainFactory.organizationCreateCommand();
-    OrganizationCreateEvent organizationCreateEvent =
-        organizationClient.organizationCreate(REQUESTER_ID, organizationCreateCommand).block();
-    assertNotNull(organizationCreateEvent);
+    OrganizationCreateEvent organizationCreateEvent = generator.organization();
     String organizationId = organizationCreateEvent.getId();
 
     DepartmentCreateCommand createCommand = DomainFactory.departmentCreateCommand();
@@ -93,16 +86,10 @@ class DepartmentControllerTest {
 
   @Test
   void findDepartment_GivenAnExistingDepartmentId_ShouldReturnOk() {
-    OrganizationCreateCommand organizationCreateCommand = DomainFactory.organizationCreateCommand();
-    OrganizationCreateEvent organizationCreateEvent =
-        organizationClient.organizationCreate(REQUESTER_ID, organizationCreateCommand).block();
-    assertNotNull(organizationCreateEvent);
+    OrganizationCreateEvent organizationCreateEvent = generator.organization();
     String organizationId = organizationCreateEvent.getId();
 
-    DepartmentCreateCommand departmentCreateCommand = DomainFactory.departmentCreateCommand();
-    departmentCreateCommand.setOrganizationId(organizationId);
-    DepartmentCreateEvent departmentCreateEvent =
-        client.departmentCreate(REQUESTER_ID, organizationId, departmentCreateCommand).block();
+    DepartmentCreateEvent departmentCreateEvent = generator.department(organizationId);
     assertNotNull(departmentCreateEvent);
     DepartmentPresenter departmentPresenter =
         client.findDepartment(REQUESTER_ID, organizationId, departmentCreateEvent.getId()).block();
@@ -110,71 +97,58 @@ class DepartmentControllerTest {
     assertNotNull(departmentPresenter.getId());
     assertNotNull(departmentPresenter.getCreatedAt());
     assertTrue(DateFormat.isValid(departmentPresenter.getCreatedAt()));
-    assertEquals(departmentCreateCommand.getName(), departmentPresenter.getName());
-    assertEquals(departmentCreateCommand.getLocation(), departmentPresenter.getLocation());
-    assertEquals(departmentCreateCommand.getParentId(), departmentPresenter.getParentId());
+    assertEquals(departmentCreateEvent.getName(), departmentPresenter.getName());
+    assertEquals(departmentCreateEvent.getLocation(), departmentPresenter.getLocation());
+    assertEquals(departmentCreateEvent.getParentId(), departmentPresenter.getParentId());
     assertEquals(
-        departmentCreateCommand.getOrganizationId(), departmentPresenter.getOrganizationId());
+        departmentCreateEvent.getOrganizationId(), departmentPresenter.getOrganizationId());
     assertEquals(
-        departmentCreateCommand.getContactId().getLocale(),
+        departmentCreateEvent.getContactId().getLocale(),
         departmentPresenter.getContactId().getLocale());
     assertEquals(
-        departmentCreateCommand.getContactId().getEmail(),
+        departmentCreateEvent.getContactId().getEmail(),
         departmentPresenter.getContactId().getEmail());
     assertEquals(
-        departmentCreateCommand.getContactId().getPhoneNumber(),
+        departmentCreateEvent.getContactId().getPhoneNumber(),
         departmentPresenter.getContactId().getPhoneNumber());
     assertEquals(
-        departmentCreateCommand.getContactId().getCountry(),
+        departmentCreateEvent.getContactId().getCountry(),
         departmentPresenter.getContactId().getCountry());
     assertEquals(
-        departmentCreateCommand.getContactId().getCity(),
+        departmentCreateEvent.getContactId().getCity(),
         departmentPresenter.getContactId().getCity());
     assertEquals(
-        departmentCreateCommand.getContactId().getCurrency(),
+        departmentCreateEvent.getContactId().getCurrency(),
         departmentPresenter.getContactId().getCurrency());
     assertEquals(
-        departmentCreateCommand.getContactId().getZoneId(),
+        departmentCreateEvent.getContactId().getZoneId(),
         departmentPresenter.getContactId().getZoneId());
     assertEquals(
-        departmentCreateCommand.getContactId().getFirstName(),
+        departmentCreateEvent.getContactId().getFirstName(),
         departmentPresenter.getContactId().getFirstName());
     assertEquals(
-        departmentCreateCommand.getContactId().getLastName(),
+        departmentCreateEvent.getContactId().getLastName(),
         departmentPresenter.getContactId().getLastName());
     assertEquals(
-        departmentCreateCommand.getContactId().getPosition(),
+        departmentCreateEvent.getContactId().getPosition(),
         departmentPresenter.getContactId().getPosition());
   }
 
   @Test
   void findChildDepartments_OnFoundChildDepartments_ShouldReturnArrayOk() {
-    OrganizationCreateCommand organizationCreateCommand = DomainFactory.organizationCreateCommand();
-    OrganizationCreateEvent organizationCreateEvent =
-        organizationClient.organizationCreate(REQUESTER_ID, organizationCreateCommand).block();
-    assertNotNull(organizationCreateEvent);
+    OrganizationCreateEvent organizationCreateEvent = generator.organization();
     String organizationId = organizationCreateEvent.getId();
 
-    DepartmentCreateCommand parentDepartmentCreateCommand = DomainFactory.departmentCreateCommand();
-    parentDepartmentCreateCommand.setOrganizationId(organizationId);
-    DepartmentCreateEvent parentDepartmentCreateEvent =
-        client
-            .departmentCreate(REQUESTER_ID, organizationId, parentDepartmentCreateCommand)
-            .block();
+    DepartmentCreateEvent parentDepartmentCreateEvent = generator.department(organizationId);
     assertNotNull(parentDepartmentCreateEvent);
     String departmentId = parentDepartmentCreateEvent.getId();
 
-    DepartmentCreateCommand createCommandFirst = DomainFactory.departmentCreateCommand();
-    createCommandFirst.setOrganizationId(organizationId);
-    createCommandFirst.setParentId(departmentId);
     DepartmentCreateEvent createEventResponseFirst =
-        client.departmentCreate(REQUESTER_ID, organizationId, createCommandFirst).block();
+        generator.department(departmentId, organizationId);
     assertNotNull(createEventResponseFirst);
-    DepartmentCreateCommand createCommandSecond = DomainFactory.departmentCreateCommand();
-    createCommandSecond.setOrganizationId(organizationId);
-    createCommandSecond.setParentId(departmentId);
+
     DepartmentCreateEvent createEventResponseSecond =
-        client.departmentCreate(REQUESTER_ID, organizationId, createCommandSecond).block();
+        generator.department(departmentId, organizationId);
     assertNotNull(createEventResponseSecond);
 
     List<DepartmentPresenter> childDepartments =

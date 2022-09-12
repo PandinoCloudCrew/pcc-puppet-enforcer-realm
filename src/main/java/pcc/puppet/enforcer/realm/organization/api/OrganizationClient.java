@@ -23,7 +23,6 @@ import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.annotation.SpanTag;
@@ -34,7 +33,7 @@ import pcc.puppet.enforcer.realm.organization.api.presenter.OrganizationPresente
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Client(OrganizationController.BASE_PATH)
+@Client("${micronaut.http.services.organization.path}")
 public interface OrganizationClient extends OrganizationOperations {
 
   @NewSpan
@@ -46,15 +45,15 @@ public interface OrganizationClient extends OrganizationOperations {
 
   @NewSpan
   @Override
-  @Get(consumes = MediaType.APPLICATION_JSON)
+  @Get(uri = "/{organizationId}", consumes = MediaType.APPLICATION_JSON)
   Mono<OrganizationPresenter> findOrganization(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
-      @SpanTag @NonNull @QueryValue("organizationId") String organizationId);
+      @SpanTag @NonNull String organizationId);
 
   @NewSpan
   @Override
-  @Get(uri = "child", consumes = MediaType.APPLICATION_JSON)
+  @Get(uri = "/{organizationId}/child", consumes = MediaType.APPLICATION_JSON)
   Flux<OrganizationPresenter> findChildOrganizations(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
-      @SpanTag @NonNull @QueryValue("organizationId") String organizationId);
+      @SpanTag @NonNull String organizationId);
 }

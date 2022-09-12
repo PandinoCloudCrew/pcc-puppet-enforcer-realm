@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.member.repository;
+package pcc.puppet.enforcer.realm.common.generator.values;
 
-import io.micronaut.data.model.query.builder.sql.Dialect;
-import io.micronaut.data.r2dbc.annotation.R2dbcRepository;
-import io.micronaut.data.repository.reactive.ReactorPageableRepository;
-import pcc.puppet.enforcer.realm.member.domain.Member;
-import reactor.core.publisher.Flux;
+import java.lang.annotation.Annotation;
+import java.util.List;
+import net.datafaker.Faker;
+import uk.co.jemos.podam.common.AttributeStrategy;
 
-@R2dbcRepository(dialect = Dialect.POSTGRES)
-public interface MemberRepository extends ReactorPageableRepository<Member, String> {
+public class JobPositionStrategy implements AttributeStrategy<String> {
+  private final Faker faker = new Faker();
 
-  Flux<Member> findByOrganizationId(String organizationId);
-
-  Flux<Member> findByDepartmentId(String departmentId);
+  @Override
+  public String getValue(Class<?> attrType, List<Annotation> attrAnnotations) {
+    return faker.job().position();
+  }
 }

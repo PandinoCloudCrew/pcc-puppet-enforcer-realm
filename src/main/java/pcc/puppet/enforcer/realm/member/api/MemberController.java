@@ -19,15 +19,14 @@ import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.DEPARTMENT;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.ORGANIZATION;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
-import com.agorapulse.permissions.RequiresPermission;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
+import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.tracing.annotation.NewSpan;
@@ -43,15 +42,15 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
-@Controller("/realm/member")
 @Secured(SecurityRule.IS_ANONYMOUS)
+@Controller("${micronaut.http.services.member.path}")
 @RequiredArgsConstructor
-public class MemberController {
+public class MemberController implements MemberOperations {
   private final MemberService memberService;
 
+  @Override
   @NewSpan
   @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-  @RequiresPermission("member-controller::member-create")
   public Mono<MemberCreateEvent> memberCreate(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
       @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
@@ -60,36 +59,36 @@ public class MemberController {
     return memberService.create(requester, createCommand);
   }
 
+  @Override
   @NewSpan
-  @Get(produces = MediaType.APPLICATION_JSON)
-  @RequiresPermission("member-controller::find-member")
+  @Get(uri = "/{memberId}", produces = MediaType.APPLICATION_JSON)
   public Mono<MemberPresenter> findMember(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
       @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
       @SpanTag(DEPARTMENT) @NonNull @Header(DEPARTMENT) String departmentId,
-      @SpanTag @NonNull @QueryValue("memberId") String memberId) {
+      @SpanTag @NonNull @PathVariable String memberId) {
     return memberService.findById(requester, memberId);
   }
 
+  @Override
   @NewSpan
-  @Get(uri = "child/organization", produces = MediaType.APPLICATION_JSON)
-  @RequiresPermission("member-controller::find-child-organization-members")
-  public Flux<MemberPresenter> findChildOrganizationMembers(
+  @Get(uri = "/organization/{parentOrganizationId}", produces = MediaType.APPLICATION_JSON)
+  public Flux<MemberPresenter> findOrganizationMembers(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
       @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
       @SpanTag(DEPARTMENT) @NonNull @Header(DEPARTMENT) String departmentId,
-      @SpanTag @NonNull @QueryValue("id") String id) {
-    return memberService.findByOrganizationId(requester, id);
+      @SpanTag @NonNull @PathVariable String parentOrganizationId) {
+    return memberService.findByOrganizationId(requester, parentOrganizationId);
   }
 
+  @Override
   @NewSpan
-  @Get(uri = "child/department", produces = MediaType.APPLICATION_JSON)
-  @RequiresPermission("member-controller::find-child-department-members")
-  public Flux<MemberPresenter> findChildDepartmentMembers(
+  @Get(uri = "/department/{parentDepartmentId}", produces = MediaType.APPLICATION_JSON)
+  public Flux<MemberPresenter> findDepartmentMembers(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
       @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
       @SpanTag(DEPARTMENT) @NonNull @Header(DEPARTMENT) String departmentId,
-      @SpanTag @NonNull @QueryValue("id") String id) {
-    return memberService.findByDepartmentId(requester, id);
+      @SpanTag @NonNull @PathVariable String parentDepartmentId) {
+    return memberService.findByDepartmentId(requester, parentDepartmentId);
   }
 }

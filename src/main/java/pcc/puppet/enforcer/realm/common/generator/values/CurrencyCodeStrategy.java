@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.common.generator;
+package pcc.puppet.enforcer.realm.common.generator.values;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
 import net.datafaker.Faker;
 import uk.co.jemos.podam.common.AttributeStrategy;
 
-public class CompanyNameStrategy implements AttributeStrategy<String> {
+public class CurrencyCodeStrategy implements AttributeStrategy<String> {
   private final Faker faker = new Faker();
 
   @Override
   public String getValue(Class<?> attrType, List<Annotation> attrAnnotations) {
-    return faker.company().name();
+    return faker.country().currencyCode();
   }
 }

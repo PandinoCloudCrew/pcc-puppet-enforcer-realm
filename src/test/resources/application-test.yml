@@ -15,6 +15,15 @@ micronaut:
         enabled: false
   otel:
     enabled: false
+  http:
+    services:
+      organization:
+        path: /realm/organization
+      department:
+        path: /realm/department
+      member:
+        path: /realm/member
+
 flyway:
   enabled: true
   datasources:
@@ -25,6 +34,7 @@ flyway:
       password: ''
       locations:
         - classpath:migration
+
 datasources:
   default:
     pooled: true
@@ -35,6 +45,7 @@ datasources:
     dialect: H2
     username: sa
     password: ''
+
 r2dbc:
   datasources:
     default:

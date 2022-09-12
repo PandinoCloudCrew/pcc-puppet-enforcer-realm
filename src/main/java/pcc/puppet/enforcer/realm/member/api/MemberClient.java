@@ -13,66 +13,65 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.department.api;
+package pcc.puppet.enforcer.realm.member.api;
 
+import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.DEPARTMENT;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.ORGANIZATION;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Post;
-import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.rules.SecurityRule;
+import io.micronaut.http.annotation.QueryValue;
+import io.micronaut.http.client.annotation.Client;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.annotation.SpanTag;
 import javax.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import pcc.puppet.enforcer.realm.department.api.command.DepartmentCreateCommand;
-import pcc.puppet.enforcer.realm.department.api.event.DepartmentCreateEvent;
-import pcc.puppet.enforcer.realm.department.api.presenter.DepartmentPresenter;
-import pcc.puppet.enforcer.realm.department.service.DepartmentService;
+import pcc.puppet.enforcer.realm.member.api.command.MemberCreateCommand;
+import pcc.puppet.enforcer.realm.member.api.event.MemberCreateEvent;
+import pcc.puppet.enforcer.realm.member.api.presenter.MemberPresenter;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Slf4j
-@Controller("${micronaut.http.services.department.path}")
-@Secured(SecurityRule.IS_ANONYMOUS)
-@RequiredArgsConstructor
-public class DepartmentController implements DepartmentOperations {
-  private final DepartmentService departmentService;
+@Client("${micronaut.http.services.member.path}")
+public interface MemberClient extends MemberOperations {
 
   @Override
   @NewSpan
   @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-  public Mono<DepartmentCreateEvent> departmentCreate(
+  Mono<MemberCreateEvent> memberCreate(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
       @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
-      @NonNull @Valid @Body DepartmentCreateCommand createCommand) {
-    return departmentService.create(requester, createCommand);
-  }
+      @SpanTag(DEPARTMENT) @NonNull @Header(DEPARTMENT) String departmentId,
+      @NonNull @Valid @Body MemberCreateCommand createCommand);
 
   @Override
   @NewSpan
-  @Get(uri = "/{departmentId}", produces = MediaType.APPLICATION_JSON)
-  public Mono<DepartmentPresenter> findDepartment(
+  @Get(uri = "/{memberId}", consumes = MediaType.APPLICATION_JSON)
+  Mono<MemberPresenter> findMember(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
       @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
-      @SpanTag @NonNull String departmentId) {
-    return departmentService.findById(requester, departmentId);
-  }
+      @SpanTag(DEPARTMENT) @NonNull @Header(DEPARTMENT) String departmentId,
+      @SpanTag @NonNull @QueryValue("memberId") String memberId);
 
   @Override
   @NewSpan
-  @Get(uri = "/{departmentId}/child", produces = MediaType.APPLICATION_JSON)
-  public Flux<DepartmentPresenter> findChildDepartments(
+  @Get(uri = "/organization/{parentOrganizationId}", consumes = MediaType.APPLICATION_JSON)
+  Flux<MemberPresenter> findOrganizationMembers(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
       @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
-      @SpanTag @NonNull String departmentId) {
-    return departmentService.findByParentId(requester, departmentId);
-  }
+      @SpanTag(DEPARTMENT) @NonNull @Header(DEPARTMENT) String departmentId,
+      @SpanTag @NonNull String parentOrganizationId);
+
+  @Override
+  @NewSpan
+  @Get(uri = "/department/{parentDepartmentId}", consumes = MediaType.APPLICATION_JSON)
+  Flux<MemberPresenter> findDepartmentMembers(
+      @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
+      @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
+      @SpanTag(DEPARTMENT) @NonNull @Header(DEPARTMENT) String departmentId,
+      @SpanTag @NonNull String parentDepartmentId);
 }

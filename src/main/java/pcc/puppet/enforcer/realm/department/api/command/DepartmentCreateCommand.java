@@ -22,9 +22,9 @@ import javax.validation.Valid;
 import lombok.Builder;
 import lombok.Data;
 import pcc.puppet.enforcer.realm.common.contact.command.CreateContactInformationCommand;
-import pcc.puppet.enforcer.realm.common.generator.CompanyDepartmentStrategy;
-import pcc.puppet.enforcer.realm.common.generator.InternalAddressStrategy;
-import pcc.puppet.enforcer.realm.common.generator.ObjectIdStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.CompanyDepartmentStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.InternalAddressStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.ObjectIdStrategy;
 import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data

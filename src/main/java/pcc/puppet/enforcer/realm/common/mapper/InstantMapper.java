@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.common.generator;
+package pcc.puppet.enforcer.realm.common.mapper;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
-import net.datafaker.Faker;
-import uk.co.jemos.podam.common.AttributeStrategy;
+import java.time.Instant;
+import pcc.puppet.enforcer.realm.common.format.DateFormat;
 
-public class TaxIdStrategy implements AttributeStrategy<String> {
-  private final Faker faker = new Faker();
+public class InstantMapper {
 
-  @Override
-  public String getValue(Class<?> attrType, List<Annotation> attrAnnotations) {
-    return faker.idNumber().ssnValid();
+  public String asString(Instant timestamp) {
+    return DateFormat.FORMATTER.format(timestamp);
+  }
+
+  public Instant asInstant(String timestamp) {
+    return Instant.from(DateFormat.FORMATTER.parse(timestamp));
   }
 }

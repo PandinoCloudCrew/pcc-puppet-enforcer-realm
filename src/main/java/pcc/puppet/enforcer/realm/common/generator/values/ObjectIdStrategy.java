@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.common;
+package pcc.puppet.enforcer.realm.common.generator.values;
 
-import java.time.Instant;
-import pcc.puppet.enforcer.realm.common.format.DateFormat;
+import java.lang.annotation.Annotation;
+import java.util.List;
+import org.bson.types.ObjectId;
+import uk.co.jemos.podam.common.AttributeStrategy;
 
-public class InstantMapper {
-
-  public String asString(Instant timestamp) {
-    return DateFormat.FORMATTER.format(timestamp);
-  }
-
-  public Instant asInstant(String timestamp) {
-    return Instant.from(DateFormat.FORMATTER.parse(timestamp));
+public class ObjectIdStrategy implements AttributeStrategy<String> {
+  @Override
+  public String getValue(Class<?> attrType, List<Annotation> attrAnnotations) {
+    return ObjectId.get().toHexString();
   }
 }

@@ -19,11 +19,11 @@ import io.micronaut.tracing.annotation.NewSpan;
 import jakarta.inject.Singleton;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
-import pcc.puppet.enforcer.realm.common.DomainFactory;
 import pcc.puppet.enforcer.realm.common.contact.ContactInformation;
 import pcc.puppet.enforcer.realm.common.contact.command.CreateContactInformationCommand;
 import pcc.puppet.enforcer.realm.common.contact.mapper.ContactInformationMapper;
 import pcc.puppet.enforcer.realm.common.contact.repository.ContactInformationRepository;
+import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import reactor.core.publisher.Mono;
 
 @Singleton

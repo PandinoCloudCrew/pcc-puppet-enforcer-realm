@@ -30,6 +30,17 @@ micronaut:
       swagger-ui:
         paths: classpath:META-INF/swagger/views/swagger-ui
         mapping: /swagger-ui/**
+  http:
+    services:
+      organization:
+        path: /realm/organization
+      department:
+        path: /realm/department
+      member:
+        path: /realm/member
+  otel:
+    enabled: true
+
 otel:
   service:
     name: ${micronaut.application.name}
@@ -38,13 +49,16 @@ otel:
     propagator: tracecontext, baggage
   exclusions:
     - /health
+
 netty:
   default:
     allocator:
       max-order: 3
+
 worker:
   queue-type: local
   enabled: true
+
 flyway:
   enabled: true
   datasources:
