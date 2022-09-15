@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.organization.repository;
+package pcc.puppet.enforcer.realm.organization.ports.output.mapper;
 
-import io.micronaut.data.model.query.builder.sql.Dialect;
-import io.micronaut.data.r2dbc.annotation.R2dbcRepository;
-import io.micronaut.data.repository.reactive.ReactorPageableRepository;
+import org.mapstruct.Mapper;
+import pcc.puppet.enforcer.realm.common.contact.mapper.ContactInformationMapper;
+import pcc.puppet.enforcer.realm.common.mapper.InstantMapper;
 import pcc.puppet.enforcer.realm.organization.domain.Organization;
-import reactor.core.publisher.Flux;
+import pcc.puppet.enforcer.realm.organization.ports.output.event.OrganizationCreateEvent;
+import pcc.puppet.enforcer.realm.organization.ports.output.presenter.OrganizationPresenter;
 
-@R2dbcRepository(dialect = Dialect.POSTGRES)
-public interface OrganizationRepository extends ReactorPageableRepository<Organization, String> {
+@Mapper(uses = {ContactInformationMapper.class, InstantMapper.class})
+public interface OrganizationOutputMapper {
 
-  Flux<Organization> findByParentId(String parentId);
+  OrganizationCreateEvent domainToEvent(Organization command);
+
+  OrganizationPresenter domainToPresenter(Organization command);
 }

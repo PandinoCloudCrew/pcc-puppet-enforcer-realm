@@ -31,7 +31,7 @@ import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import pcc.puppet.enforcer.realm.department.api.command.DepartmentCreateCommand;
 import pcc.puppet.enforcer.realm.department.api.event.DepartmentCreateEvent;
 import pcc.puppet.enforcer.realm.department.api.presenter.DepartmentPresenter;
-import pcc.puppet.enforcer.realm.organization.api.event.OrganizationCreateEvent;
+import pcc.puppet.enforcer.realm.organization.ports.output.event.OrganizationCreateEvent;
 
 @MicronautTest
 class DepartmentControllerTest {

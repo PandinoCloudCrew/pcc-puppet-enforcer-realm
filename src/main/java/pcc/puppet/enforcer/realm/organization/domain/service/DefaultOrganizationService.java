@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.organization.service;
+package pcc.puppet.enforcer.realm.organization.domain.service;
 
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.annotation.SpanTag;
@@ -23,12 +23,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import pcc.puppet.enforcer.realm.common.contact.service.ContactInformationService;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
-import pcc.puppet.enforcer.realm.organization.api.command.OrganizationCreateCommand;
-import pcc.puppet.enforcer.realm.organization.api.event.OrganizationCreateEvent;
-import pcc.puppet.enforcer.realm.organization.api.presenter.OrganizationPresenter;
 import pcc.puppet.enforcer.realm.organization.domain.Organization;
-import pcc.puppet.enforcer.realm.organization.mapper.OrganizationMapper;
-import pcc.puppet.enforcer.realm.organization.repository.OrganizationRepository;
+import pcc.puppet.enforcer.realm.organization.ports.input.command.OrganizationCreateCommand;
+import pcc.puppet.enforcer.realm.organization.ports.input.mapper.OrganizationInputMapper;
+import pcc.puppet.enforcer.realm.organization.ports.output.event.OrganizationCreateEvent;
+import pcc.puppet.enforcer.realm.organization.ports.output.mapper.OrganizationOutputMapper;
+import pcc.puppet.enforcer.realm.organization.ports.output.presenter.OrganizationPresenter;
+import pcc.puppet.enforcer.realm.organization.ports.output.repository.OrganizationRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -37,7 +38,8 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class DefaultOrganizationService implements OrganizationService {
 
-  private final OrganizationMapper mapper;
+  private final OrganizationInputMapper inputMapper;
+  private final OrganizationOutputMapper outputMapper;
   private final OrganizationRepository repository;
   private final ContactInformationService contactInformationService;
 
@@ -45,7 +47,7 @@ public class DefaultOrganizationService implements OrganizationService {
   @Override
   public Mono<OrganizationCreateEvent> create(
       @SpanTag String requester, OrganizationCreateCommand createCommand) {
-    Organization organization = mapper.commandToDomain(createCommand);
+    Organization organization = inputMapper.commandToDomain(createCommand);
     organization.setId(DomainFactory.id());
     organization.setCreatedBy(requester);
     organization.setCreatedAt(Instant.now());
@@ -56,7 +58,7 @@ public class DefaultOrganizationService implements OrganizationService {
               organization.setContactId(contactInformation);
               return repository.save(organization);
             })
-        .map(mapper::domainToEvent);
+        .map(outputMapper::domainToEvent);
   }
 
   @NewSpan
@@ -74,7 +76,7 @@ public class DefaultOrganizationService implements OrganizationService {
                           organization.setContactId(contactInformation);
                           return organization;
                         })
-                    .map(mapper::domainToPresenter));
+                    .map(outputMapper::domainToPresenter));
   }
 
   @NewSpan
@@ -88,6 +90,6 @@ public class DefaultOrganizationService implements OrganizationService {
                 contactInformationService
                     .findById(organization.getContactId().getId())
                     .map(organization::setContact))
-        .map(mapper::domainToPresenter);
+        .map(outputMapper::domainToPresenter);
   }
 }

@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.organization.service;
+package pcc.puppet.enforcer.realm.organization.domain.service;
 
-import pcc.puppet.enforcer.realm.organization.api.command.OrganizationCreateCommand;
-import pcc.puppet.enforcer.realm.organization.api.event.OrganizationCreateEvent;
-import pcc.puppet.enforcer.realm.organization.api.presenter.OrganizationPresenter;
+import pcc.puppet.enforcer.realm.organization.ports.input.command.OrganizationCreateCommand;
+import pcc.puppet.enforcer.realm.organization.ports.output.event.OrganizationCreateEvent;
+import pcc.puppet.enforcer.realm.organization.ports.output.presenter.OrganizationPresenter;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

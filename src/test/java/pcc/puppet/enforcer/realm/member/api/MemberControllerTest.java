@@ -32,7 +32,7 @@ import pcc.puppet.enforcer.realm.department.api.event.DepartmentCreateEvent;
 import pcc.puppet.enforcer.realm.member.api.command.MemberCreateCommand;
 import pcc.puppet.enforcer.realm.member.api.event.MemberCreateEvent;
 import pcc.puppet.enforcer.realm.member.api.presenter.MemberPresenter;
-import pcc.puppet.enforcer.realm.organization.api.event.OrganizationCreateEvent;
+import pcc.puppet.enforcer.realm.organization.ports.output.event.OrganizationCreateEvent;
 
 @MicronautTest
 class MemberControllerTest {

@@ -28,9 +28,10 @@ import org.junit.jupiter.api.Test;
 import pcc.puppet.enforcer.realm.TestDomainGenerator;
 import pcc.puppet.enforcer.realm.common.format.DateFormat;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
-import pcc.puppet.enforcer.realm.organization.api.command.OrganizationCreateCommand;
-import pcc.puppet.enforcer.realm.organization.api.event.OrganizationCreateEvent;
-import pcc.puppet.enforcer.realm.organization.api.presenter.OrganizationPresenter;
+import pcc.puppet.enforcer.realm.organization.ports.input.command.OrganizationCreateCommand;
+import pcc.puppet.enforcer.realm.organization.ports.output.api.OrganizationClient;
+import pcc.puppet.enforcer.realm.organization.ports.output.event.OrganizationCreateEvent;
+import pcc.puppet.enforcer.realm.organization.ports.output.presenter.OrganizationPresenter;
 
 @MicronautTest
 class OrganizationControllerTest {
