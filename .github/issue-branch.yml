@@ -8,6 +8,7 @@ copyIssueLabelsToPR: true
 copyIssueAssigneeToPR: true
 copyIssueProjectsToPR: true
 copyIssueMilestoneToPR: true
+prSkipCI: true
 branches:
   - label: defect
     name: master
