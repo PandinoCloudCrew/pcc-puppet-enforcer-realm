@@ -23,13 +23,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import pcc.puppet.enforcer.realm.common.contact.service.ContactInformationService;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
+import pcc.puppet.enforcer.realm.organization.adapters.mapper.OrganizationOutputMapper;
+import pcc.puppet.enforcer.realm.organization.adapters.presenter.OrganizationPresenter;
+import pcc.puppet.enforcer.realm.organization.adapters.repository.OrganizationRepository;
 import pcc.puppet.enforcer.realm.organization.domain.Organization;
-import pcc.puppet.enforcer.realm.organization.ports.input.command.OrganizationCreateCommand;
-import pcc.puppet.enforcer.realm.organization.ports.input.mapper.OrganizationInputMapper;
-import pcc.puppet.enforcer.realm.organization.ports.output.event.OrganizationCreateEvent;
-import pcc.puppet.enforcer.realm.organization.ports.output.mapper.OrganizationOutputMapper;
-import pcc.puppet.enforcer.realm.organization.ports.output.presenter.OrganizationPresenter;
-import pcc.puppet.enforcer.realm.organization.ports.output.repository.OrganizationRepository;
+import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
+import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEvent;
+import pcc.puppet.enforcer.realm.organization.ports.mapper.OrganizationInputMapper;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -58,7 +58,7 @@ public class DefaultOrganizationService implements OrganizationService {
               organization.setContactId(contactInformation);
               return repository.save(organization);
             })
-        .map(outputMapper::domainToEvent);
+        .map(inputMapper::domainToEvent);
   }
 
   @NewSpan

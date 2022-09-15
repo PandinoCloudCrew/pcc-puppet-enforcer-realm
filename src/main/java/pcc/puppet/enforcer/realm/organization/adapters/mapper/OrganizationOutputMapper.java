@@ -13,19 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.organization.ports.output.mapper;
+package pcc.puppet.enforcer.realm.organization.adapters.mapper;
 
 import org.mapstruct.Mapper;
 import pcc.puppet.enforcer.realm.common.contact.mapper.ContactInformationMapper;
 import pcc.puppet.enforcer.realm.common.mapper.InstantMapper;
+import pcc.puppet.enforcer.realm.organization.adapters.presenter.OrganizationPresenter;
 import pcc.puppet.enforcer.realm.organization.domain.Organization;
-import pcc.puppet.enforcer.realm.organization.ports.output.event.OrganizationCreateEvent;
-import pcc.puppet.enforcer.realm.organization.ports.output.presenter.OrganizationPresenter;
 
 @Mapper(uses = {ContactInformationMapper.class, InstantMapper.class})
 public interface OrganizationOutputMapper {
-
-  OrganizationCreateEvent domainToEvent(Organization command);
-
   OrganizationPresenter domainToPresenter(Organization command);
 }

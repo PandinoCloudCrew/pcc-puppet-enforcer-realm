@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.organization.ports.output.api;
+package pcc.puppet.enforcer.realm.organization.adapters.http;
 
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
@@ -27,10 +27,10 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.annotation.SpanTag;
 import javax.validation.Valid;
+import pcc.puppet.enforcer.realm.organization.adapters.presenter.OrganizationPresenter;
 import pcc.puppet.enforcer.realm.organization.domain.OrganizationOperations;
-import pcc.puppet.enforcer.realm.organization.ports.input.command.OrganizationCreateCommand;
-import pcc.puppet.enforcer.realm.organization.ports.output.event.OrganizationCreateEvent;
-import pcc.puppet.enforcer.realm.organization.ports.output.presenter.OrganizationPresenter;
+import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
+import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEvent;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

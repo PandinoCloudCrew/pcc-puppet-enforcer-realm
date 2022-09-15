@@ -26,9 +26,9 @@ import pcc.puppet.enforcer.realm.department.api.event.DepartmentCreateEvent;
 import pcc.puppet.enforcer.realm.member.api.MemberClient;
 import pcc.puppet.enforcer.realm.member.api.command.MemberCreateCommand;
 import pcc.puppet.enforcer.realm.member.api.event.MemberCreateEvent;
-import pcc.puppet.enforcer.realm.organization.ports.input.command.OrganizationCreateCommand;
-import pcc.puppet.enforcer.realm.organization.ports.output.api.OrganizationClient;
-import pcc.puppet.enforcer.realm.organization.ports.output.event.OrganizationCreateEvent;
+import pcc.puppet.enforcer.realm.organization.adapters.http.OrganizationClient;
+import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
+import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEvent;
 
 @Singleton
 @Requires(env = "test")

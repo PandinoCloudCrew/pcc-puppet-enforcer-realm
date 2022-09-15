@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.organization.ports.input.mapper;
+package pcc.puppet.enforcer.realm.organization.ports.mapper;
 
 import org.mapstruct.Mapper;
 import pcc.puppet.enforcer.realm.common.contact.mapper.ContactInformationMapper;
 import pcc.puppet.enforcer.realm.common.mapper.InstantMapper;
 import pcc.puppet.enforcer.realm.organization.domain.Organization;
-import pcc.puppet.enforcer.realm.organization.ports.input.command.OrganizationCreateCommand;
+import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
+import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEvent;
 
 @Mapper(uses = {ContactInformationMapper.class, InstantMapper.class})
 public interface OrganizationInputMapper {
 
   Organization commandToDomain(OrganizationCreateCommand command);
+
+  OrganizationCreateEvent domainToEvent(Organization command);
 }

@@ -15,9 +15,9 @@
  */
 package pcc.puppet.enforcer.realm.organization.domain.service;
 
-import pcc.puppet.enforcer.realm.organization.ports.input.command.OrganizationCreateCommand;
-import pcc.puppet.enforcer.realm.organization.ports.output.event.OrganizationCreateEvent;
-import pcc.puppet.enforcer.realm.organization.ports.output.presenter.OrganizationPresenter;
+import pcc.puppet.enforcer.realm.organization.adapters.presenter.OrganizationPresenter;
+import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
+import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEvent;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

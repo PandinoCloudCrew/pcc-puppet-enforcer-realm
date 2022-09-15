@@ -21,8 +21,8 @@ import org.mapstruct.factory.Mappers;
 import pcc.puppet.enforcer.realm.common.contact.mapper.ContactInformationMapper;
 import pcc.puppet.enforcer.realm.department.mapper.DepartmentMapper;
 import pcc.puppet.enforcer.realm.member.mapper.MemberMapper;
-import pcc.puppet.enforcer.realm.organization.ports.input.mapper.OrganizationInputMapper;
-import pcc.puppet.enforcer.realm.organization.ports.output.mapper.OrganizationOutputMapper;
+import pcc.puppet.enforcer.realm.organization.adapters.mapper.OrganizationOutputMapper;
+import pcc.puppet.enforcer.realm.organization.ports.mapper.OrganizationInputMapper;
 
 @Factory
 public class RealmFactory {
@@ -30,7 +30,7 @@ public class RealmFactory {
   public OrganizationInputMapper organizationMapper() {
     return Mappers.getMapper(OrganizationInputMapper.class);
   }
-  
+
   @Singleton
   public OrganizationOutputMapper organizationOutputMapper() {
     return Mappers.getMapper(OrganizationOutputMapper.class);

@@ -20,7 +20,7 @@ import lombok.experimental.UtilityClass;
 import org.bson.types.ObjectId;
 import pcc.puppet.enforcer.realm.department.api.command.DepartmentCreateCommand;
 import pcc.puppet.enforcer.realm.member.api.command.MemberCreateCommand;
-import pcc.puppet.enforcer.realm.organization.ports.input.command.OrganizationCreateCommand;
+import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
