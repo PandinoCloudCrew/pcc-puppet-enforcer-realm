@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.organization.api.command;
+package pcc.puppet.enforcer.realm.organization.ports.event;
 
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.serde.annotation.Serdeable;
-import javax.validation.Valid;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.common.contact.command.CreateContactInformationCommand;
+import pcc.puppet.enforcer.realm.common.contact.event.CreateContactInformationEvent;
 import pcc.puppet.enforcer.realm.common.generator.values.AddressStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.CityNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.CompanyNameStrategy;
@@ -33,14 +32,19 @@ import uk.co.jemos.podam.common.PodamStrategyValue;
 @Data
 @Builder
 @Serdeable
-public class OrganizationCreateCommand {
+public class OrganizationCreateEvent {
+
   @NonNull
-  @PodamStrategyValue(CompanyNameStrategy.class)
-  private String name;
+  @PodamStrategyValue(ObjectIdStrategy.class)
+  private String id;
 
   @Nullable
   @PodamStrategyValue(ObjectIdStrategy.class)
   private String parentId;
+
+  @NonNull
+  @PodamStrategyValue(CompanyNameStrategy.class)
+  private String name;
 
   @NonNull
   @PodamStrategyValue(AddressStrategy.class)
@@ -58,5 +62,7 @@ public class OrganizationCreateCommand {
   @PodamStrategyValue(TaxIdStrategy.class)
   private String taxId;
 
-  @NonNull @Valid private CreateContactInformationCommand contactId;
+  @NonNull private CreateContactInformationEvent contactId;
+
+  private String createdAt;
 }
