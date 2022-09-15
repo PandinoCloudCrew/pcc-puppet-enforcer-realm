@@ -25,6 +25,8 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.tracing.annotation.NewSpan;
@@ -40,8 +42,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
+@ExecuteOn(TaskExecutors.IO)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 @Controller("${micronaut.http.services.department.path}")
-@Secured(SecurityRule.IS_ANONYMOUS)
 @RequiredArgsConstructor
 public class DepartmentController implements DepartmentOperations {
   private final DepartmentService departmentService;
