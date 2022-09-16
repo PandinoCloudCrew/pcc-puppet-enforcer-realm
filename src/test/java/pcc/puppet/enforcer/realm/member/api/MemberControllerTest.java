@@ -29,9 +29,10 @@ import pcc.puppet.enforcer.realm.TestDomainGenerator;
 import pcc.puppet.enforcer.realm.common.format.DateFormat;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import pcc.puppet.enforcer.realm.department.ports.event.DepartmentCreateEvent;
-import pcc.puppet.enforcer.realm.member.api.command.MemberCreateCommand;
-import pcc.puppet.enforcer.realm.member.api.event.MemberCreateEvent;
-import pcc.puppet.enforcer.realm.member.api.presenter.MemberPresenter;
+import pcc.puppet.enforcer.realm.member.adapters.http.MemberClient;
+import pcc.puppet.enforcer.realm.member.adapters.presenter.MemberPresenter;
+import pcc.puppet.enforcer.realm.member.ports.command.MemberCreateCommand;
+import pcc.puppet.enforcer.realm.member.ports.event.MemberCreateEvent;
 import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEvent;
 
 @MicronautTest

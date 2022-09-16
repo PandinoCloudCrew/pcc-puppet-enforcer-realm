@@ -13,15 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.department.ports.mapper;
+package pcc.puppet.enforcer.realm.common.contact.adapters.presenter;
 
-import org.mapstruct.Mapper;
-import pcc.puppet.enforcer.realm.common.contact.ports.mapper.ContactInformationInputMapper;
-import pcc.puppet.enforcer.realm.common.mapper.InstantMapper;
-import pcc.puppet.enforcer.realm.department.domain.Department;
-import pcc.puppet.enforcer.realm.department.ports.command.DepartmentCreateCommand;
+import io.micronaut.serde.annotation.Serdeable;
+import lombok.Builder;
+import lombok.Data;
 
-@Mapper(uses = {ContactInformationInputMapper.class, InstantMapper.class})
-public interface DepartmentInputMapper {
-  Department commandToDomain(DepartmentCreateCommand command);
+@Data
+@Builder
+@Serdeable
+public class ContactInformationPresenter {
+
+  private String firstName;
+
+  private String lastName;
+
+  private String phoneNumber;
+
+  private String email;
+
+  private String position;
+
+  private String zoneId;
+
+  private String locale;
+
+  private String country;
+
+  private String city;
+
+  private String currency;
 }

@@ -13,40 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.department.ports.command;
+package pcc.puppet.enforcer.realm.member.ports.command;
 
 import io.micronaut.core.annotation.NonNull;
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.serde.annotation.Serdeable;
-import javax.validation.Valid;
 import lombok.Builder;
 import lombok.Data;
 import pcc.puppet.enforcer.realm.common.contact.ports.command.CreateContactInformationCommand;
-import pcc.puppet.enforcer.realm.common.generator.values.CompanyDepartmentStrategy;
-import pcc.puppet.enforcer.realm.common.generator.values.InternalAddressStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.ObjectIdStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.PasswordStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.UsernameStrategy;
 import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
 @Serdeable
-public class DepartmentCreateCommand {
-
-  @Nullable
-  @PodamStrategyValue(ObjectIdStrategy.class)
-  private String parentId;
-
+public class MemberCreateCommand {
   @NonNull
   @PodamStrategyValue(ObjectIdStrategy.class)
   private String organizationId;
 
   @NonNull
-  @PodamStrategyValue(CompanyDepartmentStrategy.class)
-  private String name;
+  @PodamStrategyValue(ObjectIdStrategy.class)
+  private String departmentId;
 
   @NonNull
-  @PodamStrategyValue(InternalAddressStrategy.class)
-  private String location;
+  @PodamStrategyValue(UsernameStrategy.class)
+  private String username;
 
-  @NonNull @Valid private CreateContactInformationCommand contactId;
+  @NonNull
+  @PodamStrategyValue(PasswordStrategy.class)
+  private String password;
+
+  @NonNull private CreateContactInformationCommand contactId;
 }

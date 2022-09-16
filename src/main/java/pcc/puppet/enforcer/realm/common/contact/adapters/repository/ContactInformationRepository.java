@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.department.ports.mapper;
+package pcc.puppet.enforcer.realm.common.contact.adapters.repository;
 
-import org.mapstruct.Mapper;
-import pcc.puppet.enforcer.realm.common.contact.ports.mapper.ContactInformationInputMapper;
-import pcc.puppet.enforcer.realm.common.mapper.InstantMapper;
-import pcc.puppet.enforcer.realm.department.domain.Department;
-import pcc.puppet.enforcer.realm.department.ports.command.DepartmentCreateCommand;
+import io.micronaut.data.model.query.builder.sql.Dialect;
+import io.micronaut.data.r2dbc.annotation.R2dbcRepository;
+import io.micronaut.data.repository.reactive.ReactorPageableRepository;
+import pcc.puppet.enforcer.realm.common.contact.domain.ContactInformation;
+import reactor.core.publisher.Mono;
 
-@Mapper(uses = {ContactInformationInputMapper.class, InstantMapper.class})
-public interface DepartmentInputMapper {
-  Department commandToDomain(DepartmentCreateCommand command);
+@R2dbcRepository(dialect = Dialect.POSTGRES)
+public interface ContactInformationRepository
+    extends ReactorPageableRepository<ContactInformation, String> {
+
+  Mono<ContactInformation> findByOwnerId(String organizationId);
 }

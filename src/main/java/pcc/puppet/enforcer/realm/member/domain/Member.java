@@ -27,8 +27,8 @@ import io.micronaut.serde.annotation.Serdeable;
 import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.common.contact.ContactInformation;
-import pcc.puppet.enforcer.realm.common.contact.repository.converter.ContactInformationConverter;
+import pcc.puppet.enforcer.realm.common.contact.adapters.repository.converter.ContactInformationConverter;
+import pcc.puppet.enforcer.realm.common.contact.domain.ContactInformation;
 
 @Data
 @Builder

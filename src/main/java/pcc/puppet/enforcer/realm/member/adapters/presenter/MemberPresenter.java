@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.organization.adapters.presenter;
+package pcc.puppet.enforcer.realm.member.adapters.presenter;
 
+import io.micronaut.core.annotation.NonNull;
 import io.micronaut.serde.annotation.Serdeable;
 import lombok.Builder;
 import lombok.Data;
@@ -23,16 +24,12 @@ import pcc.puppet.enforcer.realm.common.contact.adapters.presenter.ContactInform
 @Data
 @Builder
 @Serdeable
-public class OrganizationPresenter {
-  private String id;
-  private String parentId;
-  private String name;
-  private String location;
-  private String country;
-  private String city;
-  private String taxId;
-  private ContactInformationPresenter contactId;
-  private String createdBy;
-  private String createdAt;
-  private Integer version;
+public class MemberPresenter {
+  @NonNull private String id;
+  @NonNull private String organizationId;
+  @NonNull private String departmentId;
+  @NonNull private String username;
+  @NonNull private ContactInformationPresenter contactId;
+  @NonNull private String createdAt;
+  @NonNull private Integer version;
 }

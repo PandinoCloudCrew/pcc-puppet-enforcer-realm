@@ -13,51 +13,71 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.organization.domain;
+package pcc.puppet.enforcer.realm.common.contact.domain;
 
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;
-import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.annotation.Version;
-import io.micronaut.data.model.DataType;
 import io.micronaut.serde.annotation.Serdeable;
 import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.common.contact.adapters.repository.converter.ContactInformationConverter;
-import pcc.puppet.enforcer.realm.common.contact.domain.ContactInformation;
-import pcc.puppet.enforcer.realm.common.generator.values.AddressStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.CityNameStrategy;
-import pcc.puppet.enforcer.realm.common.generator.values.CompanyNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.CountryNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.CurrencyCodeStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.EmailStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.FirstNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.JobPositionStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.LastNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.LocaleStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.ObjectIdStrategy;
-import pcc.puppet.enforcer.realm.common.generator.values.TaxIdStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.PhoneNumberStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.TimeZoneStrategy;
 import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
 @Serdeable
-@MappedEntity(value = "organization")
-public class Organization {
+@MappedEntity(value = "contact_information")
+public class ContactInformation {
+
   @Id
   @NonNull
   @PodamStrategyValue(ObjectIdStrategy.class)
   private String id;
 
-  @Nullable
-  @PodamStrategyValue(ObjectIdStrategy.class)
-  private String parentId;
+  @NonNull private String ownerId;
 
   @NonNull
-  @PodamStrategyValue(CompanyNameStrategy.class)
-  private String name;
+  @PodamStrategyValue(FirstNameStrategy.class)
+  private String firstName;
 
   @NonNull
-  @PodamStrategyValue(AddressStrategy.class)
-  private String location;
+  @PodamStrategyValue(LastNameStrategy.class)
+  private String lastName;
+
+  @NonNull
+  @PodamStrategyValue(PhoneNumberStrategy.class)
+  private String phoneNumber;
+
+  @NonNull
+  @PodamStrategyValue(EmailStrategy.class)
+  private String email;
+
+  @NonNull
+  @PodamStrategyValue(JobPositionStrategy.class)
+  private String position;
+
+  @NonNull
+  @PodamStrategyValue(TimeZoneStrategy.class)
+  private String zoneId;
+
+  @NonNull
+  @PodamStrategyValue(LocaleStrategy.class)
+  private String locale;
 
   @NonNull
   @PodamStrategyValue(CountryNameStrategy.class)
@@ -68,21 +88,12 @@ public class Organization {
   private String city;
 
   @NonNull
-  @PodamStrategyValue(TaxIdStrategy.class)
-  private String taxId;
-
-  @NonNull
-  @TypeDef(type = DataType.STRING, converter = ContactInformationConverter.class)
-  private ContactInformation contactId;
+  @PodamStrategyValue(CurrencyCodeStrategy.class)
+  private String currency;
 
   @NonNull private String createdBy;
   @NonNull private Instant createdAt;
   @Nullable private String updatedBy;
   @Nullable private Instant updatedAt;
   @Version @AutoPopulated private Integer version;
-
-  public Organization setContact(ContactInformation contactInformation) {
-    this.contactId = contactInformation;
-    return this;
-  }
 }

@@ -21,7 +21,7 @@ import io.micronaut.serde.annotation.Serdeable;
 import javax.validation.Valid;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.common.contact.event.CreateContactInformationEvent;
+import pcc.puppet.enforcer.realm.common.contact.ports.event.CreateContactInformationEvent;
 
 @Data
 @Builder

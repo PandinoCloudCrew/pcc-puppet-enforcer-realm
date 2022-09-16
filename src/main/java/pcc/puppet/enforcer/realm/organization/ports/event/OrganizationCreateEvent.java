@@ -20,7 +20,7 @@ import io.micronaut.core.annotation.Nullable;
 import io.micronaut.serde.annotation.Serdeable;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.common.contact.event.CreateContactInformationEvent;
+import pcc.puppet.enforcer.realm.common.contact.ports.event.CreateContactInformationEvent;
 import pcc.puppet.enforcer.realm.common.generator.values.AddressStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.CityNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.CompanyNameStrategy;

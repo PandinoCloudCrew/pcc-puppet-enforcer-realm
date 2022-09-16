@@ -13,15 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.department.ports.mapper;
+package pcc.puppet.enforcer.realm.member.ports.event;
 
-import org.mapstruct.Mapper;
-import pcc.puppet.enforcer.realm.common.contact.ports.mapper.ContactInformationInputMapper;
-import pcc.puppet.enforcer.realm.common.mapper.InstantMapper;
-import pcc.puppet.enforcer.realm.department.domain.Department;
-import pcc.puppet.enforcer.realm.department.ports.command.DepartmentCreateCommand;
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.serde.annotation.Serdeable;
+import lombok.Builder;
+import lombok.Data;
+import pcc.puppet.enforcer.realm.common.contact.ports.event.CreateContactInformationEvent;
 
-@Mapper(uses = {ContactInformationInputMapper.class, InstantMapper.class})
-public interface DepartmentInputMapper {
-  Department commandToDomain(DepartmentCreateCommand command);
+@Data
+@Builder
+@Serdeable
+public class MemberCreateEvent {
+  @NonNull private String id;
+  @NonNull private String organizationId;
+  @NonNull private String departmentId;
+  @NonNull private String username;
+  @NonNull private String createdAt;
+  @NonNull private CreateContactInformationEvent contactId;
 }
