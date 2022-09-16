@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.department.api;
+package pcc.puppet.enforcer.realm.department.domain;
 
 import io.micronaut.core.annotation.NonNull;
-import pcc.puppet.enforcer.realm.department.api.command.DepartmentCreateCommand;
-import pcc.puppet.enforcer.realm.department.api.event.DepartmentCreateEvent;
-import pcc.puppet.enforcer.realm.department.api.presenter.DepartmentPresenter;
+import pcc.puppet.enforcer.realm.department.adapters.presenter.DepartmentPresenter;
+import pcc.puppet.enforcer.realm.department.ports.command.DepartmentCreateCommand;
+import pcc.puppet.enforcer.realm.department.ports.event.DepartmentCreateEvent;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

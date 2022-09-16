@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.department.service;
+package pcc.puppet.enforcer.realm.department.domain.service;
 
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.annotation.SpanTag;
@@ -23,12 +23,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import pcc.puppet.enforcer.realm.common.contact.service.ContactInformationService;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
-import pcc.puppet.enforcer.realm.department.api.command.DepartmentCreateCommand;
-import pcc.puppet.enforcer.realm.department.api.event.DepartmentCreateEvent;
-import pcc.puppet.enforcer.realm.department.api.presenter.DepartmentPresenter;
+import pcc.puppet.enforcer.realm.department.adapters.mapper.DepartmentOutputMapper;
+import pcc.puppet.enforcer.realm.department.adapters.presenter.DepartmentPresenter;
+import pcc.puppet.enforcer.realm.department.adapters.repository.DepartmentRepository;
 import pcc.puppet.enforcer.realm.department.domain.Department;
-import pcc.puppet.enforcer.realm.department.mapper.DepartmentMapper;
-import pcc.puppet.enforcer.realm.department.repository.DepartmentRepository;
+import pcc.puppet.enforcer.realm.department.ports.command.DepartmentCreateCommand;
+import pcc.puppet.enforcer.realm.department.ports.event.DepartmentCreateEvent;
+import pcc.puppet.enforcer.realm.department.ports.mapper.DepartmentInputMapper;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -36,7 +37,8 @@ import reactor.core.publisher.Mono;
 @Singleton
 @RequiredArgsConstructor
 public class DefaultDepartmentService implements DepartmentService {
-  private final DepartmentMapper mapper;
+  private final DepartmentOutputMapper outputMapper;
+  private final DepartmentInputMapper inputMapper;
   private final DepartmentRepository repository;
   private final ContactInformationService contactInformationService;
 
@@ -44,7 +46,7 @@ public class DefaultDepartmentService implements DepartmentService {
   @Override
   public Mono<DepartmentCreateEvent> create(
       @SpanTag String requester, @SpanTag DepartmentCreateCommand createCommand) {
-    Department department = mapper.commandToDomain(createCommand);
+    Department department = inputMapper.commandToDomain(createCommand);
     department.setId(DomainFactory.id());
     department.setCreatedBy(requester);
     department.setCreatedAt(Instant.now());
@@ -55,7 +57,7 @@ public class DefaultDepartmentService implements DepartmentService {
               department.setContactId(contactInformation);
               return repository.save(department);
             })
-        .map(mapper::domainToEvent);
+        .map(outputMapper::domainToEvent);
   }
 
   @NewSpan
@@ -73,7 +75,7 @@ public class DefaultDepartmentService implements DepartmentService {
                           department.setContactId(contactInformation);
                           return department;
                         })
-                    .map(mapper::domainToPresenter));
+                    .map(outputMapper::domainToPresenter));
   }
 
   @NewSpan
@@ -87,6 +89,6 @@ public class DefaultDepartmentService implements DepartmentService {
                 contactInformationService
                     .findById(department.getContactId().getId())
                     .map(department::setContact))
-        .map(mapper::domainToPresenter);
+        .map(outputMapper::domainToPresenter);
   }
 }

@@ -18,7 +18,7 @@ package pcc.puppet.enforcer.realm.common.generator;
 import io.micronaut.core.annotation.Introspected;
 import lombok.experimental.UtilityClass;
 import org.bson.types.ObjectId;
-import pcc.puppet.enforcer.realm.department.api.command.DepartmentCreateCommand;
+import pcc.puppet.enforcer.realm.department.ports.command.DepartmentCreateCommand;
 import pcc.puppet.enforcer.realm.member.api.command.MemberCreateCommand;
 import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
 import uk.co.jemos.podam.api.PodamFactory;
