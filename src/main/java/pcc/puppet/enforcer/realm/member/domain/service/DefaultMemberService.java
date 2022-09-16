@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.member.service;
+package pcc.puppet.enforcer.realm.member.domain.service;
 
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.annotation.SpanTag;
@@ -23,12 +23,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import pcc.puppet.enforcer.realm.common.contact.service.ContactInformationService;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
-import pcc.puppet.enforcer.realm.member.api.command.MemberCreateCommand;
-import pcc.puppet.enforcer.realm.member.api.event.MemberCreateEvent;
-import pcc.puppet.enforcer.realm.member.api.presenter.MemberPresenter;
+import pcc.puppet.enforcer.realm.member.adapters.mapper.MemberOutputMapper;
+import pcc.puppet.enforcer.realm.member.adapters.presenter.MemberPresenter;
+import pcc.puppet.enforcer.realm.member.adapters.repository.MemberRepository;
 import pcc.puppet.enforcer.realm.member.domain.Member;
-import pcc.puppet.enforcer.realm.member.mapper.MemberMapper;
-import pcc.puppet.enforcer.realm.member.repository.MemberRepository;
+import pcc.puppet.enforcer.realm.member.ports.command.MemberCreateCommand;
+import pcc.puppet.enforcer.realm.member.ports.event.MemberCreateEvent;
+import pcc.puppet.enforcer.realm.member.ports.mapper.MemberInputMapper;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -38,14 +39,15 @@ import reactor.core.publisher.Mono;
 public class DefaultMemberService implements MemberService {
 
   private final MemberRepository repository;
-  private final MemberMapper mapper;
+  private final MemberOutputMapper outputMapper;
+  private final MemberInputMapper inputMapper;
   private final ContactInformationService contactInformationService;
 
   @NewSpan
   @Override
   public Mono<MemberCreateEvent> create(
       @SpanTag String requester, MemberCreateCommand createCommand) {
-    Member member = mapper.commandToDomain(createCommand);
+    Member member = inputMapper.commandToDomain(createCommand);
     member.setId(DomainFactory.id());
     member.setCreatedBy(requester);
     member.setCreatedAt(Instant.now());
@@ -56,7 +58,7 @@ public class DefaultMemberService implements MemberService {
               member.setContactId(contactInformation);
               return repository.save(member);
             })
-        .map(mapper::domainToEvent);
+        .map(inputMapper::domainToEvent);
   }
 
   @NewSpan
@@ -73,7 +75,7 @@ public class DefaultMemberService implements MemberService {
                           member.setContactId(contactInformation);
                           return member;
                         })
-                    .map(mapper::domainToPresenter));
+                    .map(outputMapper::domainToPresenter));
   }
 
   @NewSpan
@@ -87,7 +89,7 @@ public class DefaultMemberService implements MemberService {
                 contactInformationService
                     .findById(member.getContactId().getId())
                     .map(member::setContact))
-        .map(mapper::domainToPresenter);
+        .map(outputMapper::domainToPresenter);
   }
 
   @NewSpan
@@ -101,6 +103,6 @@ public class DefaultMemberService implements MemberService {
                 contactInformationService
                     .findById(member.getContactId().getId())
                     .map(member::setContact))
-        .map(mapper::domainToPresenter);
+        .map(outputMapper::domainToPresenter);
   }
 }

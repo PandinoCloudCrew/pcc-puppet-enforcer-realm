@@ -13,21 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.member.mapper;
+package pcc.puppet.enforcer.realm.member.adapters.mapper;
 
 import org.mapstruct.Mapper;
 import pcc.puppet.enforcer.realm.common.contact.mapper.ContactInformationMapper;
 import pcc.puppet.enforcer.realm.common.mapper.InstantMapper;
-import pcc.puppet.enforcer.realm.member.api.command.MemberCreateCommand;
-import pcc.puppet.enforcer.realm.member.api.event.MemberCreateEvent;
-import pcc.puppet.enforcer.realm.member.api.presenter.MemberPresenter;
+import pcc.puppet.enforcer.realm.member.adapters.presenter.MemberPresenter;
 import pcc.puppet.enforcer.realm.member.domain.Member;
 
 @Mapper(uses = {ContactInformationMapper.class, InstantMapper.class})
-public interface MemberMapper {
-  Member commandToDomain(MemberCreateCommand command);
-
-  MemberCreateEvent domainToEvent(Member command);
-
+public interface MemberOutputMapper {
   MemberPresenter domainToPresenter(Member command);
 }

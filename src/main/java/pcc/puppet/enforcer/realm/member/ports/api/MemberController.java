@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.member.api;
+package pcc.puppet.enforcer.realm.member.ports.api;
 
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.DEPARTMENT;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.ORGANIZATION;
@@ -36,10 +36,11 @@ import io.micronaut.tracing.annotation.SpanTag;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import pcc.puppet.enforcer.realm.member.api.command.MemberCreateCommand;
-import pcc.puppet.enforcer.realm.member.api.event.MemberCreateEvent;
-import pcc.puppet.enforcer.realm.member.api.presenter.MemberPresenter;
-import pcc.puppet.enforcer.realm.member.service.MemberService;
+import pcc.puppet.enforcer.realm.member.adapters.presenter.MemberPresenter;
+import pcc.puppet.enforcer.realm.member.domain.MemberOperations;
+import pcc.puppet.enforcer.realm.member.domain.service.MemberService;
+import pcc.puppet.enforcer.realm.member.ports.command.MemberCreateCommand;
+import pcc.puppet.enforcer.realm.member.ports.event.MemberCreateEvent;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

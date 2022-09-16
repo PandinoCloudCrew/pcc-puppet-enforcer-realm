@@ -21,7 +21,8 @@ import org.mapstruct.factory.Mappers;
 import pcc.puppet.enforcer.realm.common.contact.mapper.ContactInformationMapper;
 import pcc.puppet.enforcer.realm.department.adapters.mapper.DepartmentOutputMapper;
 import pcc.puppet.enforcer.realm.department.ports.mapper.DepartmentInputMapper;
-import pcc.puppet.enforcer.realm.member.mapper.MemberMapper;
+import pcc.puppet.enforcer.realm.member.adapters.mapper.MemberOutputMapper;
+import pcc.puppet.enforcer.realm.member.ports.mapper.MemberInputMapper;
 import pcc.puppet.enforcer.realm.organization.adapters.mapper.OrganizationOutputMapper;
 import pcc.puppet.enforcer.realm.organization.ports.mapper.OrganizationInputMapper;
 
@@ -53,7 +54,12 @@ public class RealmFactory {
   }
 
   @Singleton
-  public MemberMapper memberMapper() {
-    return Mappers.getMapper(MemberMapper.class);
+  public MemberOutputMapper memberOutputMapper() {
+    return Mappers.getMapper(MemberOutputMapper.class);
+  }
+
+  @Singleton
+  public MemberInputMapper memberInputMapper() {
+    return Mappers.getMapper(MemberInputMapper.class);
   }
 }
