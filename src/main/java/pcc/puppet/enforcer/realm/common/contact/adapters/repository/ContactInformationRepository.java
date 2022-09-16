@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.common.contact.service;
+package pcc.puppet.enforcer.realm.common.contact.adapters.repository;
 
-import pcc.puppet.enforcer.realm.common.contact.ContactInformation;
-import pcc.puppet.enforcer.realm.common.contact.command.CreateContactInformationCommand;
+import io.micronaut.data.model.query.builder.sql.Dialect;
+import io.micronaut.data.r2dbc.annotation.R2dbcRepository;
+import io.micronaut.data.repository.reactive.ReactorPageableRepository;
+import pcc.puppet.enforcer.realm.common.contact.domain.ContactInformation;
 import reactor.core.publisher.Mono;
 
-public interface ContactInformationService {
+@R2dbcRepository(dialect = Dialect.POSTGRES)
+public interface ContactInformationRepository
+    extends ReactorPageableRepository<ContactInformation, String> {
 
-  Mono<ContactInformation> save(
-      String requester, String ownerId, CreateContactInformationCommand command);
-
-  Mono<ContactInformation> findById(String contactInformationId);
-
-  Mono<ContactInformation> findByOwnerId(String ownerId);
+  Mono<ContactInformation> findByOwnerId(String organizationId);
 }

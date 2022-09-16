@@ -19,7 +19,7 @@ import io.micronaut.core.annotation.NonNull;
 import io.micronaut.serde.annotation.Serdeable;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.common.contact.command.CreateContactInformationCommand;
+import pcc.puppet.enforcer.realm.common.contact.ports.command.CreateContactInformationCommand;
 import pcc.puppet.enforcer.realm.common.generator.values.ObjectIdStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.PasswordStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.UsernameStrategy;

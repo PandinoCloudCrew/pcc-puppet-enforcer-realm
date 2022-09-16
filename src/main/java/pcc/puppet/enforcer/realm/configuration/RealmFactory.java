@@ -18,7 +18,8 @@ package pcc.puppet.enforcer.realm.configuration;
 import io.micronaut.context.annotation.Factory;
 import jakarta.inject.Singleton;
 import org.mapstruct.factory.Mappers;
-import pcc.puppet.enforcer.realm.common.contact.mapper.ContactInformationMapper;
+import pcc.puppet.enforcer.realm.common.contact.adapters.mapper.ContactInformationOutputMapper;
+import pcc.puppet.enforcer.realm.common.contact.ports.mapper.ContactInformationInputMapper;
 import pcc.puppet.enforcer.realm.department.adapters.mapper.DepartmentOutputMapper;
 import pcc.puppet.enforcer.realm.department.ports.mapper.DepartmentInputMapper;
 import pcc.puppet.enforcer.realm.member.adapters.mapper.MemberOutputMapper;
@@ -39,11 +40,6 @@ public class RealmFactory {
   }
 
   @Singleton
-  public ContactInformationMapper contactInformationMapper() {
-    return Mappers.getMapper(ContactInformationMapper.class);
-  }
-
-  @Singleton
   public DepartmentOutputMapper departmentOutputMapper() {
     return Mappers.getMapper(DepartmentOutputMapper.class);
   }
@@ -61,5 +57,15 @@ public class RealmFactory {
   @Singleton
   public MemberInputMapper memberInputMapper() {
     return Mappers.getMapper(MemberInputMapper.class);
+  }
+
+  @Singleton
+  public ContactInformationOutputMapper contactInformationOutputMapper() {
+    return Mappers.getMapper(ContactInformationOutputMapper.class);
+  }
+
+  @Singleton
+  public ContactInformationInputMapper contactInformationInputMapper() {
+    return Mappers.getMapper(ContactInformationInputMapper.class);
   }
 }

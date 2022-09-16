@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.common.contact.event;
+package pcc.puppet.enforcer.realm.common.contact.ports.command;
 
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.serde.annotation.Serdeable;
@@ -27,7 +27,6 @@ import pcc.puppet.enforcer.realm.common.generator.values.FirstNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.JobPositionStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.LastNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.LocaleStrategy;
-import pcc.puppet.enforcer.realm.common.generator.values.ObjectIdStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.PhoneNumberStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.TimeZoneStrategy;
 import uk.co.jemos.podam.common.PodamStrategyValue;
@@ -35,14 +34,7 @@ import uk.co.jemos.podam.common.PodamStrategyValue;
 @Data
 @Builder
 @Serdeable
-public class CreateContactInformationEvent {
-
-  @NonNull
-  @PodamStrategyValue(ObjectIdStrategy.class)
-  private String id;
-
-  @NonNull private String ownerId;
-
+public class CreateContactInformationCommand {
   @NonNull
   @PodamStrategyValue(FirstNameStrategy.class)
   private String firstName;
@@ -82,6 +74,4 @@ public class CreateContactInformationEvent {
   @NonNull
   @PodamStrategyValue(CurrencyCodeStrategy.class)
   private String currency;
-
-  @NonNull private String createdAt;
 }

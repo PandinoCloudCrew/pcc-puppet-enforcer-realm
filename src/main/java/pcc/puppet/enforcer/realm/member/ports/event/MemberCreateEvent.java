@@ -19,7 +19,7 @@ import io.micronaut.core.annotation.NonNull;
 import io.micronaut.serde.annotation.Serdeable;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.common.contact.event.CreateContactInformationEvent;
+import pcc.puppet.enforcer.realm.common.contact.ports.event.CreateContactInformationEvent;
 
 @Data
 @Builder

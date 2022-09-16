@@ -21,7 +21,7 @@ import jakarta.inject.Singleton;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import pcc.puppet.enforcer.realm.common.contact.service.ContactInformationService;
+import pcc.puppet.enforcer.realm.common.contact.domain.service.ContactInformationService;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import pcc.puppet.enforcer.realm.organization.adapters.mapper.OrganizationOutputMapper;
 import pcc.puppet.enforcer.realm.organization.adapters.presenter.OrganizationPresenter;

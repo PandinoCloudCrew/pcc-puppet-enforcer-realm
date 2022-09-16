@@ -13,20 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.common.contact.mapper;
+package pcc.puppet.enforcer.realm.common.contact.ports.mapper;
 
 import org.mapstruct.Mapper;
-import pcc.puppet.enforcer.realm.common.contact.ContactInformation;
-import pcc.puppet.enforcer.realm.common.contact.command.CreateContactInformationCommand;
-import pcc.puppet.enforcer.realm.common.contact.event.CreateContactInformationEvent;
-import pcc.puppet.enforcer.realm.common.contact.presenter.ContactInformationPresenter;
+import pcc.puppet.enforcer.realm.common.contact.domain.ContactInformation;
+import pcc.puppet.enforcer.realm.common.contact.ports.command.CreateContactInformationCommand;
+import pcc.puppet.enforcer.realm.common.contact.ports.event.CreateContactInformationEvent;
 import pcc.puppet.enforcer.realm.common.mapper.InstantMapper;
 
 @Mapper(uses = InstantMapper.class)
-public interface ContactInformationMapper {
+public interface ContactInformationInputMapper {
   ContactInformation commandToDomain(CreateContactInformationCommand command);
 
   CreateContactInformationEvent domainToEvent(ContactInformation command);
-
-  ContactInformationPresenter domainToPresenter(ContactInformation command);
 }

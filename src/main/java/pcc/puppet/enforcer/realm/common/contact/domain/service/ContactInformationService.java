@@ -13,15 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.department.ports.mapper;
+package pcc.puppet.enforcer.realm.common.contact.domain.service;
 
-import org.mapstruct.Mapper;
-import pcc.puppet.enforcer.realm.common.contact.ports.mapper.ContactInformationInputMapper;
-import pcc.puppet.enforcer.realm.common.mapper.InstantMapper;
-import pcc.puppet.enforcer.realm.department.domain.Department;
-import pcc.puppet.enforcer.realm.department.ports.command.DepartmentCreateCommand;
+import pcc.puppet.enforcer.realm.common.contact.domain.ContactInformation;
+import pcc.puppet.enforcer.realm.common.contact.ports.command.CreateContactInformationCommand;
+import reactor.core.publisher.Mono;
 
-@Mapper(uses = {ContactInformationInputMapper.class, InstantMapper.class})
-public interface DepartmentInputMapper {
-  Department commandToDomain(DepartmentCreateCommand command);
+public interface ContactInformationService {
+
+  Mono<ContactInformation> save(
+      String requester, String ownerId, CreateContactInformationCommand command);
+
+  Mono<ContactInformation> findById(String contactInformationId);
+
+  Mono<ContactInformation> findByOwnerId(String ownerId);
 }

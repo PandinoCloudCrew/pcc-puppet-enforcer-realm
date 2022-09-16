@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.common.contact.repository.converter;
+package pcc.puppet.enforcer.realm.common.contact.adapters.repository.converter;
 
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.convert.ConversionContext;
@@ -21,14 +21,11 @@ import io.micronaut.data.model.runtime.convert.AttributeConverter;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import pcc.puppet.enforcer.realm.common.contact.ContactInformation;
-import pcc.puppet.enforcer.realm.common.contact.service.ContactInformationService;
+import pcc.puppet.enforcer.realm.common.contact.domain.ContactInformation;
 
 @Singleton
 @RequiredArgsConstructor
 public class ContactInformationConverter implements AttributeConverter<ContactInformation, String> {
-
-  private final ContactInformationService informationService;
 
   @Override
   public String convertToPersistedValue(

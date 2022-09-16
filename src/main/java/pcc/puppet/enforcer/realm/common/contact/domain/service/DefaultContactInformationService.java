@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.common.contact.service;
+package pcc.puppet.enforcer.realm.common.contact.domain.service;
 
 import io.micronaut.tracing.annotation.NewSpan;
 import jakarta.inject.Singleton;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
-import pcc.puppet.enforcer.realm.common.contact.ContactInformation;
-import pcc.puppet.enforcer.realm.common.contact.command.CreateContactInformationCommand;
-import pcc.puppet.enforcer.realm.common.contact.mapper.ContactInformationMapper;
-import pcc.puppet.enforcer.realm.common.contact.repository.ContactInformationRepository;
+import pcc.puppet.enforcer.realm.common.contact.adapters.repository.ContactInformationRepository;
+import pcc.puppet.enforcer.realm.common.contact.domain.ContactInformation;
+import pcc.puppet.enforcer.realm.common.contact.ports.command.CreateContactInformationCommand;
+import pcc.puppet.enforcer.realm.common.contact.ports.mapper.ContactInformationInputMapper;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import reactor.core.publisher.Mono;
 
@@ -31,13 +31,13 @@ import reactor.core.publisher.Mono;
 public class DefaultContactInformationService implements ContactInformationService {
 
   private final ContactInformationRepository repository;
-  private final ContactInformationMapper mapper;
+  private final ContactInformationInputMapper inputMapper;
 
   @NewSpan
   @Override
   public Mono<ContactInformation> save(
       String requester, String ownerId, CreateContactInformationCommand command) {
-    ContactInformation contactInformation = mapper.commandToDomain(command);
+    ContactInformation contactInformation = inputMapper.commandToDomain(command);
     contactInformation.setId(DomainFactory.id());
     contactInformation.setCreatedBy(requester);
     contactInformation.setCreatedAt(Instant.now());

@@ -13,10 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.common.contact.command;
+package pcc.puppet.enforcer.realm.common.contact.domain;
 
 import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
+import io.micronaut.data.annotation.AutoPopulated;
+import io.micronaut.data.annotation.Id;
+import io.micronaut.data.annotation.MappedEntity;
+import io.micronaut.data.annotation.Version;
 import io.micronaut.serde.annotation.Serdeable;
+import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
 import pcc.puppet.enforcer.realm.common.generator.values.CityNameStrategy;
@@ -27,6 +33,7 @@ import pcc.puppet.enforcer.realm.common.generator.values.FirstNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.JobPositionStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.LastNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.LocaleStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.ObjectIdStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.PhoneNumberStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.TimeZoneStrategy;
 import uk.co.jemos.podam.common.PodamStrategyValue;
@@ -34,7 +41,16 @@ import uk.co.jemos.podam.common.PodamStrategyValue;
 @Data
 @Builder
 @Serdeable
-public class CreateContactInformationCommand {
+@MappedEntity(value = "contact_information")
+public class ContactInformation {
+
+  @Id
+  @NonNull
+  @PodamStrategyValue(ObjectIdStrategy.class)
+  private String id;
+
+  @NonNull private String ownerId;
+
   @NonNull
   @PodamStrategyValue(FirstNameStrategy.class)
   private String firstName;
@@ -74,4 +90,10 @@ public class CreateContactInformationCommand {
   @NonNull
   @PodamStrategyValue(CurrencyCodeStrategy.class)
   private String currency;
+
+  @NonNull private String createdBy;
+  @NonNull private Instant createdAt;
+  @Nullable private String updatedBy;
+  @Nullable private Instant updatedAt;
+  @Version @AutoPopulated private Integer version;
 }

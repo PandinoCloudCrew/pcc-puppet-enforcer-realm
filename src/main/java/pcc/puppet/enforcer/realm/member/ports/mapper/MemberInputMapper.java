@@ -16,13 +16,13 @@
 package pcc.puppet.enforcer.realm.member.ports.mapper;
 
 import org.mapstruct.Mapper;
-import pcc.puppet.enforcer.realm.common.contact.mapper.ContactInformationMapper;
+import pcc.puppet.enforcer.realm.common.contact.ports.mapper.ContactInformationInputMapper;
 import pcc.puppet.enforcer.realm.common.mapper.InstantMapper;
 import pcc.puppet.enforcer.realm.member.domain.Member;
 import pcc.puppet.enforcer.realm.member.ports.command.MemberCreateCommand;
 import pcc.puppet.enforcer.realm.member.ports.event.MemberCreateEvent;
 
-@Mapper(uses = {ContactInformationMapper.class, InstantMapper.class})
+@Mapper(uses = {ContactInformationInputMapper.class, InstantMapper.class})
 public interface MemberInputMapper {
   Member commandToDomain(MemberCreateCommand command);
 

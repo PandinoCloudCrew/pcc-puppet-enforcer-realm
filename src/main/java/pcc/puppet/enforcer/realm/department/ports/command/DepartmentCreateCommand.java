@@ -21,7 +21,7 @@ import io.micronaut.serde.annotation.Serdeable;
 import javax.validation.Valid;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.common.contact.command.CreateContactInformationCommand;
+import pcc.puppet.enforcer.realm.common.contact.ports.command.CreateContactInformationCommand;
 import pcc.puppet.enforcer.realm.common.generator.values.CompanyDepartmentStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.InternalAddressStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.ObjectIdStrategy;

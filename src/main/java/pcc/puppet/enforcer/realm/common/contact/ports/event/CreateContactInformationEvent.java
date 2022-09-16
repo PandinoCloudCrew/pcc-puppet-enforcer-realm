@@ -13,16 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.common.contact;
+package pcc.puppet.enforcer.realm.common.contact.ports.event;
 
 import io.micronaut.core.annotation.NonNull;
-import io.micronaut.core.annotation.Nullable;
-import io.micronaut.data.annotation.AutoPopulated;
-import io.micronaut.data.annotation.Id;
-import io.micronaut.data.annotation.MappedEntity;
-import io.micronaut.data.annotation.Version;
 import io.micronaut.serde.annotation.Serdeable;
-import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
 import pcc.puppet.enforcer.realm.common.generator.values.CityNameStrategy;
@@ -41,10 +35,8 @@ import uk.co.jemos.podam.common.PodamStrategyValue;
 @Data
 @Builder
 @Serdeable
-@MappedEntity(value = "contact_information")
-public class ContactInformation {
+public class CreateContactInformationEvent {
 
-  @Id
   @NonNull
   @PodamStrategyValue(ObjectIdStrategy.class)
   private String id;
@@ -91,9 +83,5 @@ public class ContactInformation {
   @PodamStrategyValue(CurrencyCodeStrategy.class)
   private String currency;
 
-  @NonNull private String createdBy;
-  @NonNull private Instant createdAt;
-  @Nullable private String updatedBy;
-  @Nullable private Instant updatedAt;
-  @Version @AutoPopulated private Integer version;
+  @NonNull private String createdAt;
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.common.contact.presenter;
+package pcc.puppet.enforcer.realm.common.contact.adapters.presenter;
 
 import io.micronaut.serde.annotation.Serdeable;
 import lombok.Builder;
