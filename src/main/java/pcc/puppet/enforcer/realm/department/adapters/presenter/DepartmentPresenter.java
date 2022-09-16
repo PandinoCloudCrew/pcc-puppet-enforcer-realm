@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.department.api.event;
+package pcc.puppet.enforcer.realm.department.adapters.presenter;
 
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
@@ -21,17 +21,19 @@ import io.micronaut.serde.annotation.Serdeable;
 import javax.validation.Valid;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.common.contact.event.CreateContactInformationEvent;
+import pcc.puppet.enforcer.realm.common.contact.presenter.ContactInformationPresenter;
 
 @Data
 @Builder
 @Serdeable
-public class DepartmentCreateEvent {
-  @NonNull private String id;
+public class DepartmentPresenter {
+  private String id;
   @Nullable private String parentId;
   @NonNull private String organizationId;
   @NonNull private String name;
   @NonNull private String location;
+  @NonNull @Valid private ContactInformationPresenter contactId;
+  @NonNull private String createdBy;
   @NonNull private String createdAt;
-  @NonNull @Valid private CreateContactInformationEvent contactId;
+  @NonNull private Integer version;
 }
