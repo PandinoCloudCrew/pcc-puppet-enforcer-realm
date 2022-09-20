@@ -19,6 +19,9 @@ micronaut:
     enabled: true
     token:
       enabled: true
+      propagation:
+        enabled: true
+        service-id-regex: \/realm\/.*
       jwt:
         enabled: true
         signatures:
@@ -46,14 +49,16 @@ micronaut:
         mapping: /swagger-ui/**
   http:
     services:
-      organization:
+      pcc-realm-organization:
         path: /realm/organization
-      department:
+      pcc-realm-department:
         path: /realm/department
-      member:
+      pcc-realm-member:
         path: /realm/member
-  otel:
-    enabled: true
+      pcc-realm-passport:
+        path: /realm/passport
+      provider-rest-countries:
+        url: https://restcountries.com/v3.1
 
 otel:
   service:

@@ -19,6 +19,7 @@ import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.ORGANIZATION;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
 import io.micronaut.core.annotation.NonNull;
+import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Get;
@@ -28,6 +29,7 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.annotation.SpanTag;
 import javax.validation.Valid;
+import pcc.puppet.enforcer.realm.Project;
 import pcc.puppet.enforcer.realm.department.adapters.presenter.DepartmentPresenter;
 import pcc.puppet.enforcer.realm.department.domain.DepartmentOperations;
 import pcc.puppet.enforcer.realm.department.ports.command.DepartmentCreateCommand;
@@ -35,7 +37,7 @@ import pcc.puppet.enforcer.realm.department.ports.event.DepartmentCreateEvent;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Client("${micronaut.http.services.department.path}")
+@Client("${micronaut.http.services.pcc-realm-department.path}")
 @Header(name = HttpHeaders.ACCEPT_ENCODING, value = "gzip, deflate")
 @Header(
     name = HttpHeaders.USER_AGENT,

@@ -44,7 +44,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Controller("${micronaut.http.services.organization.path}")
+@Controller("${micronaut.http.services.pcc-realm-organization.path}")
 @RequiredArgsConstructor
 public class OrganizationController implements OrganizationOperations {
   private final OrganizationService organizationService;
