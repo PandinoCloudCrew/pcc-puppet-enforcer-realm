@@ -54,14 +54,16 @@ micronaut:
       provider-rest-countries:
         url: https://restcountries.com/v3.1
 
-otel:
-  service:
-    name: ${micronaut.application.name}
-  traces:
-    exporter: otlp,jaeger,logging
-    propagator: tracecontext, baggage
-  exclusions:
-    - /health
+tracing:
+  jaeger:
+    tracer-tags:
+      version: "@VERSION@"
+    enabled: true
+    sampler:
+      probability: 1.0
+    sender:
+      agent-port: 6831
+      agent-host: localhost
 
 netty:
   default:
