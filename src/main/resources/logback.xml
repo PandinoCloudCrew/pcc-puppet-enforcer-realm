@@ -3,16 +3,19 @@
         <withJansi>false</withJansi>
         <encoder>
             <pattern>
-                [%X{stack}] [%X{originator}] [%X{owner}] [%X{userId}] [%X{trackId}] [%-5p] [%t] [%d{yyyy-MM-dd HH:mm:ss.SSS}] [%logger{15}] [%m]%n
+                [%X{traceId}] [%-5p] [%t] [%d{yyyy-MM-dd HH:mm:ss.SSS}] [%logger{15}] [%m]%n
             </pattern>
         </encoder>
     </appender>
     <logger level="ERROR" name="io.netty"/>
     <logger level="ERROR" name="io.micronaut.core.reflect"/>
     <logger level="ERROR" name="io.micronaut.core.beans"/>
-    <logger level="INFO" name="io.micronaut.context"/>
+    <logger level="ERROR" name="io.micronaut.context"/>
+    <logger level="ERROR" name="io.micronaut.security"/>
     <logger level="ERROR" name="io.micronaut.http"/>
-    <logger level="DEBUG" name="io.micrometer.elastic"/>
+    <logger level="DEBUG" name="io.micronaut.http.client"/>
+    <logger level="TRACE" name="io.micronaut.tracing"/>
+    <logger level="ERROR" name="io.micrometer.elastic"/>
     <logger level="INFO" name="io.micronaut.discovery"/>
     <logger level="WARN" name="software.amazon.awssdk"/>
     <logger level="WARN" name="software.amazon.awssdk.request"/>
