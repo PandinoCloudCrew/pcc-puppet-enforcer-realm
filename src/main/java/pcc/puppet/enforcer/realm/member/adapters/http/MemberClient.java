@@ -38,6 +38,10 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Client("${micronaut.http.services.member.path}")
+@Header(name = HttpHeaders.ACCEPT_ENCODING, value = "gzip, deflate")
+@Header(
+    name = HttpHeaders.USER_AGENT,
+    value = "MemberClient/" + Project.VERSION + " (" + Project.NAME + ")")
 public interface MemberClient extends MemberOperations {
 
   @Override

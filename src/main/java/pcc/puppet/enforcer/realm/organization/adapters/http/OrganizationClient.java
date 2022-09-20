@@ -35,6 +35,10 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Client("${micronaut.http.services.organization.path}")
+@Header(name = HttpHeaders.ACCEPT_ENCODING, value = "gzip, deflate")
+@Header(
+    name = HttpHeaders.USER_AGENT,
+    value = "OrganizationClient/" + Project.VERSION + " (" + Project.NAME + ")")
 public interface OrganizationClient extends OrganizationOperations {
 
   @NewSpan

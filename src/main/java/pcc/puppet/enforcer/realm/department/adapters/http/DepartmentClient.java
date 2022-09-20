@@ -36,6 +36,10 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Client("${micronaut.http.services.department.path}")
+@Header(name = HttpHeaders.ACCEPT_ENCODING, value = "gzip, deflate")
+@Header(
+    name = HttpHeaders.USER_AGENT,
+    value = "DepartmentClient/" + Project.VERSION + " (" + Project.NAME + ")")
 public interface DepartmentClient extends DepartmentOperations {
 
   @Override
