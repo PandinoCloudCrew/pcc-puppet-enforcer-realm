@@ -45,7 +45,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Controller("${micronaut.http.services.department.path}")
+@Controller("${micronaut.http.services.pcc-realm-department.path}")
 @RequiredArgsConstructor
 public class DepartmentController implements DepartmentOperations {
   private final DepartmentService departmentService;

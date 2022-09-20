@@ -13,21 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer;
+package pcc.puppet.enforcer.realm;
 
-import io.micronaut.runtime.Micronaut;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
-import pcc.puppet.enforcer.realm.Project;
+public class Project {
 
-@OpenAPIDefinition(info = @Info(title = Project.NAME, version = Project.VERSION))
-public class Application {
-  /**
-   * Entry point for app
-   *
-   * @param args program arguments
-   */
-  public static void main(final String[] args) {
-    Micronaut.run(Application.class, args);
-  }
+  public static final String VERSION = "@VERSION@";
+  public static final String NAME = "@NAME@";
 }

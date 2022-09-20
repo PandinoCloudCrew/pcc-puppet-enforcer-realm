@@ -47,7 +47,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @ExecuteOn(TaskExecutors.IO)
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Controller("${micronaut.http.services.member.path}")
+@Controller("${micronaut.http.services.pcc-realm-member.path}")
 @RequiredArgsConstructor
 public class MemberController implements MemberOperations {
   private final MemberService memberService;

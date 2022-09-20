@@ -18,6 +18,7 @@ package pcc.puppet.enforcer.realm.common.generator;
 import io.micronaut.core.annotation.Introspected;
 import lombok.experimental.UtilityClass;
 import org.bson.types.ObjectId;
+import pcc.puppet.enforcer.realm.authentication.ports.command.ConsumerPassportCreateCommand;
 import pcc.puppet.enforcer.realm.department.ports.command.DepartmentCreateCommand;
 import pcc.puppet.enforcer.realm.member.ports.command.MemberCreateCommand;
 import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
@@ -44,6 +45,10 @@ public class DomainFactory {
 
   public MemberCreateCommand memberCreateCommand() {
     return getPojoWithFullData(MemberCreateCommand.class);
+  }
+
+  public ConsumerPassportCreateCommand consumerPassportCreateCommand() {
+    return getPojoWithFullData(ConsumerPassportCreateCommand.class);
   }
 
   private <T> T getPojoWithFullData(Class<T> classType) {
