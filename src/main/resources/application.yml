@@ -27,13 +27,7 @@ micronaut:
         signatures:
           jwks:
             keycloak:
-              url: ${AUTH_JKWS:`http://desktop-egi38ur-docker-desktop-1:8080/auth/realms/master/.well-known/openid-configuration`}
-    oauth2:
-      clients:
-        keycloak:
-          openid:
-            issuer: http://desktop-egi38ur-docker-desktop-1:8080/auth/realms/master
-            jwks-uri: http://desktop-egi38ur-docker-desktop-1:8080/auth/realms/master/.well-known/openid-configuration
+              url: ${AUTH_JKWS:`http://desktop-egi38ur-docker-desktop-1:8080/auth/realms/master/protocol/openid-connect/certs`}
     intercept-url-map:
       - access: isAnonymous()
         pattern: /swagger/**
