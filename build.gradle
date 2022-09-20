@@ -8,6 +8,7 @@ plugins {
     id("com.palantir.git-version") version "0.15.0"
     id("org.sonarqube") version "3.4.0.2513"
     id("jacoco")
+    id("net.kyori.blossom") version "1.2.0"
 }
 
 version = gitVersion()
@@ -159,4 +160,13 @@ jacocoTestReport {
                     exclude: ["Application.java"])
         }))
     }
+}
+
+blossom {
+    def constants = "src/main/java/pcc/puppet/enforcer/realm/Project.java"
+    replaceToken("@VERSION@", project.version, constants)
+    replaceToken("@NAME@", project.name, constants)
+    def resources = "src/main/resources/application.yml"
+    replaceToken("@VERSION@", project.version, resources)
+    replaceToken("@NAME@", project.name, resources)
 }
