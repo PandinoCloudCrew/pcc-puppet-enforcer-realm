@@ -15,14 +15,14 @@
  */
 package pcc.puppet.enforcer.realm.common.generator.values;
 
+import com.github.shamil.Xid;
 import java.lang.annotation.Annotation;
 import java.util.List;
-import org.bson.types.ObjectId;
 import uk.co.jemos.podam.common.AttributeStrategy;
 
 public class ObjectIdStrategy implements AttributeStrategy<String> {
   @Override
   public String getValue(Class<?> attrType, List<Annotation> attrAnnotations) {
-    return ObjectId.get().toHexString();
+    return Xid.string();
   }
 }

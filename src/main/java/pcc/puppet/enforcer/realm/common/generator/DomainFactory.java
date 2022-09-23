@@ -15,9 +15,9 @@
  */
 package pcc.puppet.enforcer.realm.common.generator;
 
+import com.github.shamil.Xid;
 import io.micronaut.core.annotation.Introspected;
 import lombok.experimental.UtilityClass;
-import org.bson.types.ObjectId;
 import pcc.puppet.enforcer.realm.authentication.ports.command.ConsumerPassportCreateCommand;
 import pcc.puppet.enforcer.realm.department.ports.command.DepartmentCreateCommand;
 import pcc.puppet.enforcer.realm.member.ports.command.MemberCreateCommand;
@@ -32,7 +32,7 @@ public class DomainFactory {
   private final PodamFactory factory = new PodamFactoryImpl();
 
   public String id() {
-    return ObjectId.get().toHexString();
+    return Xid.string();
   }
 
   public OrganizationCreateCommand organizationCreateCommand() {

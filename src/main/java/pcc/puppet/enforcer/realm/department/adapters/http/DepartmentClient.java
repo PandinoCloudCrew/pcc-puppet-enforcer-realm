@@ -26,7 +26,6 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.client.annotation.Client;
-import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.annotation.SpanTag;
 import javax.validation.Valid;
 import pcc.puppet.enforcer.realm.Project;
@@ -37,7 +36,7 @@ import pcc.puppet.enforcer.realm.department.ports.event.DepartmentCreateEvent;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Client("${micronaut.http.services.pcc-realm-department.path}")
+@Client("pcc-realm-department")
 @Header(name = HttpHeaders.ACCEPT_ENCODING, value = "gzip, deflate")
 @Header(
     name = HttpHeaders.USER_AGENT,
@@ -45,7 +44,6 @@ import reactor.core.publisher.Mono;
 public interface DepartmentClient extends DepartmentOperations {
 
   @Override
-  @NewSpan
   @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
   Mono<DepartmentCreateEvent> departmentCreate(
       @NonNull @SpanTag(REQUESTER) @Header(REQUESTER) String requester,
@@ -53,7 +51,6 @@ public interface DepartmentClient extends DepartmentOperations {
       @NonNull @Body @Valid DepartmentCreateCommand createCommand);
 
   @Override
-  @NewSpan
   @Get(uri = "/{departmentId}", consumes = MediaType.APPLICATION_JSON)
   Mono<DepartmentPresenter> findDepartment(
       @NonNull @SpanTag(REQUESTER) @Header(REQUESTER) String requester,
@@ -61,7 +58,6 @@ public interface DepartmentClient extends DepartmentOperations {
       @NonNull String departmentId);
 
   @Override
-  @NewSpan
   @Get(uri = "/{departmentId}/child", consumes = MediaType.APPLICATION_JSON)
   Flux<DepartmentPresenter> findChildDepartments(
       @NonNull @SpanTag(REQUESTER) @Header(REQUESTER) String requester,

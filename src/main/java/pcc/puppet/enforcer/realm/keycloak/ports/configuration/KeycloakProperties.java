@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.authentication.adapters.gateway.rest_countries.response;
+package pcc.puppet.enforcer.realm.keycloak.ports.configuration;
 
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.Nullable;
-import java.util.List;
-import lombok.Builder;
+import io.micronaut.context.annotation.ConfigurationProperties;
 import lombok.Data;
 
 @Data
-@Builder
-@Introspected
-public class CountryCapitalInfo {
+@ConfigurationProperties("provider.keycloak")
+public class KeycloakProperties {
 
-  @Nullable private List<String> latlng;
+  private String clientId;
+  private String clientSecret;
+  private String realm;
 }

@@ -22,7 +22,7 @@ import java.util.List;
 import pcc.puppet.enforcer.realm.authentication.adapters.gateway.rest_countries.response.RestCountriesResponse;
 import reactor.core.publisher.Mono;
 
-@Client("${micronaut.http.services.provider-rest-countries.url}")
+@Client("provider-rest-countries")
 public interface RestCountriesApiClient {
 
   @Get(uri = "/name/{name}", consumes = MediaType.APPLICATION_JSON)

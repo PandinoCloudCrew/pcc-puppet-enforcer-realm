@@ -33,7 +33,7 @@ import pcc.puppet.enforcer.realm.organization.adapters.presenter.OrganizationPre
 import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
 import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEvent;
 
-@MicronautTest
+@MicronautTest(transactional = false)
 class OrganizationControllerTest {
 
   @Inject private OrganizationClient client;

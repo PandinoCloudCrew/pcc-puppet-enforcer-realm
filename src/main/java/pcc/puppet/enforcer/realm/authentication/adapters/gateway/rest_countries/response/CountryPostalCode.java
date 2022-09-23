@@ -15,8 +15,8 @@
  */
 package pcc.puppet.enforcer.realm.authentication.adapters.gateway.rest_countries.response;
 
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.serde.annotation.Serdeable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@Serdeable
+@Introspected
 @NoArgsConstructor
 @AllArgsConstructor
 public class CountryPostalCode {

@@ -15,9 +15,9 @@
  */
 package pcc.puppet.enforcer.realm.department.ports.event;
 
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.serde.annotation.Serdeable;
 import javax.validation.Valid;
 import lombok.Builder;
 import lombok.Data;
@@ -25,7 +25,7 @@ import pcc.puppet.enforcer.realm.common.contact.ports.event.CreateContactInforma
 
 @Data
 @Builder
-@Serdeable
+@Introspected
 public class DepartmentCreateEvent {
   @NonNull private String id;
   @Nullable private String parentId;

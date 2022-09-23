@@ -12,8 +12,11 @@
     <logger level="ERROR" name="io.micronaut.core.beans"/>
     <logger level="ERROR" name="io.micronaut.context"/>
     <logger level="ERROR" name="io.micronaut.security"/>
+    <logger level="INFO" name="io.micronaut.configuration"/>
+    <logger level="INFO" name="io.micronaut.context.condition"/>
+    <logger level="TRACE" name="io.micronaut.discovery"/>
     <logger level="ERROR" name="io.micronaut.http"/>
-    <logger level="DEBUG" name="io.micronaut.http.client"/>
+    <logger level="INFO" name="io.micronaut.http.client"/>
     <logger level="TRACE" name="io.micronaut.tracing"/>
     <logger level="ERROR" name="io.micrometer.elastic"/>
     <logger level="INFO" name="io.micronaut.discovery"/>

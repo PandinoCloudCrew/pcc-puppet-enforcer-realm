@@ -15,8 +15,8 @@
  */
 package pcc.puppet.enforcer.realm.common.contact.ports.command;
 
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.NonNull;
-import io.micronaut.serde.annotation.Serdeable;
 import lombok.Builder;
 import lombok.Data;
 import pcc.puppet.enforcer.realm.common.generator.values.CityNameStrategy;
@@ -33,7 +33,7 @@ import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
-@Serdeable
+@Introspected
 public class CreateContactInformationCommand {
   @NonNull
   @PodamStrategyValue(FirstNameStrategy.class)

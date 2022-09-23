@@ -15,15 +15,15 @@
  */
 package pcc.puppet.enforcer.realm.member.ports.event;
 
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.NonNull;
-import io.micronaut.serde.annotation.Serdeable;
 import lombok.Builder;
 import lombok.Data;
 import pcc.puppet.enforcer.realm.common.contact.ports.event.CreateContactInformationEvent;
 
 @Data
 @Builder
-@Serdeable
+@Introspected
 public class MemberCreateEvent {
   @NonNull private String id;
   @NonNull private String organizationId;

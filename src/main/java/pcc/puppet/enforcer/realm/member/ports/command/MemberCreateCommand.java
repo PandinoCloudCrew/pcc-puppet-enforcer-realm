@@ -15,8 +15,8 @@
  */
 package pcc.puppet.enforcer.realm.member.ports.command;
 
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.NonNull;
-import io.micronaut.serde.annotation.Serdeable;
 import lombok.Builder;
 import lombok.Data;
 import pcc.puppet.enforcer.realm.common.contact.ports.command.CreateContactInformationCommand;
@@ -27,7 +27,7 @@ import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
-@Serdeable
+@Introspected
 public class MemberCreateCommand {
   @NonNull
   @PodamStrategyValue(ObjectIdStrategy.class)

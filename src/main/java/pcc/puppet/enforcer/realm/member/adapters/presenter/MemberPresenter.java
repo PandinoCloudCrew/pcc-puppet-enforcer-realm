@@ -15,15 +15,15 @@
  */
 package pcc.puppet.enforcer.realm.member.adapters.presenter;
 
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.NonNull;
-import io.micronaut.serde.annotation.Serdeable;
 import lombok.Builder;
 import lombok.Data;
 import pcc.puppet.enforcer.realm.common.contact.adapters.presenter.ContactInformationPresenter;
 
 @Data
 @Builder
-@Serdeable
+@Introspected
 public class MemberPresenter {
   @NonNull private String id;
   @NonNull private String organizationId;

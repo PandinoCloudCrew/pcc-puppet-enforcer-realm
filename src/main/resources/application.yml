@@ -7,7 +7,7 @@ micronaut:
       access-logger:
         enabled: true
         loggerName: HTTP_ACCESS_LOGGER
-        log-format: "%h %r %s %b"
+        log-format: "%h %r %s %b %D %{User-Agent}i %{Version}o %{uber-trace-id}o"
   metrics:
     enabled: true
     export:
@@ -27,7 +27,7 @@ micronaut:
         signatures:
           jwks:
             keycloak:
-              url: ${AUTH_JKWS:`http://desktop-egi38ur-docker-desktop-1:8080/auth/realms/master/protocol/openid-connect/certs`}
+              url: ${jwks-uri}
     intercept-url-map:
       - access: isAnonymous()
         pattern: /swagger/**
@@ -44,26 +44,25 @@ micronaut:
   http:
     services:
       pcc-realm-organization:
+        url: http://localhost:${micronaut.server.port}
         path: /realm/organization
       pcc-realm-department:
+        url: http://localhost:${micronaut.server.port}
         path: /realm/department
       pcc-realm-member:
+        url: http://localhost:${micronaut.server.port}
         path: /realm/member
       pcc-realm-passport:
+        url: http://localhost:${micronaut.server.port}
         path: /realm/passport
       provider-rest-countries:
-        url: https://restcountries.com/v3.1
-
-tracing:
-  jaeger:
-    tracer-tags:
-      version: "@VERSION@"
-    enabled: true
-    sampler:
-      probability: 1.0
-    sender:
-      agent-port: 6831
-      agent-host: localhost
+        url: ${provider-rest-countries-url}
+      provider-keycloak:
+        url: ${provider-keycloak-url}
+  caches:
+    keycloak:
+      maximum-size: 10
+      expire-after-write: PT4M
 
 netty:
   default:
@@ -79,9 +78,9 @@ flyway:
   datasources:
     default:
       enabled: true
-      url: 'jdbc:postgresql://localhost:5432/pcc_realm'
-      username: postgres
-      password: postgres
+      url: ${jdbc-uri}
+      username: ${jdbc-username}
+      password: ${jdbc-password}
       baseline-on-migrate: true
       baseline-version: 0
       locations:
@@ -92,15 +91,22 @@ datasources:
     pooled: true
     jmxExport: true
     dbCreate: none
-    url: 'jdbc:postgresql://localhost:5432/pcc_realm'
-    dialect: postgres
-    username: postgres
-    password: postgres
+    url: ${jdbc-uri}
+    dialect: ${jdbc-dialect}
+    username: ${jdbc-username}
+    password: ${jdbc-password}
 
 r2dbc:
   datasources:
     default:
-      url: 'r2dbc:postgresql://localhost:5432/pcc_realm'
-      dialect: postgres
-      username: postgres
-      password: postgres
+      url: ${r2dbc-uri}
+      dialect: ${jdbc-dialect}
+      username: ${jdbc-username}
+      password: ${jdbc-password}
+
+
+provider:
+  keycloak:
+    clientId: ${keycloak-clientId}
+    clientSecret: ${keycloak-clientSecret}
+    realm: ${keycloak-realm}

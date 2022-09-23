@@ -3,7 +3,7 @@
         <withJansi>false</withJansi>
         <encoder>
             <pattern>
-                [%X{stack}] [%X{originator}] [%X{owner}] [%X{userId}] [%X{trackId}] [%-5p] [%t] [%d{yyyy-MM-dd HH:mm:ss.SSS}] [%logger{15}] [%m]%n
+                [%X{traceId}] [%-5p] [%t] [%d{yyyy-MM-dd HH:mm:ss.SSS}] [%logger{15}] [%m]%n
             </pattern>
         </encoder>
     </appender>

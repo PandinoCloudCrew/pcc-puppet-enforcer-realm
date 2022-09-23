@@ -15,8 +15,8 @@
  */
 package pcc.puppet.enforcer.realm.authentication.adapters.gateway.rest_countries.response;
 
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.serde.annotation.Serdeable;
 import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@Serdeable
+@Introspected
 @NoArgsConstructor
 @AllArgsConstructor
 public class RestCountriesResponse {

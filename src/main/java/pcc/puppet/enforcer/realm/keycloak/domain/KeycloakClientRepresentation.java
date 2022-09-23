@@ -13,27 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.department.adapters.presenter;
+package pcc.puppet.enforcer.realm.keycloak.domain;
 
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.NonNull;
-import io.micronaut.core.annotation.Nullable;
-import javax.validation.Valid;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.common.contact.adapters.presenter.ContactInformationPresenter;
 
 @Data
 @Builder
 @Introspected
-public class DepartmentPresenter {
-  private String id;
-  @Nullable private String parentId;
-  @NonNull private String organizationId;
+public class KeycloakClientRepresentation {
+
   @NonNull private String name;
-  @NonNull private String location;
-  @NonNull @Valid private ContactInformationPresenter contactId;
-  @NonNull private String createdBy;
-  @NonNull private String createdAt;
-  @NonNull private Integer version;
+  @NonNull private String description;
+  @NonNull private Boolean serviceAccountsEnabled;
+  @NonNull private String clientId;
+  @NonNull private String secret;
 }
