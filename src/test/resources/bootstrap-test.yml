@@ -5,3 +5,6 @@ micronaut:
     enabled: false
   otel:
     enabled: false
+tracing:
+  jaeger:
+    enabled: false
