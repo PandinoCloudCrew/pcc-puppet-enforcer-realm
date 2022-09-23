@@ -34,7 +34,7 @@ import pcc.puppet.enforcer.realm.department.ports.command.DepartmentCreateComman
 import pcc.puppet.enforcer.realm.department.ports.event.DepartmentCreateEvent;
 import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEvent;
 
-@MicronautTest
+@MicronautTest(transactional = false)
 class DepartmentControllerTest {
   @Inject private DepartmentClient client;
   @Inject private TestDomainGenerator generator;

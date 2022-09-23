@@ -2,7 +2,7 @@ micronaut:
   application:
     name: test-pcc-puppet-enforcer-realm
   server:
-    port: -1
+    port: ${random.port}
     netty:
       access-logger:
         enabled: true
@@ -19,12 +19,21 @@ micronaut:
     enabled: false
   http:
     services:
-      organization:
+      pcc-realm-organization:
+        url: http://localhost:${micronaut.server.port}
         path: /realm/organization
-      department:
+      pcc-realm-department:
+        url: http://localhost:${micronaut.server.port}
         path: /realm/department
-      member:
+      pcc-realm-member:
+        url: http://localhost:${micronaut.server.port}
         path: /realm/member
+      provider-rest-countries:
+        url: http://localhost:${micronaut.server.port}
+        path: /rest-countries
+      provider-keycloak:
+        url: http://localhost:${micronaut.server.port}
+        path: /keycloak
 
 flyway:
   enabled: true
@@ -56,3 +65,9 @@ r2dbc:
       username: sa
       password: ''
       dialect: h2
+
+provider:
+  keycloak:
+    clientId: testPlaceholderClient
+    clientSecret: testPlaceholderSecret
+    realm: test

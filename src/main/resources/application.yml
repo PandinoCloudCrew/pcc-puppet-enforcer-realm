@@ -44,12 +44,16 @@ micronaut:
   http:
     services:
       pcc-realm-organization:
+        url: http://localhost:${micronaut.server.port}
         path: /realm/organization
       pcc-realm-department:
+        url: http://localhost:${micronaut.server.port}
         path: /realm/department
       pcc-realm-member:
+        url: http://localhost:${micronaut.server.port}
         path: /realm/member
       pcc-realm-passport:
+        url: http://localhost:${micronaut.server.port}
         path: /realm/passport
       provider-rest-countries:
         url: ${provider-rest-countries-url}

@@ -26,7 +26,7 @@ import pcc.puppet.enforcer.realm.authentication.ports.command.ConsumerPassportCr
 import pcc.puppet.enforcer.realm.authentication.ports.event.ConsumerPassportCreateEvent;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 
-@MicronautTest
+@MicronautTest(transactional = false)
 class ConsumerPassportControllerTest {
 
   @Inject private ConsumerPassportClient client;

@@ -1,5 +1,6 @@
 micronaut:
   application:
+    default-charset: UTF-8
     name: test-pcc-puppet-enforcer-realm
   config-client:
     enabled: false
@@ -8,3 +9,7 @@ micronaut:
 tracing:
   jaeger:
     enabled: false
+vault:
+  client:
+    config:
+      enabled: false

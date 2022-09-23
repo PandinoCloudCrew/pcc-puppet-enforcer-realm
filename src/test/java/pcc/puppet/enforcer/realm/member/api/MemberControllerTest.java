@@ -35,7 +35,7 @@ import pcc.puppet.enforcer.realm.member.ports.command.MemberCreateCommand;
 import pcc.puppet.enforcer.realm.member.ports.event.MemberCreateEvent;
 import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEvent;
 
-@MicronautTest
+@MicronautTest(transactional = false)
 class MemberControllerTest {
 
   @Inject private MemberClient client;

@@ -38,7 +38,7 @@ import pcc.puppet.enforcer.realm.member.ports.event.MemberCreateEvent;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Client("${micronaut.http.services.pcc-realm-member.path}")
+@Client("pcc-realm-member")
 @Header(name = HttpHeaders.ACCEPT_ENCODING, value = "gzip, deflate")
 @Header(
     name = HttpHeaders.USER_AGENT,

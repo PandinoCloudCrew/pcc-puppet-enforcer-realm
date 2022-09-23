@@ -16,7 +16,7 @@ tracing:
   jaeger:
     enabled: true
     sampler:
-      probability: ${jaeger-sample}
+      probability: ${jaeger-sample:`1.0`}
     sender:
-      agent-port: ${jaeger-port}
-      agent-host: ${jaeger-host}
+      agent-port: ${jaeger-port:`6831`}
+      agent-host: ${jaeger-host:`localhost`}
