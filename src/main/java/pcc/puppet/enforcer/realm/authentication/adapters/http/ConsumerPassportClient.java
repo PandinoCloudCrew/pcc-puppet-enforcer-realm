@@ -23,7 +23,6 @@ import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.client.annotation.Client;
-import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.annotation.SpanTag;
 import pcc.puppet.enforcer.realm.Project;
 import pcc.puppet.enforcer.realm.authentication.domain.ConsumerPassportOperations;
@@ -38,7 +37,6 @@ import reactor.core.publisher.Mono;
     value = "ConsumerPassportClient/" + Project.VERSION + " (" + Project.NAME + ")")
 public interface ConsumerPassportClient extends ConsumerPassportOperations {
 
-  @NewSpan
   @Override
   @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
   Mono<ConsumerPassportCreateEvent> createConsumerPassport(

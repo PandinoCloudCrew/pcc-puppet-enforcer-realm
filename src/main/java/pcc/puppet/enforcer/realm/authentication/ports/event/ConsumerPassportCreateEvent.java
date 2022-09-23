@@ -15,8 +15,9 @@
  */
 package pcc.puppet.enforcer.realm.authentication.ports.event;
 
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.NonNull;
-import io.micronaut.serde.annotation.Serdeable;
+import io.micronaut.security.token.jwt.render.AccessRefreshToken;
 import lombok.Builder;
 import lombok.Data;
 import pcc.puppet.enforcer.realm.department.ports.event.DepartmentCreateEvent;
@@ -25,13 +26,15 @@ import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEven
 
 @Data
 @Builder
-@Serdeable
+@Introspected
 public class ConsumerPassportCreateEvent {
 
   @NonNull private String memberId;
+  @NonNull private String username;
   @NonNull private MemberCreateEvent member;
   @NonNull private OrganizationCreateEvent organization;
   @NonNull private DepartmentCreateEvent department;
+  @NonNull private AccessRefreshToken accessRefreshToken;
 
   public ConsumerPassportCreateEvent organization(OrganizationCreateEvent organizationCreateEvent) {
     this.organization = organizationCreateEvent;
@@ -45,6 +48,11 @@ public class ConsumerPassportCreateEvent {
 
   public ConsumerPassportCreateEvent member(MemberCreateEvent memberCreateEvent) {
     this.member = memberCreateEvent;
+    return this;
+  }
+
+  public ConsumerPassportCreateEvent token(AccessRefreshToken token) {
+    this.accessRefreshToken = token;
     return this;
   }
 

@@ -15,8 +15,8 @@
  */
 package pcc.puppet.enforcer.realm.authentication.ports.command;
 
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.NonNull;
-import io.micronaut.serde.annotation.Serdeable;
 import lombok.Builder;
 import lombok.Data;
 import pcc.puppet.enforcer.realm.common.generator.values.AddressStrategy;
@@ -31,12 +31,11 @@ import pcc.puppet.enforcer.realm.common.generator.values.LastNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.PasswordStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.PhoneNumberStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.TaxIdStrategy;
-import pcc.puppet.enforcer.realm.common.generator.values.UsernameStrategy;
 import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
-@Serdeable
+@Introspected
 public class ConsumerPassportCreateCommand {
 
   @NonNull
@@ -46,10 +45,6 @@ public class ConsumerPassportCreateCommand {
   @NonNull
   @PodamStrategyValue(LastNameStrategy.class)
   private String lastName;
-
-  @NonNull
-  @PodamStrategyValue(UsernameStrategy.class)
-  private String username;
 
   @NonNull
   @PodamStrategyValue(PasswordStrategy.class)

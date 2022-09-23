@@ -13,27 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.department.adapters.presenter;
+package pcc.puppet.enforcer.realm.keycloak.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.core.annotation.Nullable;
-import javax.validation.Valid;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.common.contact.adapters.presenter.ContactInformationPresenter;
 
 @Data
 @Builder
 @Introspected
-public class DepartmentPresenter {
-  private String id;
-  @Nullable private String parentId;
-  @NonNull private String organizationId;
-  @NonNull private String name;
-  @NonNull private String location;
-  @NonNull @Valid private ContactInformationPresenter contactId;
-  @NonNull private String createdBy;
-  @NonNull private String createdAt;
-  @NonNull private Integer version;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class KeycloakClientCredentials {
+
+  @Builder.Default
+  @JsonProperty("grant_type")
+  private String grant_type = "client_credentials";
+
+  @JsonProperty("client_id")
+  private String client_id;
+
+  @JsonProperty("client_secret")
+  private String client_secret;
 }

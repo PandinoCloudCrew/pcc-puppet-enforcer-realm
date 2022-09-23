@@ -25,7 +25,6 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.client.annotation.Client;
-import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.annotation.SpanTag;
 import javax.validation.Valid;
 import pcc.puppet.enforcer.realm.Project;
@@ -43,21 +42,18 @@ import reactor.core.publisher.Mono;
     value = "OrganizationClient/" + Project.VERSION + " (" + Project.NAME + ")")
 public interface OrganizationClient extends OrganizationOperations {
 
-  @NewSpan
   @Override
   @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
   Mono<OrganizationCreateEvent> organizationCreate(
       @NonNull @SpanTag(REQUESTER) @Header(REQUESTER) String requester,
       @NonNull @Body @Valid OrganizationCreateCommand createCommand);
 
-  @NewSpan
   @Override
   @Get(uri = "/{organizationId}", consumes = MediaType.APPLICATION_JSON)
   Mono<OrganizationPresenter> findOrganization(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
       @SpanTag @NonNull String organizationId);
 
-  @NewSpan
   @Override
   @Get(uri = "/{organizationId}/child", consumes = MediaType.APPLICATION_JSON)
   Flux<OrganizationPresenter> findChildOrganizations(

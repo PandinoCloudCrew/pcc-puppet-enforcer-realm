@@ -15,13 +15,13 @@
  */
 package pcc.puppet.enforcer.realm.common.contact.adapters.presenter;
 
-import io.micronaut.serde.annotation.Serdeable;
+import io.micronaut.core.annotation.Introspected;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-@Serdeable
+@Introspected
 public class ContactInformationPresenter {
 
   private String firstName;

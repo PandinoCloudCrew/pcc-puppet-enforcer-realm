@@ -15,6 +15,7 @@
  */
 package pcc.puppet.enforcer.realm.department.domain;
 
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
@@ -23,7 +24,6 @@ import io.micronaut.data.annotation.MappedEntity;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.annotation.Version;
 import io.micronaut.data.model.DataType;
-import io.micronaut.serde.annotation.Serdeable;
 import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
@@ -36,7 +36,7 @@ import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
-@Serdeable
+@Introspected
 @MappedEntity(value = "department")
 public class Department {
 

@@ -28,7 +28,6 @@ import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.http.client.annotation.Client;
-import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.annotation.SpanTag;
 import javax.validation.Valid;
 import pcc.puppet.enforcer.realm.Project;
@@ -47,7 +46,6 @@ import reactor.core.publisher.Mono;
 public interface MemberClient extends MemberOperations {
 
   @Override
-  @NewSpan
   @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
   Mono<MemberCreateEvent> memberCreate(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
@@ -56,7 +54,6 @@ public interface MemberClient extends MemberOperations {
       @NonNull @Valid @Body MemberCreateCommand createCommand);
 
   @Override
-  @NewSpan
   @Get(uri = "/{memberId}", consumes = MediaType.APPLICATION_JSON)
   Mono<MemberPresenter> findMember(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
@@ -65,7 +62,6 @@ public interface MemberClient extends MemberOperations {
       @SpanTag @NonNull @QueryValue("memberId") String memberId);
 
   @Override
-  @NewSpan
   @Get(uri = "/organization/{parentOrganizationId}", consumes = MediaType.APPLICATION_JSON)
   Flux<MemberPresenter> findOrganizationMembers(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
@@ -74,7 +70,6 @@ public interface MemberClient extends MemberOperations {
       @SpanTag @NonNull String parentOrganizationId);
 
   @Override
-  @NewSpan
   @Get(uri = "/department/{parentDepartmentId}", consumes = MediaType.APPLICATION_JSON)
   Flux<MemberPresenter> findDepartmentMembers(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,

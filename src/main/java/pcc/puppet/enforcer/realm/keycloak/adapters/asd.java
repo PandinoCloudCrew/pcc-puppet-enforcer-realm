@@ -13,18 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.authentication.adapters.gateway.rest_countries.response;
+package pcc.puppet.enforcer.realm.keycloak.adapters;
 
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.Nullable;
-import java.util.List;
-import lombok.Builder;
-import lombok.Data;
-
-@Data
-@Builder
-@Introspected
-public class CountryCapitalInfo {
-
-  @Nullable private List<String> latlng;
-}
+public class asd {}

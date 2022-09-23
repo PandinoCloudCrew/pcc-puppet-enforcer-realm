@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.authentication.adapters.gateway.rest_countries.response;
+package pcc.puppet.enforcer.realm.keycloak.domain.service;
 
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.Nullable;
-import java.util.List;
-import lombok.Builder;
-import lombok.Data;
+import io.micronaut.security.token.jwt.render.AccessRefreshToken;
+import java.util.Optional;
+import reactor.core.publisher.Mono;
 
-@Data
-@Builder
-@Introspected
-public class CountryCapitalInfo {
+public interface KeycloakService {
+  Mono<AccessRefreshToken> token();
 
-  @Nullable private List<String> latlng;
+  Mono<AccessRefreshToken> token(String clientId, String clientSecret);
+
+  Mono<Optional<String>> createClient(
+      String name, String description, String clientId, String clientSecret);
 }

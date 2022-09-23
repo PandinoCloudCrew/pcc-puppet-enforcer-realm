@@ -2,6 +2,21 @@ micronaut:
   application:
     name: pcc-puppet-enforcer-realm
   config-client:
-    enabled: false
-  otel:
     enabled: true
+
+vault:
+  client:
+    uri: ${HC_VAULT_URI}
+    token: ${HC_VAULT_TOKEN}
+    kv-version: V2
+    config:
+      enabled: true
+
+tracing:
+  jaeger:
+    enabled: true
+    sampler:
+      probability: ${jaeger-sample}
+    sender:
+      agent-port: ${jaeger-port}
+      agent-host: ${jaeger-host}

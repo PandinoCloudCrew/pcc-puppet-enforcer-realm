@@ -16,6 +16,9 @@
 package pcc.puppet.enforcer.realm.authentication.domain.service;
 
 import jakarta.inject.Singleton;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import pcc.puppet.enforcer.realm.authentication.adapters.gateway.rest_countries.RestCountriesApiClient;
 import pcc.puppet.enforcer.realm.authentication.adapters.gateway.rest_countries.response.CountryCurrency;
@@ -25,10 +28,14 @@ import pcc.puppet.enforcer.realm.authentication.ports.event.ConsumerPassportCrea
 import pcc.puppet.enforcer.realm.common.contact.ports.command.CreateContactInformationCommand;
 import pcc.puppet.enforcer.realm.department.adapters.http.DepartmentClient;
 import pcc.puppet.enforcer.realm.department.ports.command.DepartmentCreateCommand;
+import pcc.puppet.enforcer.realm.department.ports.event.DepartmentCreateEvent;
+import pcc.puppet.enforcer.realm.keycloak.domain.service.KeycloakService;
 import pcc.puppet.enforcer.realm.member.adapters.http.MemberClient;
 import pcc.puppet.enforcer.realm.member.ports.command.MemberCreateCommand;
+import pcc.puppet.enforcer.realm.member.ports.event.MemberCreateEvent;
 import pcc.puppet.enforcer.realm.organization.adapters.http.OrganizationClient;
 import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
+import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEvent;
 import reactor.core.publisher.Mono;
 
 @Singleton
@@ -40,6 +47,7 @@ public class DefaultConsumerPassportService implements ConsumerPassportService {
   private final DepartmentClient departmentClient;
   private final MemberClient memberClient;
   private final RestCountriesApiClient countriesApiClient;
+  private final KeycloakService keycloakService;
 
   @Override
   public Mono<ConsumerPassportCreateEvent> createConsumerPassport(
@@ -52,76 +60,145 @@ public class DefaultConsumerPassportService implements ConsumerPassportService {
             arrayResponse -> {
               RestCountriesResponse restCountriesResponse = arrayResponse.get(0);
               CreateContactInformationCommand createContactInformationCommand =
-                  CreateContactInformationCommand.builder()
-                      .firstName(passportCommand.getFirstName())
-                      .lastName(passportCommand.getLastName())
-                      .country(passportCommand.getCountry())
-                      .email(passportCommand.getEmail())
-                      .phoneNumber(passportCommand.getPhoneNumber())
-                      .city(passportCommand.getCity())
-                      .position(passportCommand.getPosition())
-                      .locale(
-                          restCountriesResponse.getLanguages().values().stream()
-                              .findFirst()
-                              .orElse(NOT_DEFINED))
-                      .zoneId(
-                          restCountriesResponse.getTimezones().stream()
-                              .findFirst()
-                              .orElse(NOT_DEFINED))
-                      .currency(
-                          restCountriesResponse.getCurrencies().values().stream()
-                              .findFirst()
-                              .orElse(CountryCurrency.builder().name(NOT_DEFINED).build())
-                              .getName())
-                      .build();
-              OrganizationCreateCommand organizationCreateCommand =
-                  OrganizationCreateCommand.builder()
-                      .name(passportCommand.getOrganizationName())
-                      .country(passportCommand.getCountry())
-                      .city(passportCommand.getCity())
-                      .location(passportCommand.getLocation())
-                      .taxId(passportCommand.getTaxId())
-                      .contactId(createContactInformationCommand)
-                      .build();
-
-              return organizationClient
-                  .organizationCreate(requester, organizationCreateCommand)
+                  getCreateContactInformationCommand(passportCommand, restCountriesResponse);
+              return createOrganization(requester, passportCommand, createContactInformationCommand)
                   .map(consumerPassportEvent::organization)
                   .flatMap(
-                      passportEvent -> {
-                        DepartmentCreateCommand departmentCreateCommand =
-                            DepartmentCreateCommand.builder()
-                                .organizationId(passportEvent.organizationId())
-                                .name(passportCommand.getDepartmentName())
-                                .location(passportCommand.getLocation())
-                                .contactId(createContactInformationCommand)
-                                .build();
-                        return departmentClient.departmentCreate(
-                            requester, passportEvent.organizationId(), departmentCreateCommand);
-                      })
+                      passportEvent ->
+                          createDepartment(
+                              requester,
+                              passportEvent,
+                              passportCommand,
+                              createContactInformationCommand))
                   .map(consumerPassportEvent::department)
                   .flatMap(
-                      passportEvent -> {
-                        MemberCreateCommand memberCreateCommand =
-                            MemberCreateCommand.builder()
-                                .contactId(createContactInformationCommand)
-                                .departmentId(passportEvent.departmentId())
-                                .organizationId(passportEvent.organizationId())
-                                .username(passportCommand.getUsername())
-                                .password(passportCommand.getPassword())
-                                .build();
-                        return memberClient.memberCreate(
-                            requester,
-                            passportEvent.organizationId(),
-                            passportEvent.departmentId(),
-                            memberCreateCommand);
-                      })
+                      passportEvent ->
+                          createMember(
+                              requester,
+                              passportEvent,
+                              passportCommand,
+                              createContactInformationCommand))
                   .map(consumerPassportEvent::member)
-                  .map(
+                  .flatMap(
                       passportCreateEvent -> {
                         passportCreateEvent.setMemberId(passportCreateEvent.memberId());
-                        return passportCreateEvent;
-                      });
+                        passportCreateEvent.setUsername(
+                            passportCreateEvent.getMember().getUsername());
+                        String description =
+                            String.format(
+                                """
+                                Organization ID: %s Name: %s
+                                Department ID: %s Name: %s
+                                Member ID: %s Username: %s
+                                """,
+                                passportCreateEvent.organizationId(),
+                                passportCreateEvent.getOrganization().getName(),
+                                passportCreateEvent.departmentId(),
+                                passportCreateEvent.getDepartment().getName(),
+                                passportCreateEvent.memberId(),
+                                passportCreateEvent.getMember().getUsername());
+                        return keycloakService
+                            .createClient(
+                                passportCommand.getOrganizationName(),
+                                description,
+                                passportCommand.getEmail(),
+                                passportCommand.getPassword())
+                            .flatMap(
+                                optional ->
+                                    keycloakService.token(
+                                        passportCommand.getEmail(), passportCommand.getPassword()));
+                      })
+                  .map(consumerPassportEvent::token);
             });
+  }
+
+  private Mono<MemberCreateEvent> createMember(
+      String requester,
+      ConsumerPassportCreateEvent passportEvent,
+      ConsumerPassportCreateCommand passportCommand,
+      CreateContactInformationCommand contactInformationCommand) {
+    MemberCreateCommand memberCreateCommand =
+        MemberCreateCommand.builder()
+            .contactId(contactInformationCommand)
+            .departmentId(passportEvent.departmentId())
+            .organizationId(passportEvent.organizationId())
+            .username(passportCommand.getEmail())
+            .password(passportCommand.getPassword())
+            .build();
+    return memberClient.memberCreate(
+        requester,
+        passportEvent.organizationId(),
+        passportEvent.departmentId(),
+        memberCreateCommand);
+  }
+
+  private Mono<OrganizationCreateEvent> createOrganization(
+      String requester,
+      ConsumerPassportCreateCommand passportCommand,
+      CreateContactInformationCommand contactInformationCommand) {
+    OrganizationCreateCommand organizationCreateCommand =
+        getOrganizationCreateCommand(passportCommand, contactInformationCommand);
+    return organizationClient.organizationCreate(requester, organizationCreateCommand);
+  }
+
+  private Mono<DepartmentCreateEvent> createDepartment(
+      String requester,
+      ConsumerPassportCreateEvent passportEvent,
+      ConsumerPassportCreateCommand passportCommand,
+      CreateContactInformationCommand contactInformationCommand) {
+    DepartmentCreateCommand departmentCreateCommand =
+        DepartmentCreateCommand.builder()
+            .organizationId(passportEvent.organizationId())
+            .name(passportCommand.getDepartmentName())
+            .location(passportCommand.getLocation())
+            .contactId(contactInformationCommand)
+            .build();
+    return departmentClient.departmentCreate(
+        requester, passportEvent.organizationId(), departmentCreateCommand);
+  }
+
+  private static OrganizationCreateCommand getOrganizationCreateCommand(
+      ConsumerPassportCreateCommand passportCommand,
+      CreateContactInformationCommand createContactInformationCommand) {
+    return OrganizationCreateCommand.builder()
+        .name(passportCommand.getOrganizationName())
+        .country(passportCommand.getCountry())
+        .city(passportCommand.getCity())
+        .location(passportCommand.getLocation())
+        .taxId(passportCommand.getTaxId())
+        .contactId(createContactInformationCommand)
+        .build();
+  }
+
+  private static CreateContactInformationCommand getCreateContactInformationCommand(
+      ConsumerPassportCreateCommand passportCommand, RestCountriesResponse restCountriesResponse) {
+    return CreateContactInformationCommand.builder()
+        .firstName(passportCommand.getFirstName())
+        .lastName(passportCommand.getLastName())
+        .country(passportCommand.getCountry())
+        .email(passportCommand.getEmail())
+        .phoneNumber(passportCommand.getPhoneNumber())
+        .city(passportCommand.getCity())
+        .position(passportCommand.getPosition())
+        .locale(
+            Optional.ofNullable(restCountriesResponse.getLanguages())
+                .orElse(Map.of())
+                .values()
+                .stream()
+                .findFirst()
+                .orElse(NOT_DEFINED))
+        .zoneId(
+            Optional.ofNullable(restCountriesResponse.getTimezones()).orElse(List.of()).stream()
+                .findFirst()
+                .orElse(NOT_DEFINED))
+        .currency(
+            Optional.ofNullable(restCountriesResponse.getCurrencies())
+                .orElse(Map.of())
+                .values()
+                .stream()
+                .findFirst()
+                .orElse(CountryCurrency.builder().name(NOT_DEFINED).build())
+                .getName())
+        .build();
   }
 }
