@@ -1,0 +1,33 @@
+---
+# Middleware
+# Strip prefix /overview
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: realm-ingress-middleware
+  namespace: pcc-puppet-enforcer
+spec:
+  stripPrefix:
+    forceSlash: false
+    prefixes:
+      - /realm
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pcc-puppet-enforcer-realm-ingress
+  namespace: pcc-puppet-enforcer
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.middlewares: pcc-puppet-enforcer-realm-ingress-middleware@kubernetescrd
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /realm
+            pathType: Prefix
+            backend:
+              service:
+                name: pcc-puppet-enforcer-realm-service
+                port:
+                  number: 9900

@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pcc-puppet-enforcer-realm-deployment
+  namespace: pcc-puppet-enforcer
+  labels:
+    app: pcc-puppet-enforcer-realm-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pcc-puppet-enforcer-realm-deployment
+  template:
+    metadata:
+      name: pcc-puppet-enforcer-realm-deployment
+      labels:
+        app: pcc-puppet-enforcer-realm-deployment
+    spec:
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: pcc-registry
+      containers:
+        - name: pcc-puppet-enforcer-realm-deployment
+          image: registry.ops.pandino.co/pcc-puppet-enforcer/pcc-puppet-enforcer-realm:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: MICRONAUT_ENVIRONMENTS
+              value: k8s,tailscale
+            - name: HC_VAULT_URI
+              valueFrom:
+                secretKeyRef:
+                  name: vault-config
+                  key: HC_VAULT_URI
+            - name: HC_VAULT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: vault-config
+                  key: HC_VAULT_TOKEN
+          ports:
+            - name: http
+              containerPort: 9900
+          readinessProbe:
+            httpGet:
+              path: /health/readiness
+              port: 9900
+            initialDelaySeconds: 5
+            timeoutSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /health/liveness
+              port: 9900
+            initialDelaySeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 10
