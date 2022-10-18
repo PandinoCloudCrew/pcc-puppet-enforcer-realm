@@ -21,7 +21,6 @@ jobs:
           echo ${{ secrets.KUBE_CONFIG_DATA }} | base64 --decode > config
           kubectl --kubeconfig ./config set image deployment/pcc-puppet-enforcer-realm-deployment pcc-puppet-enforcer-realm-container=${DOCKER_REGISTRY_URL}/${DOCKER_REPOSITORY_PATH}/pcc-puppet-enforcer-realm:${{ github.ref_name }}
       - name: verify deployment
-        uses: steebchen/kubectl@v2.0.0
         run: |
           echo ${{ secrets.KUBE_CONFIG_DATA }} | base64 --decode > config
           kubectl --kubeconfig ./config rollout status deployment/pcc-puppet-enforcer-realm-deployment
