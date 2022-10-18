@@ -20,9 +20,9 @@ spec:
       imagePullSecrets:
         - name: pcc-registry
       containers:
-        - name: pcc-puppet-enforcer-realm-deployment
+        - name: pcc-puppet-enforcer-realm-container
           image: registry.ops.pandino.co/pcc-puppet-enforcer/pcc-puppet-enforcer-realm:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           env:
             - name: MICRONAUT_ENVIRONMENTS
               value: k8s,tailscale
