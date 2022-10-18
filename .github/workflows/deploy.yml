@@ -16,11 +16,14 @@ jobs:
           authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
           version: 1.32.0
       - uses: actions/checkout@master
+      - name: Set Kubernetes Context
+        uses: azure/k8s-set-context@v1
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBE_CONFIG_DATA }}
       - name: deploy to cluster
         run: |
-          echo ${{ secrets.KUBE_CONFIG_DATA }} | base64 --decode > config
-          kubectl --kubeconfig ./config set image deployment/pcc-puppet-enforcer-realm-deployment pcc-puppet-enforcer-realm-container=${DOCKER_REGISTRY_URL}/${DOCKER_REPOSITORY_PATH}/pcc-puppet-enforcer-realm:${{ github.ref_name }}
+          kubectl set image deployment/pcc-puppet-enforcer-realm-deployment pcc-puppet-enforcer-realm-container=${DOCKER_REGISTRY_URL}/${DOCKER_REPOSITORY_PATH}/pcc-puppet-enforcer-realm:${{ github.ref_name }}
       - name: verify deployment
         run: |
-          echo ${{ secrets.KUBE_CONFIG_DATA }} | base64 --decode > config
-          kubectl --kubeconfig ./config rollout status deployment/pcc-puppet-enforcer-realm-deployment
+          kubectl rollout status deployment/pcc-puppet-enforcer-realm-deployment
