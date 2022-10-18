@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Tailscale
-        uses: tailscale/github-action@v1
+        uses: tailscale/github-action
         with:
           authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
       - uses: actions/checkout@master
