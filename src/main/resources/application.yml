@@ -9,7 +9,7 @@ micronaut:
         loggerName: HTTP_ACCESS_LOGGER
         log-format: "%h %r %s %b %D %{User-Agent}i %{Version}o %{uber-trace-id}o"
         exclusions:
-          - /health
+          - /health.*
   metrics:
     enabled: true
     export:
