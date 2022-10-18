@@ -9,9 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Tailscale
-        uses: tailscale/github-action
+        uses: tailscale/github-action@v1
         with:
           authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+          version: 1.32.0
       - uses: actions/checkout@master
       - name: deploy to cluster
         uses: steebchen/kubectl@v2.0.0
