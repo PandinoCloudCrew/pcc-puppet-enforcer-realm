@@ -50,6 +50,9 @@ jobs:
           method: kubeconfig
           kubeconfig: ${{ secrets.KUBE_CONFIG_DATA }}
       - name: deploy to cluster
+        env:
+          DOCKER_REPOSITORY_PATH: ${{ secrets.DOCKER_REPOSITORY_PATH }}
+          DOCKER_REGISTRY_URL: ${{ secrets.DOCKER_REGISTRY_URL }}
         run: |
           kubectl set image deployment/pcc-puppet-enforcer-realm-deployment pcc-puppet-enforcer-realm-container=${DOCKER_REGISTRY_URL}/${DOCKER_REPOSITORY_PATH}/pcc-puppet-enforcer-realm-native:${{ github.ref_name }}
       - name: verify deployment
