@@ -15,7 +15,8 @@
     <logger level="INFO" name="io.micronaut.configuration"/>
     <logger level="INFO" name="io.micronaut.context.condition"/>
     <logger level="TRACE" name="io.micronaut.discovery"/>
-    <logger level="ERROR" name="io.micronaut.http"/>
+    <logger level="DEBUG" name="io.micronaut.web"/>
+    <logger level="INFO" name="io.micronaut.http"/>
     <logger level="INFO" name="io.micronaut.http.client"/>
     <logger level="TRACE" name="io.micronaut.tracing"/>
     <logger level="ERROR" name="io.micrometer.elastic"/>

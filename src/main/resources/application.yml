@@ -66,6 +66,29 @@ micronaut:
       maximum-size: 10
       expire-after-write: PT4M
 
+endpoints:
+  info:
+    enabled: true
+    sensitive: true
+  beans:
+    enabled: true
+    sensitive: true
+  loggers:
+    enabled: true
+    write-sensitive: true
+  refresh:
+    enabled: true
+    sensitive: true
+  routes:
+    enabled: true
+    sensitive: true
+  env:
+    enabled: true
+    sensitive: true
+  stop:
+    enabled: true
+    sensitive: true
+
 netty:
   default:
     allocator:
