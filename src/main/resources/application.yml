@@ -46,19 +46,20 @@ micronaut:
   http:
     services:
       pcc-realm-organization:
-        url: http://localhost:${micronaut.server.port}
-        path: /realm/organization
+        url: ${pcc-realm-organization-url}
+        path: ${pcc-realm-organization-path}
       pcc-realm-department:
-        url: http://localhost:${micronaut.server.port}
-        path: /realm/department
+        url: ${pcc-realm-department-url}
+        path: ${pcc-realm-department-path}
       pcc-realm-member:
-        url: http://localhost:${micronaut.server.port}
-        path: /realm/member
+        url: ${pcc-realm-member-url}
+        path: ${pcc-realm-member-path}
       pcc-realm-passport:
-        url: http://localhost:${micronaut.server.port}
-        path: /realm/passport
+        url: ${pcc-realm-passport-url}
+        path: ${pcc-realm-passport-path}
       provider-rest-countries:
         url: ${provider-rest-countries-url}
+        path: ${provider-rest-countries-path}
       provider-keycloak:
         url: ${provider-keycloak-url}
   caches:
