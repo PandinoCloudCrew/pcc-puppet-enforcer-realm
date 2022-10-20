@@ -28,6 +28,9 @@ micronaut:
       pcc-realm-member:
         url: http://localhost:${micronaut.server.port}
         path: /realm/member
+      pcc-realm-passport:
+        url: http://localhost:${micronaut.server.port}
+        path: /realm/passport
       provider-rest-countries:
         url: http://localhost:${micronaut.server.port}
         path: /rest-countries
