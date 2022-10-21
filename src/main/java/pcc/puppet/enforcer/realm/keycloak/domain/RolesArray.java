@@ -13,20 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.keycloak.domain.service;
+package pcc.puppet.enforcer.realm.keycloak.domain;
 
-import io.micronaut.security.token.jwt.render.AccessRefreshToken;
-import java.util.Optional;
-import pcc.puppet.enforcer.realm.keycloak.domain.KeycloakTokenDetails;
-import reactor.core.publisher.Mono;
+import io.micronaut.core.annotation.Introspected;
+import java.util.ArrayList;
+import lombok.Data;
 
-public interface KeycloakService {
-  Mono<AccessRefreshToken> token();
-
-  Mono<AccessRefreshToken> token(String clientId, String clientSecret);
-
-  Mono<KeycloakTokenDetails> introspect(String token);
-
-  Mono<Optional<String>> createClient(
-      String name, String description, String clientId, String clientSecret);
+@Data
+@Introspected
+public class RolesArray {
+  private ArrayList<String> roles;
 }

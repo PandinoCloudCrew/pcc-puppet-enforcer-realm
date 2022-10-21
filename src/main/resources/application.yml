@@ -19,11 +19,14 @@ micronaut:
         step: PT1M
   security:
     enabled: true
+    endpoints:
+      login:
+        enabled: true
     token:
       enabled: true
       propagation:
         enabled: true
-        service-id-regex: \/realm\/.*
+        service-id-regex: pcc-realm.*
       jwt:
         enabled: true
         signatures:
@@ -35,6 +38,23 @@ micronaut:
         pattern: /swagger/**
       - access: isAnonymous()
         pattern: /swagger-ui/**
+    authentication: bearer
+    oauth2:
+      clients:
+        keycloak:
+          openid:
+            issuer: ${provider-keycloak-url}
+            configuration-path: /realms/${keycloak-realm}/.well-known/openid-configuration
+            authorization:
+              max-age: 300
+          grant-type: password
+          client-id: ${keycloak-clientId}
+          client-secret: ${keycloak-clientSecret}
+          authorization:
+            url: ${provider-keycloak-url}/realms/${keycloak-realm}/protocol/openid-connect/auth
+          token:
+            url: ${provider-keycloak-url}/realms/${keycloak-realm}/protocol/openid-connect/token
+            auth-method: client_secret_post
   router:
     static-resources:
       swagger:

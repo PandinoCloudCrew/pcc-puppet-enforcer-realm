@@ -24,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 import pcc.puppet.enforcer.realm.keycloak.adapters.http.KeycloakAdminClient;
 import pcc.puppet.enforcer.realm.keycloak.domain.KeycloakClientCredentials;
 import pcc.puppet.enforcer.realm.keycloak.domain.KeycloakClientRepresentation;
+import pcc.puppet.enforcer.realm.keycloak.domain.KeycloakIntrospection;
+import pcc.puppet.enforcer.realm.keycloak.domain.KeycloakTokenDetails;
 import pcc.puppet.enforcer.realm.keycloak.ports.configuration.KeycloakProperties;
 import reactor.core.publisher.Mono;
 
@@ -44,6 +46,17 @@ public class DefaultKeycloakService implements KeycloakService {
             .client_secret(keycloakProperties.getClientSecret())
             .build();
     return adminClient.token(keycloakProperties.getRealm(), credentials);
+  }
+
+  @Override
+  public Mono<KeycloakTokenDetails> introspect(String token) {
+    KeycloakIntrospection introspection =
+        KeycloakIntrospection.builder()
+            .token(token)
+            .client_id(keycloakProperties.getClientId())
+            .client_secret(keycloakProperties.getClientSecret())
+            .build();
+    return adminClient.introspect(keycloakProperties.getRealm(), introspection);
   }
 
   @Override
