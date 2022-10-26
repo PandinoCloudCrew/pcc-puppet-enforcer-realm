@@ -17,6 +17,7 @@ package pcc.puppet.enforcer.realm.keycloak.domain.service;
 
 import io.micronaut.security.token.jwt.render.AccessRefreshToken;
 import java.util.Optional;
+import pcc.puppet.enforcer.realm.authentication.ports.event.ConsumerPassportCreateEvent;
 import pcc.puppet.enforcer.realm.keycloak.domain.KeycloakTokenDetails;
 import reactor.core.publisher.Mono;
 
@@ -29,4 +30,7 @@ public interface KeycloakService {
 
   Mono<Optional<String>> createClient(
       String name, String description, String clientId, String clientSecret);
+
+  Mono<Optional<String>> createUser(
+      ConsumerPassportCreateEvent createEvent, String username, String password);
 }

@@ -30,6 +30,7 @@ import pcc.puppet.enforcer.realm.keycloak.domain.KeycloakClientCredentials;
 import pcc.puppet.enforcer.realm.keycloak.domain.KeycloakClientRepresentation;
 import pcc.puppet.enforcer.realm.keycloak.domain.KeycloakIntrospection;
 import pcc.puppet.enforcer.realm.keycloak.domain.KeycloakTokenDetails;
+import pcc.puppet.enforcer.realm.keycloak.domain.KeycloakUserRepresentation;
 import reactor.core.publisher.Mono;
 
 @Client("provider-keycloak")
@@ -53,8 +54,17 @@ public interface KeycloakAdminClient {
       uri = "/admin/realms/{realm}/clients",
       produces = MediaType.APPLICATION_JSON,
       consumes = MediaType.APPLICATION_JSON)
-  Mono<Optional<String>> createUser(
+  Mono<Optional<String>> createClient(
       @Header(AUTHORIZATION) String authorization,
       @NonNull String realm,
       @Valid @Body KeycloakClientRepresentation request);
+
+  @Post(
+      uri = "/admin/realms/{realm}/users",
+      produces = MediaType.APPLICATION_JSON,
+      consumes = MediaType.APPLICATION_JSON)
+  Mono<Optional<String>> createUser(
+      @Header(AUTHORIZATION) String authorization,
+      @NonNull String realm,
+      @Valid @Body KeycloakUserRepresentation request);
 }

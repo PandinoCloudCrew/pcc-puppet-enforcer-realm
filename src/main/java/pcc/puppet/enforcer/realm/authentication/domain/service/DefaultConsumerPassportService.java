@@ -15,6 +15,7 @@
  */
 package pcc.puppet.enforcer.realm.authentication.domain.service;
 
+import io.micronaut.security.authentication.UsernamePasswordCredentials;
 import jakarta.inject.Singleton;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import pcc.puppet.enforcer.realm.authentication.adapters.gateway.rest_countries.RestCountriesApiClient;
 import pcc.puppet.enforcer.realm.authentication.adapters.gateway.rest_countries.response.CountryCurrency;
 import pcc.puppet.enforcer.realm.authentication.adapters.gateway.rest_countries.response.RestCountriesResponse;
+import pcc.puppet.enforcer.realm.authentication.adapters.http.RealmClient;
 import pcc.puppet.enforcer.realm.authentication.ports.command.ConsumerPassportCreateCommand;
 import pcc.puppet.enforcer.realm.authentication.ports.event.ConsumerPassportCreateEvent;
 import pcc.puppet.enforcer.realm.common.contact.ports.command.CreateContactInformationCommand;
@@ -46,6 +48,7 @@ public class DefaultConsumerPassportService implements ConsumerPassportService {
   private final OrganizationClient organizationClient;
   private final DepartmentClient departmentClient;
   private final MemberClient memberClient;
+  private final RealmClient realmClient;
   private final RestCountriesApiClient countriesApiClient;
   private final KeycloakService keycloakService;
 
@@ -84,29 +87,18 @@ public class DefaultConsumerPassportService implements ConsumerPassportService {
                         passportCreateEvent.setMemberId(passportCreateEvent.memberId());
                         passportCreateEvent.setUsername(
                             passportCreateEvent.getMember().getUsername());
-                        String description =
-                            String.format(
-                                """
-                                Organization ID: %s Name: %s
-                                Department ID: %s Name: %s
-                                Member ID: %s Username: %s
-                                """,
-                                passportCreateEvent.organizationId(),
-                                passportCreateEvent.getOrganization().getName(),
-                                passportCreateEvent.departmentId(),
-                                passportCreateEvent.getDepartment().getName(),
-                                passportCreateEvent.memberId(),
-                                passportCreateEvent.getMember().getUsername());
                         return keycloakService
-                            .createClient(
-                                passportCommand.getOrganizationName(),
-                                description,
+                            .createUser(
+                                consumerPassportEvent,
                                 passportCommand.getEmail(),
                                 passportCommand.getPassword())
                             .flatMap(
                                 optional ->
-                                    keycloakService.token(
-                                        passportCommand.getEmail(), passportCommand.getPassword()));
+                                    realmClient.login(
+                                        requester,
+                                        new UsernamePasswordCredentials(
+                                            passportCommand.getEmail(),
+                                            passportCommand.getPassword())));
                       })
                   .map(consumerPassportEvent::token);
             });
