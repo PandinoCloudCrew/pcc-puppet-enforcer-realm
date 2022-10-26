@@ -13,24 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.realm.keycloak.domain.service;
+package pcc.puppet.enforcer.realm.mock;
 
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.security.authentication.UsernamePasswordCredentials;
 import io.micronaut.security.token.jwt.render.AccessRefreshToken;
-import java.util.Optional;
-import pcc.puppet.enforcer.realm.authentication.ports.event.ConsumerPassportCreateEvent;
-import pcc.puppet.enforcer.realm.keycloak.domain.KeycloakTokenDetails;
 import reactor.core.publisher.Mono;
 
-public interface KeycloakService {
-  Mono<AccessRefreshToken> token();
+@Controller
+public class LoginController {
 
-  Mono<AccessRefreshToken> token(String clientId, String clientSecret);
-
-  Mono<KeycloakTokenDetails> introspect(String token);
-
-  Mono<Optional<String>> createClient(
-      String name, String description, String clientId, String clientSecret);
-
-  Mono<Optional<String>> createUser(
-      ConsumerPassportCreateEvent createEvent, String username, String password);
+  @Post(uri = "/login")
+  public Mono<AccessRefreshToken> login(@Body UsernamePasswordCredentials credentials) {
+    return Mono.just(new AccessRefreshToken());
+  }
 }

@@ -28,24 +28,43 @@ import java.util.Optional;
 import javax.validation.Valid;
 import pcc.puppet.enforcer.realm.keycloak.domain.KeycloakClientCredentials;
 import pcc.puppet.enforcer.realm.keycloak.domain.KeycloakClientRepresentation;
+import pcc.puppet.enforcer.realm.keycloak.domain.KeycloakIntrospection;
+import pcc.puppet.enforcer.realm.keycloak.domain.KeycloakTokenDetails;
+import pcc.puppet.enforcer.realm.keycloak.domain.KeycloakUserRepresentation;
 import reactor.core.publisher.Mono;
 
 @Client("provider-keycloak")
 public interface KeycloakAdminClient {
 
   @Post(
-      uri = "/auth/realms/{realm}/protocol/openid-connect/token",
+      uri = "/realms/{realm}/protocol/openid-connect/token",
       produces = MediaType.APPLICATION_FORM_URLENCODED,
       consumes = MediaType.APPLICATION_JSON)
   Mono<AccessRefreshToken> token(
       @NonNull String realm, @Valid @Body KeycloakClientCredentials credentials);
 
   @Post(
-      uri = "/auth/admin/realms/{realm}/clients",
+      uri = "/realms/{realm}/protocol/openid-connect/token/introspect",
+      produces = MediaType.APPLICATION_FORM_URLENCODED,
+      consumes = MediaType.APPLICATION_JSON)
+  Mono<KeycloakTokenDetails> introspect(
+      @NonNull String realm, @Valid @Body KeycloakIntrospection introspection);
+
+  @Post(
+      uri = "/admin/realms/{realm}/clients",
+      produces = MediaType.APPLICATION_JSON,
+      consumes = MediaType.APPLICATION_JSON)
+  Mono<Optional<String>> createClient(
+      @Header(AUTHORIZATION) String authorization,
+      @NonNull String realm,
+      @Valid @Body KeycloakClientRepresentation request);
+
+  @Post(
+      uri = "/admin/realms/{realm}/users",
       produces = MediaType.APPLICATION_JSON,
       consumes = MediaType.APPLICATION_JSON)
   Mono<Optional<String>> createUser(
       @Header(AUTHORIZATION) String authorization,
       @NonNull String realm,
-      @Valid @Body KeycloakClientRepresentation request);
+      @Valid @Body KeycloakUserRepresentation request);
 }

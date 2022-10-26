@@ -28,13 +28,14 @@ import java.util.Optional;
 import javax.validation.Valid;
 import pcc.puppet.enforcer.realm.keycloak.domain.KeycloakClientCredentials;
 import pcc.puppet.enforcer.realm.keycloak.domain.KeycloakClientRepresentation;
+import pcc.puppet.enforcer.realm.keycloak.domain.KeycloakUserRepresentation;
 import reactor.core.publisher.Mono;
 
 @Controller("/keycloak")
 public class KeycloakController {
 
   @Post(
-      uri = "/auth/realms/{realm}/protocol/openid-connect/token",
+      uri = "/realms/{realm}/protocol/openid-connect/token",
       consumes = MediaType.APPLICATION_FORM_URLENCODED,
       produces = MediaType.APPLICATION_JSON)
   public Mono<AccessRefreshToken> getToken(
@@ -43,13 +44,24 @@ public class KeycloakController {
   }
 
   @Post(
-      uri = "/auth/admin/realms/{realm}/clients",
+      uri = "/admin/realms/{realm}/clients",
+      produces = MediaType.APPLICATION_JSON,
+      consumes = MediaType.APPLICATION_JSON)
+  public Mono<Optional<String>> createClient(
+      @NonNull @Header(AUTHORIZATION) String authorization,
+      @NonNull String realm,
+      @Valid @Body KeycloakClientRepresentation request) {
+    return Mono.just(Optional.of(request.getDescription()));
+  }
+
+  @Post(
+      uri = "/admin/realms/{realm}/users",
       produces = MediaType.APPLICATION_JSON,
       consumes = MediaType.APPLICATION_JSON)
   public Mono<Optional<String>> createUser(
       @NonNull @Header(AUTHORIZATION) String authorization,
       @NonNull String realm,
-      @Valid @Body KeycloakClientRepresentation request) {
-    return Mono.just(Optional.of(request.getDescription()));
+      @Valid @Body KeycloakUserRepresentation request) {
+    return Mono.just(Optional.of(request.getEmail()));
   }
 }

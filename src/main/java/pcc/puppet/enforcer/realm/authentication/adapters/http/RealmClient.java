@@ -15,7 +15,6 @@
  */
 package pcc.puppet.enforcer.realm.authentication.adapters.http;
 
-import static io.micronaut.http.HttpHeaders.ACCEPT_ENCODING;
 import static io.micronaut.http.HttpHeaders.USER_AGENT;
 import static io.micronaut.http.MediaType.APPLICATION_JSON;
 import static pcc.puppet.enforcer.realm.Project.NAME;
@@ -23,23 +22,20 @@ import static pcc.puppet.enforcer.realm.Project.VERSION;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
 import io.micronaut.core.annotation.NonNull;
+import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.client.annotation.Client;
+import io.micronaut.security.authentication.UsernamePasswordCredentials;
+import io.micronaut.security.token.jwt.render.AccessRefreshToken;
 import io.micronaut.tracing.annotation.SpanTag;
-import pcc.puppet.enforcer.realm.authentication.domain.ConsumerPassportOperations;
-import pcc.puppet.enforcer.realm.authentication.ports.command.ConsumerPassportCreateCommand;
-import pcc.puppet.enforcer.realm.authentication.ports.event.ConsumerPassportCreateEvent;
 import reactor.core.publisher.Mono;
 
-@Client("${micronaut.http.services.pcc-realm-passport.path}")
-@Header(name = ACCEPT_ENCODING, value = "gzip, deflate")
-@Header(name = USER_AGENT, value = "ConsumerPassportClient/" + VERSION + " (" + NAME + ")")
-public interface ConsumerPassportClient extends ConsumerPassportOperations {
-
-  @Override
-  @Post(consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
-  Mono<ConsumerPassportCreateEvent> createConsumerPassport(
+@Client("/")
+@Header(name = USER_AGENT, value = "RealmClient/" + VERSION + " (" + NAME + ")")
+public interface RealmClient {
+  @Post(value = "/login", consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
+  Mono<AccessRefreshToken> login(
       @NonNull @SpanTag(REQUESTER) @Header(REQUESTER) String requester,
-      @NonNull ConsumerPassportCreateCommand passportCommand);
+      @NonNull @Body UsernamePasswordCredentials passportCommand);
 }
