@@ -96,6 +96,7 @@ endpoints:
     sensitive: true
   loggers:
     enabled: true
+    sensitive: true
     write-sensitive: true
   refresh:
     enabled: true
