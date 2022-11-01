@@ -52,6 +52,7 @@ dependencies {
     implementation("io.micronaut.security:micronaut-security-oauth2")
     implementation("io.micronaut.tracing:micronaut-tracing-jaeger")
     implementation("io.swagger.core.v3:swagger-annotations")
+    implementation ("org.passay:passay:$passayVersion")
     implementation("org.mapstruct:mapstruct:$mapstructProcessorVersion")
     implementation("net.datafaker:datafaker:$datafakerVersion")
     implementation("uk.co.jemos.podam:podam:$podamVersion")
