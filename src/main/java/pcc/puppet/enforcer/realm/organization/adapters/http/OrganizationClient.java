@@ -27,7 +27,7 @@ import io.micronaut.http.annotation.Post;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.tracing.annotation.SpanTag;
 import javax.validation.Valid;
-import pcc.puppet.enforcer.realm.Project;
+import pcc.puppet.enforcer.app.Project;
 import pcc.puppet.enforcer.realm.organization.adapters.presenter.OrganizationPresenter;
 import pcc.puppet.enforcer.realm.organization.domain.OrganizationOperations;
 import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
