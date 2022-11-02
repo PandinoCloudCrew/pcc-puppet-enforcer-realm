@@ -1,0 +1,56 @@
+/*
+ * Copyright 2022 Pandino Cloud Crew (C)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package pcc.puppet.enforcer.security.password;
+
+import java.util.UUID;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+class PassaySecurePasswordGeneratorTest {
+
+  private SecurePasswordGenerator passwordGenerator;
+
+  @BeforeEach
+  void setUp() {
+    passwordGenerator = new PassaySecurePasswordGenerator();
+  }
+
+  @Test
+  void password() {
+    final int passwordLength = 16;
+    Assertions.assertAll(
+        () -> {
+          String password = passwordGenerator.password(passwordLength);
+          Assertions.assertEquals(passwordLength, password.length());
+        });
+  }
+
+  @Test
+  void validate_shouldAcceptGeneratedPassword() {
+    final int passwordLength = 16;
+    String password = passwordGenerator.password(passwordLength);
+    boolean validate = passwordGenerator.validate(password);
+    Assertions.assertTrue(validate);
+  }
+
+  @Test
+  void validate_shouldRejectNotCompliantPassword() {
+    String password = UUID.randomUUID().toString();
+    boolean validate = passwordGenerator.validate(password);
+    Assertions.assertFalse(validate);
+  }
+}

@@ -26,9 +26,12 @@ import io.micronaut.http.annotation.Post;
 import io.micronaut.security.token.jwt.render.AccessRefreshToken;
 import java.util.Optional;
 import javax.validation.Valid;
-import pcc.puppet.enforcer.realm.keycloak.domain.KeycloakClientCredentials;
-import pcc.puppet.enforcer.realm.keycloak.domain.KeycloakClientRepresentation;
-import pcc.puppet.enforcer.realm.keycloak.domain.KeycloakUserRepresentation;
+import pcc.puppet.enforcer.keycloak.domain.KeycloakClientCredentials;
+import pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation;
+import pcc.puppet.enforcer.keycloak.domain.KeycloakIntrospection;
+import pcc.puppet.enforcer.keycloak.domain.KeycloakTokenDetails;
+import pcc.puppet.enforcer.keycloak.domain.KeycloakUserRepresentation;
+import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import reactor.core.publisher.Mono;
 
 @Controller("/keycloak")
@@ -41,6 +44,15 @@ public class KeycloakController {
   public Mono<AccessRefreshToken> getToken(
       String realm, @Body KeycloakClientCredentials credentials) {
     return Mono.just(new AccessRefreshToken());
+  }
+
+  @Post(
+      uri = "/realms/{realm}/protocol/openid-connect/token/introspect",
+      consumes = MediaType.APPLICATION_FORM_URLENCODED,
+      produces = MediaType.APPLICATION_JSON)
+  public Mono<KeycloakTokenDetails> tokenIntrospect(
+      String realm, @Body KeycloakIntrospection introspection) {
+    return Mono.just(DomainFactory.keycloakTokenDetails());
   }
 
   @Post(

@@ -30,7 +30,7 @@ import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.tracing.annotation.SpanTag;
 import javax.validation.Valid;
-import pcc.puppet.enforcer.realm.Project;
+import pcc.puppet.enforcer.app.Project;
 import pcc.puppet.enforcer.realm.member.adapters.presenter.MemberPresenter;
 import pcc.puppet.enforcer.realm.member.domain.MemberOperations;
 import pcc.puppet.enforcer.realm.member.ports.command.MemberCreateCommand;

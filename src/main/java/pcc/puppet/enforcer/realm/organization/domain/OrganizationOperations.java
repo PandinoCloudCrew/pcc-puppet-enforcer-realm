@@ -16,6 +16,11 @@
 package pcc.puppet.enforcer.realm.organization.domain;
 
 import io.micronaut.core.annotation.NonNull;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.security.authentication.UsernamePasswordCredentials;
+import io.micronaut.security.token.jwt.render.AccessRefreshToken;
 import javax.validation.Valid;
 import pcc.puppet.enforcer.realm.organization.adapters.presenter.OrganizationPresenter;
 import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
@@ -33,4 +38,11 @@ public interface OrganizationOperations {
 
   Flux<OrganizationPresenter> findChildOrganizations(
       @NonNull String requester, @NonNull String organizationId);
+
+  @Post(
+      uri = "/{organizationId}/login",
+      consumes = MediaType.APPLICATION_JSON,
+      produces = MediaType.APPLICATION_JSON)
+  Mono<AccessRefreshToken> organizationLogin(
+      @NonNull String organizationId, @NonNull @Body UsernamePasswordCredentials credentials);
 }
