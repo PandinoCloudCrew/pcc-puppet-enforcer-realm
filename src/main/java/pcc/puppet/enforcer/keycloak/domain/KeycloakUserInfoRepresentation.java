@@ -51,25 +51,25 @@ public class KeycloakUserInfoRepresentation {
 
   public Map<String, Object> asAttributes() {
     HashMap<String, Object> attributes = new HashMap<>();
-    attributes.put("address", address);
-    attributes.put("otherClaims", otherClaims);
-    attributes.put("claimsLocales", claimsLocales);
-    attributes.put("birthdate", birthdate);
-    attributes.put("email", email);
-    attributes.put("emailVerified", emailVerified);
-    attributes.put("familyName", familyName);
-    attributes.put("middleName", middleName);
-    attributes.put("givenName", givenName);
-    attributes.put("nickName", nickName);
-    attributes.put("gender", gender);
-    attributes.put("phoneNumber", phoneNumber);
-    attributes.put("phoneNumberVerified", phoneNumberVerified);
-    attributes.put("locale", locale);
-    attributes.put("zoneinfo", zoneinfo);
-    attributes.put("picture", picture);
-    attributes.put("profile", profile);
-    attributes.put("website", website);
-    attributes.put("audience", audience);
+    attributes.put("address", getAddress());
+    attributes.put("otherClaims", getOtherClaims());
+    attributes.put("claimsLocales", getClaimsLocales());
+    attributes.put("birthdate", getBirthdate());
+    attributes.put("email", getEmail());
+    attributes.put("emailVerified", isEmailVerified());
+    attributes.put("familyName", getFamilyName());
+    attributes.put("middleName", getMiddleName());
+    attributes.put("givenName", getGivenName());
+    attributes.put("nickName", getNickName());
+    attributes.put("gender", getGender());
+    attributes.put("phoneNumber", getPhoneNumber());
+    attributes.put("phoneNumberVerified", isPhoneNumberVerified());
+    attributes.put("locale", getLocale());
+    attributes.put("zoneinfo", getZoneinfo());
+    attributes.put("picture", getPicture());
+    attributes.put("profile", getProfile());
+    attributes.put("website", getWebsite());
+    attributes.put("audience", getAudience());
     return attributes;
   }
 }

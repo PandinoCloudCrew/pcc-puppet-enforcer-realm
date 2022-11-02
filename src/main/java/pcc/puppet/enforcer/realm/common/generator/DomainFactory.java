@@ -18,6 +18,7 @@ package pcc.puppet.enforcer.realm.common.generator;
 import com.github.shamil.Xid;
 import io.micronaut.core.annotation.Introspected;
 import lombok.experimental.UtilityClass;
+import pcc.puppet.enforcer.keycloak.domain.KeycloakTokenDetails;
 import pcc.puppet.enforcer.realm.department.ports.command.DepartmentCreateCommand;
 import pcc.puppet.enforcer.realm.member.ports.command.MemberCreateCommand;
 import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
@@ -49,6 +50,10 @@ public class DomainFactory {
 
   public ConsumerPassportCreateCommand consumerPassportCreateCommand() {
     return getPojoWithFullData(ConsumerPassportCreateCommand.class);
+  }
+
+  public KeycloakTokenDetails keycloakTokenDetails() {
+    return getPojoWithFullData(KeycloakTokenDetails.class);
   }
 
   private <T> T getPojoWithFullData(Class<T> classType) {
