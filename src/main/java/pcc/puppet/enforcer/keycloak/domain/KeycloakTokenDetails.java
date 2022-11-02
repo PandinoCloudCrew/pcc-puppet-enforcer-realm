@@ -33,32 +33,46 @@ import uk.co.jemos.podam.common.PodamStrategyValue;
 public class KeycloakTokenDetails {
   @PodamStrategyValue(UnixtimeStrategy.class)
   private int exp;
+
   @PodamStrategyValue(UnixtimeStrategy.class)
   private int iat;
+
   private String jti;
+
   @PodamStrategyValue(UrlStrategy.class)
   private String iss;
+
   private ArrayList<String> aud;
+
   @PodamStrategyValue(ObjectIdStrategy.class)
   private String sub;
+
   private String typ;
   private String azp;
+
   @PodamStrategyValue(UsernameStrategy.class)
   private String preferred_username;
+
   private boolean email_verified;
   private String acr;
   private RolesArray realm_access;
   private Map<String, RolesArray> resource_access;
   private String scope;
+
   @PodamStrategyValue(ObjectIdStrategy.class)
   private String clientId;
+
   @PodamStrategyValue(IpV4Strategy.class)
   private String clientHost;
+
   @PodamStrategyValue(IpV4Strategy.class)
   private String clientAddress;
+
   @PodamStrategyValue(ObjectIdStrategy.class)
   private String client_id;
+
   @PodamStrategyValue(UsernameStrategy.class)
   private String username;
+
   private boolean active;
 }

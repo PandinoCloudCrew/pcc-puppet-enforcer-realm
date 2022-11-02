@@ -159,10 +159,11 @@ class OrganizationControllerTest {
     String organizationId = DomainFactory.id();
     UsernamePasswordCredentials credentials =
         new UsernamePasswordCredentials(organizationId, passwordGenerator.password(16));
-    Assertions.assertAll(() -> {
-      AccessRefreshToken accessRefreshToken =
-          client.organizationLogin(organizationId, credentials).block();
-      assertNotNull(accessRefreshToken);
-    });
+    Assertions.assertAll(
+        () -> {
+          AccessRefreshToken accessRefreshToken =
+              client.organizationLogin(organizationId, credentials).block();
+          assertNotNull(accessRefreshToken);
+        });
   }
 }
