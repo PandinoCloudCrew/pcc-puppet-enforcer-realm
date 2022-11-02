@@ -21,6 +21,8 @@ import jakarta.inject.Singleton;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation;
+import pcc.puppet.enforcer.keycloak.domain.service.KeycloakService;
 import pcc.puppet.enforcer.realm.common.contact.domain.service.ContactInformationService;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import pcc.puppet.enforcer.realm.organization.adapters.mapper.OrganizationOutputMapper;
@@ -30,6 +32,8 @@ import pcc.puppet.enforcer.realm.organization.domain.Organization;
 import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
 import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEvent;
 import pcc.puppet.enforcer.realm.organization.ports.mapper.OrganizationInputMapper;
+import pcc.puppet.enforcer.security.password.SecurePasswordGenerator;
+import pcc.puppet.enforcer.vault.domain.KVSecretService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -42,6 +46,10 @@ public class DefaultOrganizationService implements OrganizationService {
   private final OrganizationOutputMapper outputMapper;
   private final OrganizationRepository repository;
   private final ContactInformationService contactInformationService;
+  private final KeycloakService keycloakService;
+  private final KVSecretService secretService;
+  private final SecurePasswordGenerator passwordGenerator;
+  public static final int DEFAULT_PASSWORD_LENGTH = 16;
 
   @NewSpan
   @Override
@@ -51,14 +59,45 @@ public class DefaultOrganizationService implements OrganizationService {
     organization.setId(DomainFactory.id());
     organization.setCreatedBy(requester);
     organization.setCreatedAt(Instant.now());
-    return contactInformationService
-        .save(requester, organization.getId(), createCommand.getContactId())
+    KeycloakClientRepresentation clientRepresentation =
+        KeycloakClientRepresentation.builder()
+            .clientId(organization.getId())
+            .name(organization.getName())
+            .description(
+                String.format(
+                    """
+                Country: %s
+                City: %s
+                TaxId: %s
+                ParentId: %s
+                """,
+                    organization.getCountry(),
+                    organization.getCity(),
+                    organization.getTaxId(),
+                    organization.getParentId()))
+            .serviceAccountsEnabled(true)
+            .secret(passwordGenerator.password(DEFAULT_PASSWORD_LENGTH))
+            .build();
+    return keycloakService
+        .createClient(
+            clientRepresentation.getName(),
+            clientRepresentation.getDescription(),
+            clientRepresentation.getClientId(),
+            clientRepresentation.getSecret())
         .flatMap(
-            contactInformation -> {
-              organization.setContactId(contactInformation);
-              return repository.save(organization);
-            })
-        .map(inputMapper::domainToEvent);
+            created ->
+                secretService
+                    .createClientSecret(clientRepresentation)
+                    .flatMap(
+                        vaultResponseV2 ->
+                            contactInformationService
+                                .save(requester, organization.getId(), createCommand.getContactId())
+                                .flatMap(
+                                    contactInformation -> {
+                                      organization.setContactId(contactInformation);
+                                      return repository.save(organization);
+                                    })
+                                .map(inputMapper::domainToEvent)));
   }
 
   @NewSpan

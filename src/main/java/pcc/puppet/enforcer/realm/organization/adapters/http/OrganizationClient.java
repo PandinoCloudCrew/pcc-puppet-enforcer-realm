@@ -25,9 +25,11 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.client.annotation.Client;
+import io.micronaut.security.authentication.UsernamePasswordCredentials;
+import io.micronaut.security.token.jwt.render.AccessRefreshToken;
 import io.micronaut.tracing.annotation.SpanTag;
 import javax.validation.Valid;
-import pcc.puppet.enforcer.realm.Project;
+import pcc.puppet.enforcer.app.Project;
 import pcc.puppet.enforcer.realm.organization.adapters.presenter.OrganizationPresenter;
 import pcc.puppet.enforcer.realm.organization.domain.OrganizationOperations;
 import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
@@ -49,14 +51,21 @@ public interface OrganizationClient extends OrganizationOperations {
       @NonNull @Body @Valid OrganizationCreateCommand createCommand);
 
   @Override
-  @Get(uri = "/{organizationId}", consumes = MediaType.APPLICATION_JSON)
+  @Get(uri = "/{organizationId}", produces = MediaType.APPLICATION_JSON)
   Mono<OrganizationPresenter> findOrganization(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
       @SpanTag @NonNull String organizationId);
 
   @Override
-  @Get(uri = "/{organizationId}/child", consumes = MediaType.APPLICATION_JSON)
+  @Get(uri = "/{organizationId}/child", produces = MediaType.APPLICATION_JSON)
   Flux<OrganizationPresenter> findChildOrganizations(
       @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
       @SpanTag @NonNull String organizationId);
+
+  @Post(
+      uri = "/{organizationId}/login",
+      consumes = MediaType.APPLICATION_JSON,
+      produces = MediaType.APPLICATION_JSON)
+  Mono<AccessRefreshToken> organizationLogin(
+      @NonNull String organizationId, @NonNull @Body UsernamePasswordCredentials credentials);
 }

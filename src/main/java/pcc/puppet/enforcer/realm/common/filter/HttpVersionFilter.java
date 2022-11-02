@@ -25,7 +25,7 @@ import io.micronaut.tracing.annotation.ContinueSpan;
 import io.micronaut.tracing.annotation.SpanTag;
 import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Publisher;
-import pcc.puppet.enforcer.realm.Project;
+import pcc.puppet.enforcer.app.Project;
 
 @Slf4j
 @Filter(Filter.MATCH_ALL_PATTERN)
