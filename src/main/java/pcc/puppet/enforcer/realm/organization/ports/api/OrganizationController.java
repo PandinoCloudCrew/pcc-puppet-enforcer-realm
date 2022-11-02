@@ -27,12 +27,15 @@ import io.micronaut.http.annotation.Post;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.authentication.UsernamePasswordCredentials;
 import io.micronaut.security.rules.SecurityRule;
+import io.micronaut.security.token.jwt.render.AccessRefreshToken;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.annotation.SpanTag;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import pcc.puppet.enforcer.keycloak.domain.service.KeycloakService;
 import pcc.puppet.enforcer.realm.organization.adapters.presenter.OrganizationPresenter;
 import pcc.puppet.enforcer.realm.organization.domain.OrganizationOperations;
 import pcc.puppet.enforcer.realm.organization.domain.service.OrganizationService;
@@ -48,6 +51,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class OrganizationController implements OrganizationOperations {
   private final OrganizationService organizationService;
+  private final KeycloakService keycloakService;
 
   @NewSpan
   @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
@@ -71,5 +75,16 @@ public class OrganizationController implements OrganizationOperations {
       @NonNull @SpanTag(REQUESTER) @Header(REQUESTER) String requester,
       @NonNull @SpanTag String organizationId) {
     return organizationService.findByParentId(requester, organizationId);
+  }
+
+  @NewSpan
+  @Post(
+      uri = "/{organizationId}/login",
+      consumes = MediaType.APPLICATION_JSON,
+      produces = MediaType.APPLICATION_JSON)
+  public Mono<AccessRefreshToken> organizationLogin(
+      @NonNull @SpanTag String organizationId,
+      @NonNull @Body UsernamePasswordCredentials credentials) {
+    return keycloakService.token(credentials.getUsername(), credentials.getPassword());
   }
 }
