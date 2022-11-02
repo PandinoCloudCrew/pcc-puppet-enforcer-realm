@@ -13,24 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.keycloak.domain;
+package pcc.puppet.enforcer.vault.adapters.http.request;
 
 import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.NonNull;
+import java.util.Map;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Singular;
 
 @Data
 @Builder
 @Introspected
-public class KeycloakClientRepresentation {
+public class VaultSecretCreateRequest {
 
-  public static final String CLIENT_NAME = "name";
-  public static final String CLIENT_ID = "clientId";
-  public static final String CLIENT_SECRET = "secret";
-  @NonNull private String name;
-  @NonNull private String description;
-  @NonNull private Boolean serviceAccountsEnabled;
-  @NonNull private String clientId;
-  @NonNull private String secret;
+  @Singular("property")
+  private Map<String, String> data;
 }

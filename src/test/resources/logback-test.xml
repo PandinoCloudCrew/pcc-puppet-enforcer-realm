@@ -11,6 +11,7 @@
     <logger level="ERROR" name="io.micronaut.core.reflect"/>
     <logger level="ERROR" name="io.micronaut.core.beans"/>
     <logger level="INFO" name="io.micronaut.context"/>
+    <logger level="INFO" name="io.micronaut.context.condition"/>
     <logger level="ERROR" name="io.micronaut.http"/>
     <logger level="TRACE" name="io.micronaut.http.client"/>
     <logger level="DEBUG" name="io.micrometer.elastic"/>

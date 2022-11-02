@@ -82,6 +82,8 @@ micronaut:
         path: ${provider-rest-countries-path}
       provider-keycloak:
         url: ${provider-keycloak-url}
+      provider-vault:
+        url: ${HC_VAULT_URI}
   caches:
     keycloak:
       maximum-size: 10
@@ -157,3 +159,6 @@ provider:
     clientId: ${keycloak-clientId}
     clientSecret: ${keycloak-clientSecret}
     realm: ${keycloak-realm}
+  vault:
+    uri: ${HC_VAULT_URI}
+    token: ${HC_VAULT_TOKEN}

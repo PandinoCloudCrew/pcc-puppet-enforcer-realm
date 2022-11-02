@@ -13,24 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package pcc.puppet.enforcer.keycloak.domain;
+package pcc.puppet.enforcer.vault.ports.configuration;
 
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.NonNull;
-import lombok.Builder;
+import io.micronaut.context.annotation.ConfigurationProperties;
 import lombok.Data;
 
 @Data
-@Builder
-@Introspected
-public class KeycloakClientRepresentation {
+@ConfigurationProperties("provider.vault")
+public class VaultProperties {
 
-  public static final String CLIENT_NAME = "name";
-  public static final String CLIENT_ID = "clientId";
-  public static final String CLIENT_SECRET = "secret";
-  @NonNull private String name;
-  @NonNull private String description;
-  @NonNull private Boolean serviceAccountsEnabled;
-  @NonNull private String clientId;
-  @NonNull private String secret;
+  private static final String DEFAULT_SECRET_ENGINE = "secret";
+  private String uri;
+  private String token;
+  private String secretEngineName = DEFAULT_SECRET_ENGINE;
 }

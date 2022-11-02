@@ -163,7 +163,7 @@ jacocoTestReport {
 }
 
 blossom {
-    def constants = "src/main/java/pcc/puppet/enforcer/realm/Project.java"
+    def constants = "src/main/java/pcc/puppet/enforcer/app/Project.java"
     replaceToken("@VERSION@", project.version, constants)
     replaceToken("@NAME@", project.name, constants)
     def resources = "src/main/resources/application.yml"

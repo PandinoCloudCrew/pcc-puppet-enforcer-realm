@@ -18,6 +18,7 @@ package pcc.puppet.enforcer.keycloak.adapters.http;
 import static io.micronaut.http.HttpHeaders.AUTHORIZATION;
 
 import io.micronaut.core.annotation.NonNull;
+import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Header;
@@ -26,6 +27,7 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.security.token.jwt.render.AccessRefreshToken;
 import java.util.Optional;
 import javax.validation.Valid;
+import pcc.puppet.enforcer.app.Project;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientCredentials;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakIntrospection;
@@ -34,6 +36,9 @@ import pcc.puppet.enforcer.keycloak.domain.KeycloakUserRepresentation;
 import reactor.core.publisher.Mono;
 
 @Client("provider-keycloak")
+@Header(
+    name = HttpHeaders.USER_AGENT,
+    value = "KeycloakAdminClient/" + Project.VERSION + " (" + Project.NAME + ")")
 public interface KeycloakAdminClient {
 
   @Post(

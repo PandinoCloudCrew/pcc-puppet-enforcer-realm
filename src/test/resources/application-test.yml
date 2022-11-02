@@ -37,6 +37,9 @@ micronaut:
       provider-keycloak:
         url: http://localhost:${micronaut.server.port}
         path: /keycloak
+      provider-vault:
+        url: http://localhost:${micronaut.server.port}
+        path: /vault
 
 flyway:
   enabled: true
@@ -74,3 +77,6 @@ provider:
     clientId: testPlaceholderClient
     clientSecret: testPlaceholderSecret
     realm: test
+  vault:
+    uri: http://localhost:${random.port}/vault
+    token: testPlaceholderToken
