@@ -5,7 +5,7 @@ micronaut:
     port: 9900
     netty:
       access-logger:
-        enabled: true
+        enabled: false
         loggerName: HTTP_ACCESS_LOGGER
         log-format: "%h %r %s %b %D %{User-Agent}i %{Version}o %{uber-trace-id}o"
         exclusions:

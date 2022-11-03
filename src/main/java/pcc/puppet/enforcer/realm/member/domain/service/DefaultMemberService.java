@@ -15,6 +15,8 @@
  */
 package pcc.puppet.enforcer.realm.member.domain.service;
 
+import io.micronaut.cache.annotation.CacheConfig;
+import io.micronaut.cache.annotation.Cacheable;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.annotation.SpanTag;
 import jakarta.inject.Singleton;
@@ -35,6 +37,7 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @Singleton
+@CacheConfig("member")
 @RequiredArgsConstructor
 public class DefaultMemberService implements MemberService {
 
@@ -63,6 +66,7 @@ public class DefaultMemberService implements MemberService {
 
   @NewSpan
   @Override
+  @Cacheable
   public Mono<MemberPresenter> findById(@SpanTag String requester, @SpanTag String memberId) {
     return contactInformationService
         .findByOwnerId(memberId)
@@ -80,6 +84,7 @@ public class DefaultMemberService implements MemberService {
 
   @NewSpan
   @Override
+  @Cacheable
   public Flux<MemberPresenter> findByOrganizationId(
       @SpanTag String requester, @SpanTag String organizationId) {
     return repository
@@ -94,6 +99,7 @@ public class DefaultMemberService implements MemberService {
 
   @NewSpan
   @Override
+  @Cacheable
   public Flux<MemberPresenter> findByDepartmentId(
       @SpanTag String requester, @SpanTag String departmentId) {
     return repository

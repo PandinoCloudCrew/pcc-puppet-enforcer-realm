@@ -15,6 +15,8 @@
  */
 package pcc.puppet.enforcer.realm.organization.domain.service;
 
+import io.micronaut.cache.annotation.CacheConfig;
+import io.micronaut.cache.annotation.Cacheable;
 import io.micronaut.tracing.annotation.NewSpan;
 import io.micronaut.tracing.annotation.SpanTag;
 import jakarta.inject.Singleton;
@@ -39,6 +41,7 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @Singleton
+@CacheConfig("organization")
 @RequiredArgsConstructor
 public class DefaultOrganizationService implements OrganizationService {
 
@@ -102,6 +105,7 @@ public class DefaultOrganizationService implements OrganizationService {
 
   @NewSpan
   @Override
+  @Cacheable
   public Mono<OrganizationPresenter> findById(
       @SpanTag String requester, @SpanTag String organizationId) {
     return contactInformationService
@@ -120,6 +124,7 @@ public class DefaultOrganizationService implements OrganizationService {
 
   @NewSpan
   @Override
+  @Cacheable
   public Flux<OrganizationPresenter> findByParentId(
       @SpanTag String requester, @SpanTag String organizationId) {
     return repository
