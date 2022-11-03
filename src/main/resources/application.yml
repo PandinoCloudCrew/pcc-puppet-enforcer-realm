@@ -88,6 +88,15 @@ micronaut:
     keycloak:
       maximum-size: 10
       expire-after-write: PT4M
+    organization:
+      maximum-size: 50
+      expire-after-write: PT15M
+    department:
+      maximum-size: 50
+      expire-after-write: PT15M
+    member:
+      maximum-size: 50
+      expire-after-write: PT15M
 
 endpoints:
   info:
@@ -152,7 +161,13 @@ r2dbc:
       dialect: ${jdbc-dialect}
       username: ${jdbc-username}
       password: ${jdbc-password}
-
+      options:
+        driver: pool
+        protocol: postgresql
+        poolName: ${micronaut.application.name}-pool
+        minIdle: 0
+        maxSize: 10
+        initialSize: 5
 
 provider:
   keycloak:

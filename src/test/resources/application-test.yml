@@ -71,6 +71,9 @@ r2dbc:
       username: sa
       password: ''
       dialect: h2
+      options:
+        driver: pool
+        protocol: h2:mem
 
 provider:
   keycloak:

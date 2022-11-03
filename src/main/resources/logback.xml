@@ -8,6 +8,8 @@
         </encoder>
     </appender>
     <logger level="ERROR" name="io.netty"/>
+    <logger level="INFO" name="io.r2dbc"/>
+    <logger level="INFO" name="io.r2dbc.pool"/>
     <logger level="ERROR" name="io.micronaut.core.reflect"/>
     <logger level="ERROR" name="io.micronaut.core.beans"/>
     <logger level="ERROR" name="io.micronaut.context"/>
@@ -15,7 +17,7 @@
     <logger level="INFO" name="io.micronaut.configuration"/>
     <logger level="INFO" name="io.micronaut.context.condition"/>
     <logger level="TRACE" name="io.micronaut.discovery"/>
-    <logger level="DEBUG" name="io.micronaut.web"/>
+    <logger level="INFO" name="io.micronaut.web"/>
     <logger level="INFO" name="io.micronaut.http"/>
     <logger level="DEBUG" name="io.micronaut.http.client"/>
     <logger level="TRACE" name="io.micronaut.tracing"/>
