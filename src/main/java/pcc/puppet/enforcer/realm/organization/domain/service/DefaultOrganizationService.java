@@ -124,7 +124,6 @@ public class DefaultOrganizationService implements OrganizationService {
 
   @NewSpan
   @Override
-  @Cacheable
   public Flux<OrganizationPresenter> findByParentId(
       @SpanTag String requester, @SpanTag String organizationId) {
     return repository

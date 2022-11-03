@@ -84,7 +84,6 @@ public class DefaultDepartmentService implements DepartmentService {
 
   @NewSpan
   @Override
-  @Cacheable
   public Flux<DepartmentPresenter> findByParentId(
       @SpanTag String requester, @SpanTag String departmentId) {
     return repository

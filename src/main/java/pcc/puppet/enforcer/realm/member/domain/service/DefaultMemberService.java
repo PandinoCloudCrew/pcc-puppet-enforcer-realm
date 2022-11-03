@@ -84,7 +84,6 @@ public class DefaultMemberService implements MemberService {
 
   @NewSpan
   @Override
-  @Cacheable
   public Flux<MemberPresenter> findByOrganizationId(
       @SpanTag String requester, @SpanTag String organizationId) {
     return repository
@@ -99,7 +98,6 @@ public class DefaultMemberService implements MemberService {
 
   @NewSpan
   @Override
-  @Cacheable
   public Flux<MemberPresenter> findByDepartmentId(
       @SpanTag String requester, @SpanTag String departmentId) {
     return repository
