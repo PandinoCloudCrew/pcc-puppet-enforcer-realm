@@ -15,6 +15,8 @@ spec:
       name: pcc-puppet-enforcer-realm-deployment
       labels:
         app: pcc-puppet-enforcer-realm-deployment
+      annotations:
+        linkerd.io/inject: enabled
     spec:
       restartPolicy: Always
       imagePullSecrets:
@@ -40,15 +42,18 @@ spec:
             - name: http
               containerPort: 9900
           readinessProbe:
-            httpGet:
-              path: /health/readiness
+            tcpSocket:
               port: 9900
-            initialDelaySeconds: 60
-            timeoutSeconds: 10
-          livenessProbe:
-            httpGet:
-              path: /health/liveness
-              port: 9900
-            initialDelaySeconds: 60
+            initialDelaySeconds: 15
+            periodSeconds: 5
             timeoutSeconds: 10
             failureThreshold: 10
+            successThreshold: 1
+          livenessProbe:
+            tcpSocket:
+              port: 9900
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 10
+            failureThreshold: 10
+            successThreshold: 1
