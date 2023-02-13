@@ -42,7 +42,7 @@ jobs:
         uses: tailscale/github-action@v1
         with:
           authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
-          version: 1.32.0
+          version: 1.36.1
       - uses: actions/checkout@master
       - name: Set Kubernetes Context
         uses: azure/k8s-set-context@v3
