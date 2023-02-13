@@ -17,6 +17,8 @@ package pcc.puppet.enforcer.realm.organization.ports.api;
 
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
+import io.micrometer.core.annotation.Counted;
+import io.micrometer.core.annotation.Timed;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
@@ -53,6 +55,8 @@ public class OrganizationController implements OrganizationOperations {
   private final OrganizationService organizationService;
   private final KeycloakService keycloakService;
 
+  @Timed
+  @Counted
   @NewSpan
   @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
   public Mono<OrganizationCreateEvent> organizationCreate(
@@ -61,6 +65,8 @@ public class OrganizationController implements OrganizationOperations {
     return organizationService.create(requester, createCommand);
   }
 
+  @Timed
+  @Counted
   @NewSpan
   @Get(uri = "/{organizationId}", produces = MediaType.APPLICATION_JSON)
   public Mono<OrganizationPresenter> findOrganization(
@@ -69,6 +75,8 @@ public class OrganizationController implements OrganizationOperations {
     return organizationService.findById(requester, organizationId);
   }
 
+  @Timed
+  @Counted
   @NewSpan
   @Get(uri = "/{organizationId}/child", produces = MediaType.APPLICATION_JSON)
   public Flux<OrganizationPresenter> findChildOrganizations(
@@ -77,6 +85,8 @@ public class OrganizationController implements OrganizationOperations {
     return organizationService.findByParentId(requester, organizationId);
   }
 
+  @Timed
+  @Counted
   @NewSpan
   @Post(
       uri = "/{organizationId}/login",

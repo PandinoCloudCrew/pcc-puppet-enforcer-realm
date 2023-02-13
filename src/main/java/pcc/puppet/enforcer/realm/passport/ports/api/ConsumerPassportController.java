@@ -17,6 +17,8 @@ package pcc.puppet.enforcer.realm.passport.ports.api;
 
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
+import io.micrometer.core.annotation.Counted;
+import io.micrometer.core.annotation.Timed;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
@@ -40,6 +42,8 @@ public class ConsumerPassportController implements ConsumerPassportOperations {
 
   private final ConsumerPassportService passportService;
 
+  @Timed
+  @Counted
   @NewSpan
   @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
   public Mono<ConsumerPassportCreateEvent> createConsumerPassport(

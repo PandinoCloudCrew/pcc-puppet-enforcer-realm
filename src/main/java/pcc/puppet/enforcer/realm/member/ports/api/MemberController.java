@@ -19,6 +19,8 @@ import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.DEPARTMENT;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.ORGANIZATION;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
+import io.micrometer.core.annotation.Counted;
+import io.micrometer.core.annotation.Timed;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
@@ -52,6 +54,8 @@ import reactor.core.publisher.Mono;
 public class MemberController implements MemberOperations {
   private final MemberService memberService;
 
+  @Timed
+  @Counted
   @Override
   @NewSpan
   @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
@@ -63,6 +67,8 @@ public class MemberController implements MemberOperations {
     return memberService.create(requester, createCommand);
   }
 
+  @Timed
+  @Counted
   @Override
   @NewSpan
   @Get(uri = "/{memberId}", produces = MediaType.APPLICATION_JSON)
@@ -74,6 +80,8 @@ public class MemberController implements MemberOperations {
     return memberService.findById(requester, memberId);
   }
 
+  @Timed
+  @Counted
   @Override
   @NewSpan
   @Get(uri = "/organization/{parentOrganizationId}", produces = MediaType.APPLICATION_JSON)
@@ -85,6 +93,8 @@ public class MemberController implements MemberOperations {
     return memberService.findByOrganizationId(requester, parentOrganizationId);
   }
 
+  @Timed
+  @Counted
   @Override
   @NewSpan
   @Get(uri = "/department/{parentDepartmentId}", produces = MediaType.APPLICATION_JSON)
