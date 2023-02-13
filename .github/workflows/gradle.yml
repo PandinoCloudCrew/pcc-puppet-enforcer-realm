@@ -32,8 +32,8 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ${{ secrets.DOCKER_REGISTRY_URL }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.GH_PAT_USERNAME }}
+          password: ${{ secrets.GH_PAT }}
       - name: Build And Push Docker Image
         env:
           DOCKER_REPOSITORY_PATH: ${{ secrets.DOCKER_REPOSITORY_PATH }}
