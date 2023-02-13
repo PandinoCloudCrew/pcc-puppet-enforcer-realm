@@ -38,11 +38,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build And Push Docker Image
         env:
-          DOCKER_REPOSITORY_PATH: ${{ secrets.DOCKER_REPOSITORY_PATH }}
-          DOCKER_REGISTRY_URL: ${{ secrets.DOCKER_REGISTRY_URL }}
+          DOCKER_IMAGE: ${{ secrets.DOCKER_REGISTRY_URL }}/${{ github.repository }}
           TESTCONTAINERS_RYUK_DISABLED: true
         run: |
-          export DOCKER_IMAGE=`echo "${DOCKER_REGISTRY_URL}/${{ github.repository }}" | sed -e 's#//#/#' -e 's#^/##'`
           ./gradlew check dockerPush --no-daemon
       - name: Tailscale
         uses: tailscale/github-action@v1
