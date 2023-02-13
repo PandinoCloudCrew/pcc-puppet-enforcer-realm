@@ -12,6 +12,9 @@ micronaut:
           - /health.*
   metrics:
     enabled: true
+    binders:
+      jvm:
+        enabled: true
     export:
       prometheus:
         enabled: true

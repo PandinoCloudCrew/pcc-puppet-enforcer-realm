@@ -18,6 +18,8 @@ package pcc.puppet.enforcer.realm.department.ports.api;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.ORGANIZATION;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
+import io.micrometer.core.annotation.Counted;
+import io.micrometer.core.annotation.Timed;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
@@ -50,6 +52,8 @@ import reactor.core.publisher.Mono;
 public class DepartmentController implements DepartmentOperations {
   private final DepartmentService departmentService;
 
+  @Timed
+  @Counted
   @Override
   @NewSpan
   @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
@@ -60,6 +64,8 @@ public class DepartmentController implements DepartmentOperations {
     return departmentService.create(requester, createCommand);
   }
 
+  @Timed
+  @Counted
   @Override
   @NewSpan
   @Get(uri = "/{departmentId}", produces = MediaType.APPLICATION_JSON)
@@ -70,6 +76,8 @@ public class DepartmentController implements DepartmentOperations {
     return departmentService.findById(requester, departmentId);
   }
 
+  @Timed
+  @Counted
   @Override
   @NewSpan
   @Get(uri = "/{departmentId}/child", produces = MediaType.APPLICATION_JSON)
