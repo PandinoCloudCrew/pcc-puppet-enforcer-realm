@@ -1,3 +1,5 @@
+import java.time.Instant
+
 plugins {
     id("com.gorylenko.gradle-git-properties") version "2.4.1"
     id("com.pasam.gradle.buildinfo") version "0.1.3"
@@ -52,7 +54,7 @@ dependencies {
     implementation("io.micronaut.security:micronaut-security-oauth2")
     implementation("io.micronaut.tracing:micronaut-tracing-jaeger")
     implementation("io.swagger.core.v3:swagger-annotations")
-    implementation ("org.passay:passay:$passayVersion")
+    implementation("org.passay:passay:$passayVersion")
     implementation("org.mapstruct:mapstruct:$mapstructProcessorVersion")
     implementation("net.datafaker:datafaker:$datafakerVersion")
     implementation("uk.co.jemos.podam:podam:$podamVersion")
@@ -78,12 +80,24 @@ java {
     targetCompatibility = JavaVersion.toVersion("$javaVersion")
 }
 
+def details = versionDetails()
+def dockerLabels = [
+        "org.opencontainers.image.source": "https://github.com/PandinoCloudCrew/pcc-puppet-enforcer-realm",
+        "org.opencontainers.image.version": "$project.version",
+        "org.opencontainers.image.revision": details.gitHash,
+        "org.opencontainers.image.vendor": "PandinoCloudCrew",
+        "org.opencontainers.image.title": "$project.name",
+        "org.opencontainers.image.license": "Apache-2.0",
+        "org.opencontainers.image.created": Instant.now().toString()
+]
+
 tasks {
     dockerBuild {
         images = [
                 "${System.env.DOCKER_IMAGE ?: project.name}:$project.version",
                 "${System.env.DOCKER_IMAGE ?: project.name}:latest"
         ]
+        labels = dockerLabels
     }
 
     dockerBuildNative {
@@ -91,6 +105,7 @@ tasks {
                 "${System.env.DOCKER_IMAGE ?: project.name}:$project.version",
                 "${System.env.DOCKER_IMAGE ?: project.name}:latest"
         ]
+        labels = dockerLabels
     }
     jib {
         from {
