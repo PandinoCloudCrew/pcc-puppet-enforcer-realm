@@ -102,8 +102,8 @@ tasks {
 
     dockerBuildNative {
         images = [
-                "${System.env.DOCKER_IMAGE ?: project.name}:$project.version",
-                "${System.env.DOCKER_IMAGE ?: project.name}:latest"
+                "${System.env.DOCKER_IMAGE ?: project.name}-native:$project.version",
+                "${System.env.DOCKER_IMAGE ?: project.name}-native:latest"
         ]
         labels = dockerLabels
     }
