@@ -30,6 +30,11 @@ jobs:
         run: git update-index --assume-unchanged gradlew
       - name: Make gradlew executable
         run: chmod +x ./gradlew
+      - name: lowercase repository name
+        env:
+          DOCKER_IMAGE_UPPERCASE: ${{ secrets.DOCKER_REGISTRY_URL }}/${{ github.repository }}
+        run: |
+          echo "DOCKER_IMAGE=${DOCKER_IMAGE_UPPERCASE,,}" >>${GITHUB_ENV}
       - name: Docker login
         uses: docker/login-action@v2
         with:
@@ -38,7 +43,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build And Push Docker Image
         env:
-          DOCKER_IMAGE: ${{ secrets.DOCKER_REGISTRY_URL }}/${{ github.repository }}
           TESTCONTAINERS_RYUK_DISABLED: true
         run: |
           ./gradlew check dockerPush --no-daemon
@@ -55,7 +59,7 @@ jobs:
           kubeconfig: ${{ secrets.KUBE_CONFIG_DATA }}
       - name: deploy to cluster
         run: |
-          kubectl set image deployment/pcc-puppet-enforcer-realm-deployment pcc-puppet-enforcer-realm-container=${{ secrets.DOCKER_REGISTRY_URL }}/${{ secrets.DOCKER_REPOSITORY_PATH }}/pcc-puppet-enforcer-realm:${{ github.ref_name }}
+          kubectl set image deployment/pcc-puppet-enforcer-realm-deployment pcc-puppet-enforcer-realm-container=${DOCKER_IMAGE}:${{ github.ref_name }}
       - name: verify deployment
         run: |
           kubectl rollout status deployment/pcc-puppet-enforcer-realm-deployment
