@@ -15,17 +15,16 @@
  */
 package pcc.puppet.enforcer.realm.passport.adapters.gateway.rest_countries.response;
 
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-@Introspected
 public class CountryIdd {
 
-  @Nullable private String root;
+  @Nullable
+  private String root;
   @Nullable private List<String> suffixes;
 }

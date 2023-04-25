@@ -15,8 +15,7 @@
  */
 package pcc.puppet.enforcer.realm.common.generator;
 
-import com.github.shamil.Xid;
-import io.micronaut.core.annotation.Introspected;
+import com.github.f4b6a3.ulid.Ulid;
 import lombok.experimental.UtilityClass;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakTokenDetails;
 import pcc.puppet.enforcer.realm.department.ports.command.DepartmentCreateCommand;
@@ -27,13 +26,12 @@ import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 @UtilityClass
-@Introspected
 public class DomainFactory {
 
   private final PodamFactory factory = new PodamFactoryImpl();
 
   public String id() {
-    return Xid.string();
+    return Ulid.fast().toLowerCase();
   }
 
   public OrganizationCreateCommand organizationCreateCommand() {

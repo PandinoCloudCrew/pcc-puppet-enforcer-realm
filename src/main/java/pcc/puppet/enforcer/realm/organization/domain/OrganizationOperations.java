@@ -15,34 +15,27 @@
  */
 package pcc.puppet.enforcer.realm.organization.domain;
 
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.security.authentication.UsernamePasswordCredentials;
-import io.micronaut.security.token.jwt.render.AccessRefreshToken;
+import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
+import jakarta.validation.constraints.NotNull;
 import javax.validation.Valid;
 import pcc.puppet.enforcer.realm.organization.adapters.presenter.OrganizationPresenter;
 import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
 import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEvent;
+import pcc.puppet.enforcer.realm.passport.domain.UsernamePasswordCredentials;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface OrganizationOperations {
 
   Mono<OrganizationCreateEvent> organizationCreate(
-      @NonNull String requester, @NonNull @Valid OrganizationCreateCommand createCommand);
+      @NotNull String requester, @NotNull @Valid OrganizationCreateCommand createCommand);
 
   Mono<OrganizationPresenter> findOrganization(
-      @NonNull String requester, @NonNull String organizationId);
+      @NotNull String requester, @NotNull String organizationId);
 
   Flux<OrganizationPresenter> findChildOrganizations(
-      @NonNull String requester, @NonNull String organizationId);
+      @NotNull String requester, @NotNull String organizationId);
 
-  @Post(
-      uri = "/{organizationId}/login",
-      consumes = MediaType.APPLICATION_JSON,
-      produces = MediaType.APPLICATION_JSON)
-  Mono<AccessRefreshToken> organizationLogin(
-      @NonNull String organizationId, @NonNull @Body UsernamePasswordCredentials credentials);
+  Mono<BearerAccessToken> organizationLogin(
+      @NotNull String organizationId, @NotNull UsernamePasswordCredentials credentials);
 }

@@ -19,11 +19,10 @@ import static pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation.C
 import static pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation.CLIENT_NAME;
 import static pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation.CLIENT_SECRET;
 
-import io.micronaut.discovery.vault.config.v2.VaultResponseV2;
-import io.micronaut.runtime.ApplicationConfiguration;
-import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation;
 import pcc.puppet.enforcer.vault.adapters.http.VaultSecretsClient;
 import pcc.puppet.enforcer.vault.adapters.http.request.VaultSecretCreateRequest;
@@ -31,18 +30,18 @@ import pcc.puppet.enforcer.vault.ports.configuration.VaultProperties;
 import reactor.core.publisher.Mono;
 
 @Slf4j
-@Singleton
+@Service
 @RequiredArgsConstructor
 public class VaultDefaultSecretService implements KVSecretService {
 
   public static final String KEYCLOAK_CLIENT_SUFFIX = "client-credentials";
   private final VaultSecretsClient secretsClient;
-  private final ApplicationConfiguration applicationConfiguration;
+  private final ApplicationContext applicationConfiguration;
   private final VaultProperties vaultClientConfiguration;
 
-  public Mono<VaultResponseV2> createClientSecret(
+  public Mono<String> createClientSecret(
       KeycloakClientRepresentation clientRepresentation) {
-    String applicationName = applicationConfiguration.getName().orElseThrow();
+    String applicationName = applicationConfiguration.getApplicationName();
     String token = vaultClientConfiguration.getToken();
     String engine = vaultClientConfiguration.getSecretEngineName();
     VaultSecretCreateRequest request =

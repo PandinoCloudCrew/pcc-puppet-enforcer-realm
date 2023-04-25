@@ -15,41 +15,36 @@
  */
 package pcc.puppet.enforcer.realm.member.domain;
 
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.core.annotation.Nullable;
-import io.micronaut.data.annotation.AutoPopulated;
-import io.micronaut.data.annotation.Id;
-import io.micronaut.data.annotation.MappedEntity;
-import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.annotation.Version;
-import io.micronaut.data.model.DataType;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.common.contact.adapters.repository.converter.ContactInformationConverter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
+import org.springframework.data.relational.core.mapping.Table;
 import pcc.puppet.enforcer.realm.common.contact.domain.ContactInformation;
 
 @Data
 @Builder
-@Introspected
-@MappedEntity(value = "member")
+@Table
 public class Member {
-  @Id private String id;
-  @NonNull private String organizationId;
-  @NonNull private String departmentId;
-  @NonNull private String username;
-  @NonNull private String password;
+  @Id
+  private String id;
+  @NotNull private String organizationId;
+  @NotNull private String departmentId;
+  @NotNull private String username;
+  @NotNull private String password;
 
-  @NonNull
-  @TypeDef(type = DataType.STRING, converter = ContactInformationConverter.class)
+  @NotNull
   private ContactInformation contactId;
 
-  @NonNull private String createdBy;
-  @NonNull private Instant createdAt;
-  @Nullable private String updatedBy;
+  @NotNull private String createdBy;
+  @NotNull private Instant createdAt;
+  @Nullable
+  private String updatedBy;
   @Nullable private Instant updatedAt;
-  @Version @AutoPopulated private Integer version;
+  @Version private Integer version;
 
   public Member setContact(ContactInformation contactInformation) {
     this.contactId = contactInformation;

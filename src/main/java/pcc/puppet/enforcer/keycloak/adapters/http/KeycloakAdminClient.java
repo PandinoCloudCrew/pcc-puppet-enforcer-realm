@@ -15,18 +15,19 @@
  */
 package pcc.puppet.enforcer.keycloak.adapters.http;
 
-import static io.micronaut.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.http.HttpHeaders;
-import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Header;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.client.annotation.Client;
-import io.micronaut.security.token.jwt.render.AccessRefreshToken;
+import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
+import jakarta.validation.constraints.NotNull;
 import java.util.Optional;
 import javax.validation.Valid;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.service.annotation.HttpExchange;
+import org.springframework.web.service.annotation.PostExchange;
 import pcc.puppet.enforcer.app.Project;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientCredentials;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation;
@@ -35,41 +36,59 @@ import pcc.puppet.enforcer.keycloak.domain.KeycloakTokenDetails;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakUserRepresentation;
 import reactor.core.publisher.Mono;
 
-@Client("provider-keycloak")
-@Header(
-    name = HttpHeaders.USER_AGENT,
-    value = "KeycloakAdminClient/" + Project.VERSION + " (" + Project.NAME + ")")
+@HttpExchange("${spring.http.services.provider-keycloak.url}")
 public interface KeycloakAdminClient {
-
-  @Post(
-      uri = "/realms/{realm}/protocol/openid-connect/token",
-      produces = MediaType.APPLICATION_FORM_URLENCODED,
-      consumes = MediaType.APPLICATION_JSON)
-  Mono<AccessRefreshToken> token(
-      @NonNull String realm, @Valid @Body KeycloakClientCredentials credentials);
-
-  @Post(
-      uri = "/realms/{realm}/protocol/openid-connect/token/introspect",
-      produces = MediaType.APPLICATION_FORM_URLENCODED,
-      consumes = MediaType.APPLICATION_JSON)
+  String USER_AGENT = "KeycloakAdminClient/" + Project.VERSION + " (" + Project.NAME + ")";
+  @PostExchange(
+      value = "/realms/{realm}/protocol/openid-connect/token",
+      contentType = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+      accept = MediaType.APPLICATION_JSON_VALUE)
+  Mono<BearerAccessToken> token(
+      @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+      @NotNull @PathVariable String realm, @Valid @RequestBody KeycloakClientCredentials credentials);
+  default Mono<BearerAccessToken> token(
+      @NotNull String realm, @Valid KeycloakClientCredentials credentials) {
+    return token(USER_AGENT, realm, credentials);
+  }
+  @PostExchange(
+      value = "/realms/{realm}/protocol/openid-connect/token/introspect",
+      contentType = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+      accept = MediaType.APPLICATION_JSON_VALUE)
   Mono<KeycloakTokenDetails> introspect(
-      @NonNull String realm, @Valid @Body KeycloakIntrospection introspection);
-
-  @Post(
-      uri = "/admin/realms/{realm}/clients",
-      produces = MediaType.APPLICATION_JSON,
-      consumes = MediaType.APPLICATION_JSON)
+      @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+      @NotNull @PathVariable String realm, @Valid @RequestBody KeycloakIntrospection introspection);
+  default Mono<KeycloakTokenDetails> introspect(
+      @NotNull String realm, @Valid KeycloakIntrospection introspection) {
+    return introspect(USER_AGENT, realm, introspection);
+  }
+  @PostExchange(
+      value = "/admin/realms/{realm}/clients",
+      contentType = MediaType.APPLICATION_JSON_VALUE,
+      accept = MediaType.APPLICATION_JSON_VALUE)
   Mono<Optional<String>> createClient(
-      @Header(AUTHORIZATION) String authorization,
-      @NonNull String realm,
-      @Valid @Body KeycloakClientRepresentation request);
-
-  @Post(
-      uri = "/admin/realms/{realm}/users",
-      produces = MediaType.APPLICATION_JSON,
-      consumes = MediaType.APPLICATION_JSON)
+      @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+      @RequestHeader(AUTHORIZATION) String authorization,
+      @NotNull @PathVariable String realm,
+      @Valid @RequestBody KeycloakClientRepresentation request);
+  default Mono<Optional<String>> createClient(
+      @RequestHeader(AUTHORIZATION) String authorization,
+      @NotNull @PathVariable String realm,
+      @Valid @RequestBody KeycloakClientRepresentation request) {
+    return createClient(USER_AGENT, authorization, realm, request);
+  }
+  @PostExchange(
+      value = "/admin/realms/{realm}/users",
+      contentType = MediaType.APPLICATION_JSON_VALUE,
+      accept = MediaType.APPLICATION_JSON_VALUE)
   Mono<Optional<String>> createUser(
-      @Header(AUTHORIZATION) String authorization,
-      @NonNull String realm,
-      @Valid @Body KeycloakUserRepresentation request);
+      @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+      @RequestHeader(AUTHORIZATION) String authorization,
+      @NotNull @PathVariable String realm,
+      @Valid @RequestBody KeycloakUserRepresentation request);
+  default Mono<Optional<String>> createUser(
+      @RequestHeader(AUTHORIZATION) String authorization,
+      @NotNull @PathVariable String realm,
+      @Valid @RequestBody KeycloakUserRepresentation request) {
+    return createUser(USER_AGENT, authorization, realm, request);
+  }
 }

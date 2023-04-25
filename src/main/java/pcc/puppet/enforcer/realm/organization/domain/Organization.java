@@ -15,19 +15,14 @@
  */
 package pcc.puppet.enforcer.realm.organization.domain;
 
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.core.annotation.Nullable;
-import io.micronaut.data.annotation.AutoPopulated;
-import io.micronaut.data.annotation.Id;
-import io.micronaut.data.annotation.MappedEntity;
-import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.annotation.Version;
-import io.micronaut.data.model.DataType;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.common.contact.adapters.repository.converter.ContactInformationConverter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
+import org.springframework.data.relational.core.mapping.Table;
 import pcc.puppet.enforcer.realm.common.contact.domain.ContactInformation;
 import pcc.puppet.enforcer.realm.common.generator.values.AddressStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.CityNameStrategy;
@@ -39,11 +34,10 @@ import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
-@Introspected
-@MappedEntity(value = "organization")
+@Table
 public class Organization {
   @Id
-  @NonNull
+  @NotNull
   @PodamStrategyValue(ObjectIdStrategy.class)
   private String id;
 
@@ -51,35 +45,34 @@ public class Organization {
   @PodamStrategyValue(ObjectIdStrategy.class)
   private String parentId;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(CompanyNameStrategy.class)
   private String name;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(AddressStrategy.class)
   private String location;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(CountryNameStrategy.class)
   private String country;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(CityNameStrategy.class)
   private String city;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(TaxIdStrategy.class)
   private String taxId;
 
-  @NonNull
-  @TypeDef(type = DataType.STRING, converter = ContactInformationConverter.class)
+  @NotNull
   private ContactInformation contactId;
 
-  @NonNull private String createdBy;
-  @NonNull private Instant createdAt;
+  @NotNull private String createdBy;
+  @NotNull private Instant createdAt;
   @Nullable private String updatedBy;
   @Nullable private Instant updatedAt;
-  @Version @AutoPopulated private Integer version;
+  @Version private Integer version;
 
   public Organization setContact(ContactInformation contactInformation) {
     this.contactId = contactInformation;

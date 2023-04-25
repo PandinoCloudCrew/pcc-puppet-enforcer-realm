@@ -15,41 +15,28 @@
  */
 package pcc.puppet.enforcer.realm.mock;
 
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.discovery.vault.config.v2.VaultResponseData;
-import io.micronaut.discovery.vault.config.v2.VaultResponseV2;
-import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Header;
-import io.micronaut.http.annotation.Post;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RestController;
 import pcc.puppet.enforcer.vault.adapters.http.request.VaultSecretCreateRequest;
 import reactor.core.publisher.Mono;
 
-@Controller("/vault")
+@RestController("/vault")
 public class VaultController {
 
-  @Post(
-      uri = "/v1/{backend}/data/{secretKey}",
-      consumes = MediaType.APPLICATION_JSON,
-      produces = MediaType.APPLICATION_JSON)
-  public Mono<VaultResponseV2> getToken(
-      @NonNull @Header("X-Vault-Token") String token,
-      @NonNull String backend,
-      @NonNull String secretKey,
-      @NonNull @Body VaultSecretCreateRequest credentials) {
-    VaultResponseData responseData = new VaultResponseData(Map.of(), Map.of());
-    return Mono.just(
-        new VaultResponseV2(
-            responseData,
-            1000L,
-            UUID.randomUUID().toString(),
-            UUID.randomUUID().toString(),
-            Map.of(),
-            false,
-            List.of()));
+  @PostMapping(
+      value = "/v1/{backend}/data/{secretKey}",
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public Mono<String> getToken(
+      @NotNull @RequestHeader("X-Vault-Token") String token,
+      @NotNull @PathVariable String backend,
+      @NotNull @PathVariable String secretKey,
+      @NotNull @RequestBody VaultSecretCreateRequest credentials) {
+    return Mono.just("created");
   }
 }

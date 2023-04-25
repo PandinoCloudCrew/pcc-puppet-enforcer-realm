@@ -17,39 +17,36 @@ package pcc.puppet.enforcer.realm.organization.ports.api;
 
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
+import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 import io.micrometer.core.annotation.Counted;
 import io.micrometer.core.annotation.Timed;
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Header;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.scheduling.TaskExecutors;
-import io.micronaut.scheduling.annotation.ExecuteOn;
-import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.authentication.UsernamePasswordCredentials;
-import io.micronaut.security.rules.SecurityRule;
-import io.micronaut.security.token.jwt.render.AccessRefreshToken;
-import io.micronaut.tracing.annotation.NewSpan;
-import io.micronaut.tracing.annotation.SpanTag;
+import io.micrometer.tracing.annotation.NewSpan;
+import io.micrometer.tracing.annotation.SpanTag;
+import jakarta.validation.constraints.NotNull;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import pcc.puppet.enforcer.keycloak.domain.service.KeycloakService;
 import pcc.puppet.enforcer.realm.organization.adapters.presenter.OrganizationPresenter;
 import pcc.puppet.enforcer.realm.organization.domain.OrganizationOperations;
 import pcc.puppet.enforcer.realm.organization.domain.service.OrganizationService;
 import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
 import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEvent;
+import pcc.puppet.enforcer.realm.passport.domain.UsernamePasswordCredentials;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
-@ExecuteOn(TaskExecutors.IO)
-@Secured(SecurityRule.IS_AUTHENTICATED)
-@Controller("${micronaut.http.services.pcc-realm-organization.path}")
+@RestController
+    @RequestMapping("${spring.http.services.pcc-realm-organization.path}")
 @RequiredArgsConstructor
 public class OrganizationController implements OrganizationOperations {
   private final OrganizationService organizationService;
@@ -58,43 +55,43 @@ public class OrganizationController implements OrganizationOperations {
   @Timed
   @Counted
   @NewSpan
-  @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<OrganizationCreateEvent> organizationCreate(
-      @NonNull @SpanTag(REQUESTER) @Header(REQUESTER) String requester,
-      @NonNull @Valid @Body OrganizationCreateCommand createCommand) {
+      @NotNull @SpanTag(REQUESTER) @RequestHeader(REQUESTER) String requester,
+      @NotNull @Valid @RequestBody OrganizationCreateCommand createCommand) {
     return organizationService.create(requester, createCommand);
   }
 
   @Timed
   @Counted
   @NewSpan
-  @Get(uri = "/{organizationId}", produces = MediaType.APPLICATION_JSON)
+  @GetMapping(value = "/{organizationId}", produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<OrganizationPresenter> findOrganization(
-      @NonNull @SpanTag(REQUESTER) @Header(REQUESTER) String requester,
-      @NonNull @SpanTag String organizationId) {
+      @NotNull @SpanTag(REQUESTER) @RequestHeader(REQUESTER) String requester,
+      @NotNull @SpanTag @PathVariable String organizationId) {
     return organizationService.findById(requester, organizationId);
   }
 
   @Timed
   @Counted
   @NewSpan
-  @Get(uri = "/{organizationId}/child", produces = MediaType.APPLICATION_JSON)
+  @GetMapping(value = "/{organizationId}/child", produces = MediaType.APPLICATION_JSON_VALUE)
   public Flux<OrganizationPresenter> findChildOrganizations(
-      @NonNull @SpanTag(REQUESTER) @Header(REQUESTER) String requester,
-      @NonNull @SpanTag String organizationId) {
+      @NotNull @SpanTag(REQUESTER) @RequestHeader(REQUESTER) String requester,
+      @NotNull @SpanTag @PathVariable String organizationId) {
     return organizationService.findByParentId(requester, organizationId);
   }
 
   @Timed
   @Counted
   @NewSpan
-  @Post(
-      uri = "/{organizationId}/login",
-      consumes = MediaType.APPLICATION_JSON,
-      produces = MediaType.APPLICATION_JSON)
-  public Mono<AccessRefreshToken> organizationLogin(
-      @NonNull @SpanTag String organizationId,
-      @NonNull @Body UsernamePasswordCredentials credentials) {
+  @PostMapping(
+      value = "/{organizationId}/login",
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public Mono<BearerAccessToken> organizationLogin(
+      @NotNull @SpanTag @PathVariable String organizationId,
+      @NotNull @RequestBody UsernamePasswordCredentials credentials) {
     return keycloakService.token(credentials.getUsername(), credentials.getPassword());
   }
 }

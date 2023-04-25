@@ -15,37 +15,25 @@
  */
 package pcc.puppet.enforcer.realm.common.filter;
 
-import io.micronaut.core.async.publisher.Publishers;
-import io.micronaut.http.HttpRequest;
-import io.micronaut.http.MutableHttpResponse;
-import io.micronaut.http.annotation.Filter;
-import io.micronaut.http.filter.HttpServerFilter;
-import io.micronaut.http.filter.ServerFilterChain;
-import io.micronaut.tracing.annotation.ContinueSpan;
-import io.micronaut.tracing.annotation.SpanTag;
 import lombok.extern.slf4j.Slf4j;
-import org.reactivestreams.Publisher;
+import org.springframework.http.HttpHeaders;
+import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
 import pcc.puppet.enforcer.app.Project;
+import reactor.core.publisher.Mono;
 
 @Slf4j
-@Filter(Filter.MATCH_ALL_PATTERN)
-public class HttpVersionFilter implements HttpServerFilter {
-
+@Component
+public class HttpVersionFilter implements WebFilter {
   @Override
-  public Publisher<MutableHttpResponse<?>> doFilter(
-      HttpRequest<?> request, ServerFilterChain chain) {
-    return Publishers.map(
-        chain.proceed(request),
-        response -> {
-          addHeaders(response, Project.VERSION, Project.NAME);
-          return response;
-        });
-  }
-
-  @ContinueSpan
-  public void addHeaders(
-      MutableHttpResponse<?> response, @SpanTag String version, @SpanTag String service) {
-    response.header("Version", version);
-    response.header("Service", service);
+  public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+    HttpHeaders headers = exchange.getResponse()
+        .getHeaders();
+    headers
+        .add("Version", Project.VERSION);
+    headers.add("Service", Project.NAME);
+    return chain.filter(exchange);
   }
 }

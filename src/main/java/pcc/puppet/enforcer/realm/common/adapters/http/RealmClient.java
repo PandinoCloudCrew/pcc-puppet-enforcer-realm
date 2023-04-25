@@ -15,27 +15,33 @@
  */
 package pcc.puppet.enforcer.realm.common.adapters.http;
 
-import static io.micronaut.http.HttpHeaders.USER_AGENT;
-import static io.micronaut.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static pcc.puppet.enforcer.app.Project.NAME;
 import static pcc.puppet.enforcer.app.Project.VERSION;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Header;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.client.annotation.Client;
-import io.micronaut.security.authentication.UsernamePasswordCredentials;
-import io.micronaut.security.token.jwt.render.AccessRefreshToken;
-import io.micronaut.tracing.annotation.SpanTag;
+import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
+import io.micrometer.tracing.annotation.SpanTag;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.service.annotation.HttpExchange;
+import org.springframework.web.service.annotation.PostExchange;
+import pcc.puppet.enforcer.realm.passport.domain.UsernamePasswordCredentials;
 import reactor.core.publisher.Mono;
 
-@Client("/")
-@Header(name = USER_AGENT, value = "RealmClient/" + VERSION + " (" + NAME + ")")
+@HttpExchange("/")
 public interface RealmClient {
-  @Post(value = "/login", consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
-  Mono<AccessRefreshToken> login(
-      @NonNull @SpanTag(REQUESTER) @Header(REQUESTER) String requester,
-      @NonNull @Body UsernamePasswordCredentials passportCommand);
+  String USER_AGENT = "RealmClient/" + VERSION + " (" + NAME + ")";
+  @PostExchange(value = "/login", accept = APPLICATION_JSON_VALUE, contentType = APPLICATION_JSON_VALUE)
+  Mono<BearerAccessToken> login(
+      @RequestHeader(name = USER_AGENT) String userAgent,
+      @NotNull @SpanTag(REQUESTER) @RequestHeader(REQUESTER) String requester,
+      @NotNull @RequestBody UsernamePasswordCredentials passportCommand);
+
+  default Mono<BearerAccessToken> login(
+      @NotNull String requester,
+      @NotNull UsernamePasswordCredentials passportCommand) {
+    return login(USER_AGENT, requester, passportCommand);
+  }
 }

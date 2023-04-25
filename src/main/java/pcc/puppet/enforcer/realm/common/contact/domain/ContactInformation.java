@@ -15,16 +15,14 @@
  */
 package pcc.puppet.enforcer.realm.common.contact.domain;
 
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.core.annotation.Nullable;
-import io.micronaut.data.annotation.AutoPopulated;
-import io.micronaut.data.annotation.Id;
-import io.micronaut.data.annotation.MappedEntity;
-import io.micronaut.data.annotation.Version;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
+import org.springframework.data.relational.core.mapping.Table;
 import pcc.puppet.enforcer.realm.common.generator.values.CityNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.CountryNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.CurrencyCodeStrategy;
@@ -40,60 +38,60 @@ import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
-@Introspected
-@MappedEntity(value = "contact_information")
+@Table
 public class ContactInformation {
 
   @Id
-  @NonNull
+  @NotNull
   @PodamStrategyValue(ObjectIdStrategy.class)
   private String id;
 
-  @NonNull private String ownerId;
+  @NotNull private String ownerId;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(FirstNameStrategy.class)
   private String firstName;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(LastNameStrategy.class)
   private String lastName;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(PhoneNumberStrategy.class)
   private String phoneNumber;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(EmailStrategy.class)
   private String email;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(JobPositionStrategy.class)
   private String position;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(TimeZoneStrategy.class)
   private String zoneId;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(LocaleStrategy.class)
   private String locale;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(CountryNameStrategy.class)
   private String country;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(CityNameStrategy.class)
   private String city;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(CurrencyCodeStrategy.class)
   private String currency;
 
-  @NonNull private String createdBy;
-  @NonNull private Instant createdAt;
-  @Nullable private String updatedBy;
+  @NotNull private String createdBy;
+  @NotNull private Instant createdAt;
+  @Nullable
+  private String updatedBy;
   @Nullable private Instant updatedAt;
-  @Version @AutoPopulated private Integer version;
+  @Version private Integer version;
 }

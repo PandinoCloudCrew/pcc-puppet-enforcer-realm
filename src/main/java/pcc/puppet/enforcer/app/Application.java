@@ -15,11 +15,18 @@
  */
 package pcc.puppet.enforcer.app;
 
-import io.micronaut.runtime.Micronaut;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.web.reactive.config.EnableWebFlux;
 
-@OpenAPIDefinition(info = @Info(title = Project.NAME, version = Project.VERSION))
+@EnableWebFlux
+@EnableScheduling
+@EnableConfigurationProperties
+@SpringBootApplication(scanBasePackages = {"pcc.puppet.*"})
+@EnableR2dbcRepositories(basePackages = {"pcc.puppet.*"})
 public class Application {
   /**
    * Entry point for app
@@ -27,6 +34,6 @@ public class Application {
    * @param args program arguments
    */
   public static void main(final String[] args) {
-    Micronaut.run(Application.class, args);
+    SpringApplication.run(Application.class, args);
   }
 }

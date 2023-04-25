@@ -15,14 +15,16 @@
  */
 package pcc.puppet.enforcer.realm.mock;
 
-import io.micronaut.core.io.ResourceLoader;
-import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
-@Controller("/rest-countries")
+@RestController("/rest-countries")
 public class RestCountriesController {
 
   private final ResourceLoader loader;
@@ -31,15 +33,14 @@ public class RestCountriesController {
     this.loader = loader;
   }
 
-  @Get(uri = "/name/{name}", produces = MediaType.APPLICATION_JSON)
-  public Mono<String> getCountryResponse(String name) {
+  @GetMapping(value = "/name/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public Mono<String> getCountryResponse(@PathVariable String name) {
     return Mono.just(getJsonResponse());
   }
 
   private String getJsonResponse() {
     try {
-      return new String(
-          loader.getResourceAsStream("rest-countries.json").orElseThrow().readAllBytes());
+      return  loader.getResource("rest-countries.json").getContentAsString(StandardCharsets.UTF_8);
     } catch (IOException e) {
       return e.getMessage();
     }

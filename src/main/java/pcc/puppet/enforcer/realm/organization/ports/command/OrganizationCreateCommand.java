@@ -15,9 +15,8 @@
  */
 package pcc.puppet.enforcer.realm.organization.ports.command;
 
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.core.annotation.Nullable;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
 import javax.validation.Valid;
 import lombok.Builder;
 import lombok.Data;
@@ -32,9 +31,8 @@ import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
-@Introspected
 public class OrganizationCreateCommand {
-  @NonNull
+  @NotNull
   @PodamStrategyValue(CompanyNameStrategy.class)
   private String name;
 
@@ -42,21 +40,21 @@ public class OrganizationCreateCommand {
   @PodamStrategyValue(ObjectIdStrategy.class)
   private String parentId;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(AddressStrategy.class)
   private String location;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(CountryNameStrategy.class)
   private String country;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(CityNameStrategy.class)
   private String city;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(TaxIdStrategy.class)
   private String taxId;
 
-  @NonNull @Valid private CreateContactInformationCommand contactId;
+  @NotNull @Valid private CreateContactInformationCommand contactId;
 }

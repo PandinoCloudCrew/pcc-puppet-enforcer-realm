@@ -15,12 +15,11 @@
  */
 package pcc.puppet.enforcer.realm.passport.domain.service;
 
-import io.micronaut.security.authentication.UsernamePasswordCredentials;
-import jakarta.inject.Singleton;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import pcc.puppet.enforcer.keycloak.domain.service.KeycloakService;
 import pcc.puppet.enforcer.realm.common.adapters.http.RealmClient;
 import pcc.puppet.enforcer.realm.common.contact.ports.command.CreateContactInformationCommand;
@@ -36,11 +35,12 @@ import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEven
 import pcc.puppet.enforcer.realm.passport.adapters.gateway.rest_countries.RestCountriesApiClient;
 import pcc.puppet.enforcer.realm.passport.adapters.gateway.rest_countries.response.CountryCurrency;
 import pcc.puppet.enforcer.realm.passport.adapters.gateway.rest_countries.response.RestCountriesResponse;
+import pcc.puppet.enforcer.realm.passport.domain.UsernamePasswordCredentials;
 import pcc.puppet.enforcer.realm.passport.ports.command.ConsumerPassportCreateCommand;
 import pcc.puppet.enforcer.realm.passport.ports.event.ConsumerPassportCreateEvent;
 import reactor.core.publisher.Mono;
 
-@Singleton
+@Service
 @RequiredArgsConstructor
 public class DefaultConsumerPassportService implements ConsumerPassportService {
 

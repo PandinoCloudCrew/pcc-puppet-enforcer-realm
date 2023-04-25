@@ -17,23 +17,21 @@ package pcc.puppet.enforcer.keycloak.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.micronaut.core.annotation.Introspected;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-@Introspected
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class KeycloakClientCredentials {
 
   @Builder.Default
   @JsonProperty("grant_type")
-  private String grant_type = "client_credentials";
+  private String grantType = "client_credentials";
 
   @JsonProperty("client_id")
-  private String client_id;
+  private String clientId;
 
   @JsonProperty("client_secret")
-  private String client_secret;
+  private String clientSecret;
 }

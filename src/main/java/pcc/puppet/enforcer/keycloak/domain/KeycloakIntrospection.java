@@ -15,16 +15,17 @@
  */
 package pcc.puppet.enforcer.keycloak.domain;
 
-import io.micronaut.core.annotation.Introspected;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-@Introspected
 public class KeycloakIntrospection {
 
   private String token;
-  private String client_id;
-  private String client_secret;
+  @JsonProperty("client_id")
+  private String clientId;
+  @JsonProperty("client_secret")
+  private String clientSecret;
 }

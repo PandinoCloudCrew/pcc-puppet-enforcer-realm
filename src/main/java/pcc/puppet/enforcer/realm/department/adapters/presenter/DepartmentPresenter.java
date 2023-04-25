@@ -15,9 +15,8 @@
  */
 package pcc.puppet.enforcer.realm.department.adapters.presenter;
 
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.core.annotation.Nullable;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
 import javax.validation.Valid;
 import lombok.Builder;
 import lombok.Data;
@@ -25,15 +24,16 @@ import pcc.puppet.enforcer.realm.common.contact.adapters.presenter.ContactInform
 
 @Data
 @Builder
-@Introspected
 public class DepartmentPresenter {
   private String id;
-  @Nullable private String parentId;
-  @NonNull private String organizationId;
-  @NonNull private String name;
-  @NonNull private String location;
-  @NonNull @Valid private ContactInformationPresenter contactId;
-  @NonNull private String createdBy;
-  @NonNull private String createdAt;
-  @NonNull private Integer version;
+  @Nullable
+  private String parentId;
+  @NotNull
+  private String organizationId;
+  @NotNull private String name;
+  @NotNull private String location;
+  @NotNull @Valid private ContactInformationPresenter contactId;
+  @NotNull private String createdBy;
+  @NotNull private String createdAt;
+  @NotNull private Integer version;
 }

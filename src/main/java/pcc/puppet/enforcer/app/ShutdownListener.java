@@ -15,17 +15,16 @@
  */
 package pcc.puppet.enforcer.app;
 
-import io.micronaut.context.event.ApplicationEventListener;
-import io.micronaut.context.event.ShutdownEvent;
-import jakarta.inject.Singleton;
+import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 @Slf4j
-@Singleton
-public class ShutdownListener implements ApplicationEventListener<ShutdownEvent> {
+@Component
+public class ShutdownListener {
 
-  @Override
-  public void onApplicationEvent(ShutdownEvent event) {
+  @PreDestroy
+  public void onApplicationEvent() {
     log.info("shutting down application: {}, version: {}", Project.NAME, Project.VERSION);
   }
 }

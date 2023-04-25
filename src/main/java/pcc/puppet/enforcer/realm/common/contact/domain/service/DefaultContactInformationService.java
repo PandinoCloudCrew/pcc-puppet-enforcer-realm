@@ -15,10 +15,10 @@
  */
 package pcc.puppet.enforcer.realm.common.contact.domain.service;
 
-import io.micronaut.tracing.annotation.NewSpan;
-import jakarta.inject.Singleton;
+import io.micrometer.tracing.annotation.NewSpan;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import pcc.puppet.enforcer.realm.common.contact.adapters.repository.ContactInformationRepository;
 import pcc.puppet.enforcer.realm.common.contact.domain.ContactInformation;
 import pcc.puppet.enforcer.realm.common.contact.ports.command.CreateContactInformationCommand;
@@ -26,7 +26,7 @@ import pcc.puppet.enforcer.realm.common.contact.ports.mapper.ContactInformationI
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import reactor.core.publisher.Mono;
 
-@Singleton
+@Service
 @RequiredArgsConstructor
 public class DefaultContactInformationService implements ContactInformationService {
 

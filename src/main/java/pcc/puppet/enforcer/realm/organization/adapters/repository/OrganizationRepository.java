@@ -15,14 +15,13 @@
  */
 package pcc.puppet.enforcer.realm.organization.adapters.repository;
 
-import io.micronaut.data.model.query.builder.sql.Dialect;
-import io.micronaut.data.r2dbc.annotation.R2dbcRepository;
-import io.micronaut.data.repository.reactive.ReactorPageableRepository;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.stereotype.Repository;
 import pcc.puppet.enforcer.realm.organization.domain.Organization;
 import reactor.core.publisher.Flux;
 
-@R2dbcRepository(dialect = Dialect.POSTGRES)
-public interface OrganizationRepository extends ReactorPageableRepository<Organization, String> {
+@Repository
+public interface OrganizationRepository extends ReactiveCrudRepository<Organization, String> {
 
   Flux<Organization> findByParentId(String parentId);
 }

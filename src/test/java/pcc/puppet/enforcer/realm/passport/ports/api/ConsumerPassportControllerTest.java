@@ -18,18 +18,19 @@ package pcc.puppet.enforcer.realm.passport.ports.api;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static pcc.puppet.enforcer.realm.TestDomainGenerator.REQUESTER_ID;
 
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import pcc.puppet.enforcer.realm.passport.adapters.http.ConsumerPassportClient;
 import pcc.puppet.enforcer.realm.passport.ports.command.ConsumerPassportCreateCommand;
 import pcc.puppet.enforcer.realm.passport.ports.event.ConsumerPassportCreateEvent;
 
-@MicronautTest(transactional = false)
+@SpringBootTest
 class ConsumerPassportControllerTest {
 
-  @Inject private ConsumerPassportClient client;
+  @Autowired
+  private ConsumerPassportClient client;
 
   @Test
   void createConsumerPassport() {

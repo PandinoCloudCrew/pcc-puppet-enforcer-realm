@@ -15,16 +15,15 @@
  */
 package pcc.puppet.enforcer.realm.passport.adapters.gateway.rest_countries.response;
 
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-@Introspected
 public class CountryCarInfo {
-  @Nullable private String side;
+  @Nullable
+  private String side;
   @Nullable private List<String> signs;
 }

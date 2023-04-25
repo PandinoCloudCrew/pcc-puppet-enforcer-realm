@@ -15,31 +15,35 @@
  */
 package pcc.puppet.enforcer.realm.passport.adapters.http;
 
-import static io.micronaut.http.HttpHeaders.ACCEPT_ENCODING;
-import static io.micronaut.http.HttpHeaders.USER_AGENT;
-import static io.micronaut.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static pcc.puppet.enforcer.app.Project.NAME;
 import static pcc.puppet.enforcer.app.Project.VERSION;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.http.annotation.Header;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.client.annotation.Client;
-import io.micronaut.tracing.annotation.SpanTag;
+import io.micrometer.tracing.annotation.SpanTag;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.service.annotation.HttpExchange;
+import org.springframework.web.service.annotation.PostExchange;
 import pcc.puppet.enforcer.realm.passport.domain.ConsumerPassportOperations;
 import pcc.puppet.enforcer.realm.passport.ports.command.ConsumerPassportCreateCommand;
 import pcc.puppet.enforcer.realm.passport.ports.event.ConsumerPassportCreateEvent;
 import reactor.core.publisher.Mono;
 
-@Client("${micronaut.http.services.pcc-realm-passport.path}")
-@Header(name = ACCEPT_ENCODING, value = "gzip, deflate")
-@Header(name = USER_AGENT, value = "ConsumerPassportClient/" + VERSION + " (" + NAME + ")")
+@HttpExchange("${spring.http.services.pcc-realm-passport.url}")
 public interface ConsumerPassportClient extends ConsumerPassportOperations {
-
-  @Override
-  @Post(consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
+String USER_AGENT =  "ConsumerPassportClient/" + VERSION + " (" + NAME + ")";
+  @PostExchange(accept = APPLICATION_JSON_VALUE, contentType = APPLICATION_JSON_VALUE)
   Mono<ConsumerPassportCreateEvent> createConsumerPassport(
-      @NonNull @SpanTag(REQUESTER) @Header(REQUESTER) String requester,
-      @NonNull ConsumerPassportCreateCommand passportCommand);
+      @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+      @NotNull @SpanTag(REQUESTER) @RequestHeader(REQUESTER) String requester,
+      @NotNull @RequestBody ConsumerPassportCreateCommand passportCommand);
+  @Override
+ default  Mono<ConsumerPassportCreateEvent> createConsumerPassport(
+      @NotNull String requester,
+      @NotNull ConsumerPassportCreateCommand passportCommand){
+    return createConsumerPassport(USER_AGENT, requester, passportCommand);
+  }
 }

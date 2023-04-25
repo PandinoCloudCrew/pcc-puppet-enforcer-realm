@@ -21,13 +21,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static pcc.puppet.enforcer.realm.TestDomainGenerator.REQUESTER_ID;
 
-import io.micronaut.security.authentication.UsernamePasswordCredentials;
-import io.micronaut.security.token.jwt.render.AccessRefreshToken;
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import jakarta.inject.Inject;
+import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import pcc.puppet.enforcer.realm.TestDomainGenerator;
 import pcc.puppet.enforcer.realm.common.format.DateFormat;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
@@ -35,14 +34,16 @@ import pcc.puppet.enforcer.realm.organization.adapters.http.OrganizationClient;
 import pcc.puppet.enforcer.realm.organization.adapters.presenter.OrganizationPresenter;
 import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
 import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEvent;
+import pcc.puppet.enforcer.realm.passport.domain.UsernamePasswordCredentials;
 import pcc.puppet.enforcer.security.password.SecurePasswordGenerator;
 
-@MicronautTest(transactional = false)
+@SpringBootTest
 class OrganizationControllerTest {
 
-  @Inject private OrganizationClient client;
-  @Inject private TestDomainGenerator generator;
-  @Inject private SecurePasswordGenerator passwordGenerator;
+  @Autowired
+  private OrganizationClient client;
+  @Autowired private TestDomainGenerator generator;
+  @Autowired private SecurePasswordGenerator passwordGenerator;
 
   @Test
   void organizationCreate_ShouldSucceedWithCleanData_ReturnHttpOkWithDetails() {
@@ -161,7 +162,7 @@ class OrganizationControllerTest {
         new UsernamePasswordCredentials(organizationId, passwordGenerator.password(16));
     Assertions.assertAll(
         () -> {
-          AccessRefreshToken accessRefreshToken =
+          BearerAccessToken accessRefreshToken =
               client.organizationLogin(organizationId, credentials).block();
           assertNotNull(accessRefreshToken);
         });

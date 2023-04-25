@@ -15,9 +15,8 @@
  */
 package pcc.puppet.enforcer.realm.organization.ports.event;
 
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.core.annotation.Nullable;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 import pcc.puppet.enforcer.realm.common.contact.ports.event.CreateContactInformationEvent;
@@ -31,10 +30,9 @@ import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
-@Introspected
 public class OrganizationCreateEvent {
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(ObjectIdStrategy.class)
   private String id;
 
@@ -42,27 +40,27 @@ public class OrganizationCreateEvent {
   @PodamStrategyValue(ObjectIdStrategy.class)
   private String parentId;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(CompanyNameStrategy.class)
   private String name;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(AddressStrategy.class)
   private String location;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(CountryNameStrategy.class)
   private String country;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(CityNameStrategy.class)
   private String city;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(TaxIdStrategy.class)
   private String taxId;
 
-  @NonNull private CreateContactInformationEvent contactId;
+  @NotNull private CreateContactInformationEvent contactId;
 
   private String createdAt;
 }

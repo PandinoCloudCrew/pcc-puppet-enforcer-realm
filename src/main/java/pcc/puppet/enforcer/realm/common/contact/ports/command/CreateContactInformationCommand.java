@@ -15,8 +15,7 @@
  */
 package pcc.puppet.enforcer.realm.common.contact.ports.command;
 
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.NonNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 import pcc.puppet.enforcer.realm.common.generator.values.CityNameStrategy;
@@ -33,45 +32,44 @@ import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
-@Introspected
 public class CreateContactInformationCommand {
-  @NonNull
+  @NotNull
   @PodamStrategyValue(FirstNameStrategy.class)
   private String firstName;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(LastNameStrategy.class)
   private String lastName;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(PhoneNumberStrategy.class)
   private String phoneNumber;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(EmailStrategy.class)
   private String email;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(JobPositionStrategy.class)
   private String position;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(TimeZoneStrategy.class)
   private String zoneId;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(LocaleStrategy.class)
   private String locale;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(CountryNameStrategy.class)
   private String country;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(CityNameStrategy.class)
   private String city;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(CurrencyCodeStrategy.class)
   private String currency;
 }

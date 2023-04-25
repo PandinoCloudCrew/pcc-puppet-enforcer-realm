@@ -15,7 +15,7 @@
  */
 package pcc.puppet.enforcer.realm.member.domain;
 
-import io.micronaut.core.annotation.NonNull;
+import jakarta.validation.constraints.NotNull;
 import pcc.puppet.enforcer.realm.member.adapters.presenter.MemberPresenter;
 import pcc.puppet.enforcer.realm.member.ports.command.MemberCreateCommand;
 import pcc.puppet.enforcer.realm.member.ports.event.MemberCreateEvent;
@@ -25,26 +25,26 @@ import reactor.core.publisher.Mono;
 public interface MemberOperations {
 
   Mono<MemberCreateEvent> memberCreate(
-      @NonNull String requester,
-      @NonNull String organizationId,
-      @NonNull String departmentId,
-      @NonNull MemberCreateCommand createCommand);
+      @NotNull String requester,
+      @NotNull String organizationId,
+      @NotNull String departmentId,
+      @NotNull MemberCreateCommand createCommand);
 
   Mono<MemberPresenter> findMember(
-      @NonNull String requester,
-      @NonNull String organizationId,
-      @NonNull String departmentId,
-      @NonNull String memberId);
+      @NotNull String requester,
+      @NotNull String organizationId,
+      @NotNull String departmentId,
+      @NotNull String memberId);
 
   Flux<MemberPresenter> findOrganizationMembers(
-      @NonNull String requester,
-      @NonNull String organizationId,
-      @NonNull String departmentId,
-      @NonNull String id);
+      @NotNull String requester,
+      @NotNull String organizationId,
+      @NotNull String departmentId,
+      @NotNull String id);
 
   Flux<MemberPresenter> findDepartmentMembers(
-      @NonNull String requester,
-      @NonNull String organizationId,
-      @NonNull String departmentId,
-      @NonNull String id);
+      @NotNull String requester,
+      @NotNull String organizationId,
+      @NotNull String departmentId,
+      @NotNull String id);
 }

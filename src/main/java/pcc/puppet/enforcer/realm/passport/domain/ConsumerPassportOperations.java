@@ -15,12 +15,12 @@
  */
 package pcc.puppet.enforcer.realm.passport.domain;
 
-import io.micronaut.core.annotation.NonNull;
+import jakarta.validation.constraints.NotNull;
 import pcc.puppet.enforcer.realm.passport.ports.command.ConsumerPassportCreateCommand;
 import pcc.puppet.enforcer.realm.passport.ports.event.ConsumerPassportCreateEvent;
 import reactor.core.publisher.Mono;
 
 public interface ConsumerPassportOperations {
   Mono<ConsumerPassportCreateEvent> createConsumerPassport(
-      @NonNull String requester, @NonNull ConsumerPassportCreateCommand passportCommand);
+      @NotNull String requester, @NotNull ConsumerPassportCreateCommand passportCommand);
 }

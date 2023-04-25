@@ -4,14 +4,20 @@ micronaut:
   config-client:
     enabled: true
 
-vault:
-  client:
-    uri: ${HC_VAULT_URI}
-    token: ${HC_VAULT_TOKEN}
-    kv-version: V2
-    config:
+spring:
+  cloud:
+    vault:
       enabled: true
-
+      application-name: ${spring.application.name},global
+      authentication: token
+      host: vault-dev.ops.pandino.co
+      token: hvs.V0diJA9HjKPClSMAkIS1L8QW
+      port: 443
+      scheme: https
+      connection-timeout: 5000
+      read-timeout: 15000
+      kv:
+        backend: kv
 tracing:
   jaeger:
     enabled: true

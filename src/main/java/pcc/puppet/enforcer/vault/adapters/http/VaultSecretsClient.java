@@ -15,31 +15,40 @@
  */
 package pcc.puppet.enforcer.vault.adapters.http;
 
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.discovery.vault.config.v2.VaultResponseV2;
-import io.micronaut.http.HttpHeaders;
-import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Header;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.client.annotation.Client;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.service.annotation.HttpExchange;
+import org.springframework.web.service.annotation.PostExchange;
 import pcc.puppet.enforcer.app.Project;
 import pcc.puppet.enforcer.vault.adapters.http.request.VaultSecretCreateRequest;
 import reactor.core.publisher.Mono;
 
-@Client("provider-vault")
-@Header(
-    name = HttpHeaders.USER_AGENT,
-    value = "VaultSecretsClient/" + Project.VERSION + " (" + Project.NAME + ")")
+@HttpExchange("${spring.http.services.provider-vault.url}")
 public interface VaultSecretsClient {
-
-  @Post(
-      uri = "/v1/{backend}/data/{secretKey}",
-      produces = MediaType.APPLICATION_JSON,
-      consumes = MediaType.APPLICATION_JSON)
-  Mono<VaultResponseV2> createSecret(
-      @NonNull @Header("X-Vault-Token") String token,
-      @NonNull String backend,
-      @NonNull String secretKey,
-      @NonNull @Body VaultSecretCreateRequest request);
+String USER_AGENT = "VaultSecretsClient/" + Project.VERSION + " (" + Project.NAME + ")";
+  @PostExchange(
+      value = "/v1/{backend}/data/{secretKey}",
+      contentType = MediaType.APPLICATION_JSON_VALUE,
+      accept = MediaType.APPLICATION_JSON_VALUE)
+  Mono<String> createSecret(
+      @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+      @NotNull @RequestHeader("X-Vault-Token") String token,
+      @NotNull @PathVariable String backend,
+      @NotNull @PathVariable String secretKey,
+      @NotNull @RequestBody VaultSecretCreateRequest request);
+  @PostExchange(
+      value = "/v1/{backend}/data/{secretKey}",
+      contentType = MediaType.APPLICATION_JSON_VALUE,
+      accept = MediaType.APPLICATION_JSON_VALUE)
+ default  Mono<String> createSecret(
+      @NotNull String token,
+      @NotNull String backend,
+      @NotNull String secretKey,
+      @NotNull VaultSecretCreateRequest request) {
+    return createSecret(USER_AGENT, token, backend, secretKey, request);
+  }
 }

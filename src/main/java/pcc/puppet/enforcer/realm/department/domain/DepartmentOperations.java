@@ -15,7 +15,7 @@
  */
 package pcc.puppet.enforcer.realm.department.domain;
 
-import io.micronaut.core.annotation.NonNull;
+import jakarta.validation.constraints.NotNull;
 import pcc.puppet.enforcer.realm.department.adapters.presenter.DepartmentPresenter;
 import pcc.puppet.enforcer.realm.department.ports.command.DepartmentCreateCommand;
 import pcc.puppet.enforcer.realm.department.ports.event.DepartmentCreateEvent;
@@ -25,13 +25,13 @@ import reactor.core.publisher.Mono;
 public interface DepartmentOperations {
 
   Mono<DepartmentCreateEvent> departmentCreate(
-      @NonNull String requester,
-      @NonNull String organizationId,
-      @NonNull DepartmentCreateCommand createCommand);
+      @NotNull String requester,
+      @NotNull String organizationId,
+      @NotNull DepartmentCreateCommand createCommand);
 
   Mono<DepartmentPresenter> findDepartment(
-      @NonNull String requester, @NonNull String organizationId, @NonNull String departmentId);
+      @NotNull String requester, @NotNull String organizationId, @NotNull String departmentId);
 
   Flux<DepartmentPresenter> findChildDepartments(
-      @NonNull String requester, @NonNull String organizationId, @NonNull String departmentId);
+      @NotNull String requester, @NotNull String organizationId, @NotNull String departmentId);
 }

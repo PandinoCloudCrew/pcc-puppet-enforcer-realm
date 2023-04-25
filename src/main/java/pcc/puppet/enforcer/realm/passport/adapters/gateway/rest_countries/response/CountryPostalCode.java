@@ -15,8 +15,7 @@
  */
 package pcc.puppet.enforcer.realm.passport.adapters.gateway.rest_countries.response;
 
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,11 +23,11 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@Introspected
 @NoArgsConstructor
 @AllArgsConstructor
 public class CountryPostalCode {
 
-  @Nullable private String format;
+  @Nullable
+  private String format;
   @Nullable private String regex;
 }

@@ -15,7 +15,6 @@
  */
 package pcc.puppet.enforcer.vault.adapters.http.request;
 
-import io.micronaut.core.annotation.Introspected;
 import java.util.Map;
 import lombok.Builder;
 import lombok.Data;
@@ -23,7 +22,6 @@ import lombok.Singular;
 
 @Data
 @Builder
-@Introspected
 public class VaultSecretCreateRequest {
 
   @Singular("property")

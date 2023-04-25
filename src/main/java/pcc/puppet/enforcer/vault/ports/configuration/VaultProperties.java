@@ -15,10 +15,12 @@
  */
 package pcc.puppet.enforcer.vault.ports.configuration;
 
-import io.micronaut.context.annotation.ConfigurationProperties;
 import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 @Data
+@Component
 @ConfigurationProperties("provider.vault")
 public class VaultProperties {
 

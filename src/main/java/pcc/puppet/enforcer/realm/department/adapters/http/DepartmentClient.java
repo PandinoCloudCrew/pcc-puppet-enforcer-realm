@@ -18,16 +18,17 @@ package pcc.puppet.enforcer.realm.department.adapters.http;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.ORGANIZATION;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.http.HttpHeaders;
-import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Header;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.client.annotation.Client;
-import io.micronaut.tracing.annotation.SpanTag;
+import io.micrometer.tracing.annotation.SpanTag;
+import jakarta.validation.constraints.NotNull;
 import javax.validation.Valid;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.service.annotation.GetExchange;
+import org.springframework.web.service.annotation.HttpExchange;
+import org.springframework.web.service.annotation.PostExchange;
 import pcc.puppet.enforcer.app.Project;
 import pcc.puppet.enforcer.realm.department.adapters.presenter.DepartmentPresenter;
 import pcc.puppet.enforcer.realm.department.domain.DepartmentOperations;
@@ -36,31 +37,48 @@ import pcc.puppet.enforcer.realm.department.ports.event.DepartmentCreateEvent;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Client("pcc-realm-department")
-@Header(name = HttpHeaders.ACCEPT_ENCODING, value = "gzip, deflate")
-@Header(
-    name = HttpHeaders.USER_AGENT,
-    value = "DepartmentClient/" + Project.VERSION + " (" + Project.NAME + ")")
+@HttpExchange("${spring.http.services.pcc-realm-department.url}")
 public interface DepartmentClient extends DepartmentOperations {
-
-  @Override
-  @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+String USER_AGENT = "DepartmentClient/" + Project.VERSION + " (" + Project.NAME + ")";
+  @PostExchange(accept = MediaType.APPLICATION_JSON_VALUE, contentType = MediaType.APPLICATION_JSON_VALUE)
   Mono<DepartmentCreateEvent> departmentCreate(
-      @NonNull @SpanTag(REQUESTER) @Header(REQUESTER) String requester,
-      @NonNull @SpanTag(ORGANIZATION) @Header(ORGANIZATION) String organizationId,
-      @NonNull @Body @Valid DepartmentCreateCommand createCommand);
-
+      @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+      @NotNull @SpanTag(REQUESTER) @RequestHeader(REQUESTER) String requester,
+      @NotNull @SpanTag(ORGANIZATION) @RequestHeader(ORGANIZATION) String organizationId,
+      @NotNull @RequestBody @Valid DepartmentCreateCommand createCommand);
   @Override
-  @Get(uri = "/{departmentId}", consumes = MediaType.APPLICATION_JSON)
+  default Mono<DepartmentCreateEvent> departmentCreate(
+      @NotNull String requester,
+      @NotNull String organizationId,
+      @NotNull @Valid DepartmentCreateCommand createCommand) {
+    return departmentCreate(USER_AGENT, requester, organizationId, createCommand);
+  }
+  @GetExchange(value = "/{departmentId}", accept = MediaType.APPLICATION_JSON_VALUE)
   Mono<DepartmentPresenter> findDepartment(
-      @NonNull @SpanTag(REQUESTER) @Header(REQUESTER) String requester,
-      @NonNull @SpanTag(ORGANIZATION) @Header(ORGANIZATION) String organizationId,
-      @NonNull String departmentId);
+      @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+      @NotNull @SpanTag(REQUESTER) @RequestHeader(REQUESTER) String requester,
+      @NotNull @SpanTag(ORGANIZATION) @RequestHeader(ORGANIZATION) String organizationId,
+      @NotNull @PathVariable String departmentId);
+  @Override
+  default Mono<DepartmentPresenter> findDepartment(
+      @NotNull String requester,
+      @NotNull String organizationId,
+      @NotNull String departmentId) {
+    return findDepartment(USER_AGENT, requester, organizationId, departmentId);
+  }
+
+  @GetExchange(value = "/{departmentId}/child", accept = MediaType.APPLICATION_JSON_VALUE)
+  Flux<DepartmentPresenter> findChildDepartments(
+      @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+      @NotNull @SpanTag(REQUESTER) @RequestHeader(REQUESTER) String requester,
+      @NotNull @SpanTag(ORGANIZATION) @RequestHeader(ORGANIZATION) String organizationId,
+      @SpanTag @NotNull @PathVariable String departmentId);
 
   @Override
-  @Get(uri = "/{departmentId}/child", consumes = MediaType.APPLICATION_JSON)
-  Flux<DepartmentPresenter> findChildDepartments(
-      @NonNull @SpanTag(REQUESTER) @Header(REQUESTER) String requester,
-      @NonNull @SpanTag(ORGANIZATION) @Header(ORGANIZATION) String organizationId,
-      @SpanTag @NonNull String departmentId);
+  default Flux<DepartmentPresenter> findChildDepartments(
+      @NotNull String requester,
+      @NotNull String organizationId,
+      @SpanTag String departmentId) {
+    return findChildDepartments(USER_AGENT, requester, organizationId, departmentId);
+  }
 }

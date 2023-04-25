@@ -1,6 +1,8 @@
-micronaut:
+spring:
   application:
     name: pcc-puppet-enforcer-realm
+  main:
+    web-application-type: reactive
   server:
     port: 9900
     netty:
@@ -10,6 +12,20 @@ micronaut:
         log-format: "%h %r %s %b %D %{User-Agent}i %{Version}o %{uber-trace-id}o"
         exclusions:
           - /health.*
+
+  cloud:
+    vault:
+      enabled: true
+      application-name: ${spring.application.name},global
+      authentication: token
+      host: vault-dev.ops.pandino.co
+      token: hvs.V0diJA9HjKPClSMAkIS1L8QW
+      port: 443
+      scheme: https
+      connection-timeout: 5000
+      read-timeout: 15000
+      kv:
+        backend: kv
   metrics:
     enabled: true
     binders:

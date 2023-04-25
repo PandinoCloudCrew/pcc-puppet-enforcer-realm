@@ -15,13 +15,13 @@
  */
 package pcc.puppet.enforcer.keycloak.domain.service;
 
-import io.micronaut.cache.annotation.CacheConfig;
-import io.micronaut.cache.annotation.Cacheable;
-import io.micronaut.security.token.jwt.render.AccessRefreshToken;
-import jakarta.inject.Singleton;
+import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
 import pcc.puppet.enforcer.keycloak.adapters.http.KeycloakAdminClient;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakAddressClaimSetRepresentation;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientCredentials;
@@ -35,8 +35,8 @@ import pcc.puppet.enforcer.keycloak.ports.configuration.KeycloakProperties;
 import pcc.puppet.enforcer.realm.passport.ports.event.ConsumerPassportCreateEvent;
 import reactor.core.publisher.Mono;
 
-@Singleton
-@CacheConfig("keycloak")
+@Service
+@CacheConfig
 @RequiredArgsConstructor
 public class DefaultKeycloakService implements KeycloakService {
 
@@ -44,12 +44,12 @@ public class DefaultKeycloakService implements KeycloakService {
   private final KeycloakProperties keycloakProperties;
 
   @Override
-  @Cacheable
-  public Mono<AccessRefreshToken> token() {
+  @Cacheable("keycloak")
+  public Mono<BearerAccessToken> token() {
     KeycloakClientCredentials credentials =
         KeycloakClientCredentials.builder()
-            .client_id(keycloakProperties.getClientId())
-            .client_secret(keycloakProperties.getClientSecret())
+            .clientId(keycloakProperties.getClientId())
+            .clientSecret(keycloakProperties.getClientSecret())
             .build();
     return adminClient.token(keycloakProperties.getRealm(), credentials);
   }
@@ -59,16 +59,16 @@ public class DefaultKeycloakService implements KeycloakService {
     KeycloakIntrospection introspection =
         KeycloakIntrospection.builder()
             .token(token)
-            .client_id(keycloakProperties.getClientId())
-            .client_secret(keycloakProperties.getClientSecret())
+            .clientId(keycloakProperties.getClientId())
+            .clientSecret(keycloakProperties.getClientSecret())
             .build();
     return adminClient.introspect(keycloakProperties.getRealm(), introspection);
   }
 
   @Override
-  public Mono<AccessRefreshToken> token(String clientId, String clientSecret) {
+  public Mono<BearerAccessToken> token(String clientId, String clientSecret) {
     KeycloakClientCredentials credentials =
-        KeycloakClientCredentials.builder().client_id(clientId).client_secret(clientSecret).build();
+        KeycloakClientCredentials.builder().clientId(clientId).clientSecret(clientSecret).build();
     return adminClient.token(keycloakProperties.getRealm(), credentials);
   }
 
@@ -87,7 +87,7 @@ public class DefaultKeycloakService implements KeycloakService {
                       .serviceAccountsEnabled(Boolean.TRUE)
                       .build();
               return adminClient.createClient(
-                  String.format("Bearer %s", bearerAccessRefreshToken.getAccessToken()),
+                  bearerAccessRefreshToken.toAuthorizationHeader(),
                   keycloakProperties.getRealm(),
                   clientRepresentation);
             });
@@ -140,7 +140,7 @@ public class DefaultKeycloakService implements KeycloakService {
                           "currency", createEvent.getOrganization().getContactId().getCurrency())
                       .build();
               return adminClient.createUser(
-                  String.format("Bearer %s", bearerAccessRefreshToken.getAccessToken()),
+                  bearerAccessRefreshToken.toAuthorizationHeader(),
                   keycloakProperties.getRealm(),
                   userRepresentation);
             });

@@ -15,13 +15,11 @@
  */
 package pcc.puppet.enforcer.realm.common.contact.adapters.presenter;
 
-import io.micronaut.core.annotation.Introspected;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-@Introspected
 public class ContactInformationPresenter {
 
   private String firstName;

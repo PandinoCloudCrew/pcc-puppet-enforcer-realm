@@ -15,7 +15,6 @@
  */
 package pcc.puppet.enforcer.security.password;
 
-import jakarta.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +24,10 @@ import org.passay.EnglishCharacterData;
 import org.passay.PasswordData;
 import org.passay.PasswordGenerator;
 import org.passay.PasswordValidator;
+import org.springframework.stereotype.Component;
 
 @Slf4j
-@Singleton
+@Component
 public class PassaySecurePasswordGenerator implements SecurePasswordGenerator {
 
   public final PasswordGenerator passwordGenerator;

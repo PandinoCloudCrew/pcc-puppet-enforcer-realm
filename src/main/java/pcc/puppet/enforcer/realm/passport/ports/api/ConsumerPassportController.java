@@ -19,16 +19,15 @@ import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
 import io.micrometer.core.annotation.Counted;
 import io.micrometer.core.annotation.Timed;
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Header;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.rules.SecurityRule;
-import io.micronaut.tracing.annotation.NewSpan;
-import io.micronaut.tracing.annotation.SpanTag;
+import io.micrometer.tracing.annotation.NewSpan;
+import io.micrometer.tracing.annotation.SpanTag;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import pcc.puppet.enforcer.realm.passport.domain.ConsumerPassportOperations;
 import pcc.puppet.enforcer.realm.passport.domain.service.ConsumerPassportService;
 import pcc.puppet.enforcer.realm.passport.ports.command.ConsumerPassportCreateCommand;
@@ -36,8 +35,8 @@ import pcc.puppet.enforcer.realm.passport.ports.event.ConsumerPassportCreateEven
 import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
-@Secured(SecurityRule.IS_AUTHENTICATED)
-@Controller("${micronaut.http.services.pcc-realm-passport.path}")
+@RestController
+    @RequestMapping("${micronaut.http.services.pcc-realm-passport.path}")
 public class ConsumerPassportController implements ConsumerPassportOperations {
 
   private final ConsumerPassportService passportService;
@@ -45,10 +44,10 @@ public class ConsumerPassportController implements ConsumerPassportOperations {
   @Timed
   @Counted
   @NewSpan
-  @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<ConsumerPassportCreateEvent> createConsumerPassport(
-      @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
-      @NonNull ConsumerPassportCreateCommand passportCommand) {
+      @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,
+      @NotNull ConsumerPassportCreateCommand passportCommand) {
     return passportService.createConsumerPassport(requester, passportCommand);
   }
 }

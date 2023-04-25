@@ -15,16 +15,15 @@
  */
 package pcc.puppet.enforcer.realm.passport.adapters.gateway.rest_countries.response;
 
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-@Introspected
 public class DemonymGender {
 
-  @Nullable private String m;
+  @Nullable
+  private String m;
   @Nullable private String f;
 }

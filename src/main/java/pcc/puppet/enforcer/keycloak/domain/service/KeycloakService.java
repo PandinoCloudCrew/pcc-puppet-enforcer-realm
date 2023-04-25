@@ -15,16 +15,16 @@
  */
 package pcc.puppet.enforcer.keycloak.domain.service;
 
-import io.micronaut.security.token.jwt.render.AccessRefreshToken;
+import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 import java.util.Optional;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakTokenDetails;
 import pcc.puppet.enforcer.realm.passport.ports.event.ConsumerPassportCreateEvent;
 import reactor.core.publisher.Mono;
 
 public interface KeycloakService {
-  Mono<AccessRefreshToken> token();
+  Mono<BearerAccessToken> token();
 
-  Mono<AccessRefreshToken> token(String clientId, String clientSecret);
+  Mono<BearerAccessToken> token(String clientId, String clientSecret);
 
   Mono<KeycloakTokenDetails> introspect(String token);
 

@@ -15,8 +15,7 @@
  */
 package pcc.puppet.enforcer.realm.passport.ports.command;
 
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.NonNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 import pcc.puppet.enforcer.realm.common.generator.values.AddressStrategy;
@@ -35,54 +34,53 @@ import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
-@Introspected
 public class ConsumerPassportCreateCommand {
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(FirstNameStrategy.class)
   private String firstName;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(LastNameStrategy.class)
   private String lastName;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(PasswordStrategy.class)
   private String password;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(EmailStrategy.class)
   private String email;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(PhoneNumberStrategy.class)
   private String phoneNumber;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(JobPositionStrategy.class)
   private String position;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(CountryNameStrategy.class)
   private String country;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(CityNameStrategy.class)
   private String city;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(CompanyNameStrategy.class)
   private String organizationName;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(AddressStrategy.class)
   private String location;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(TaxIdStrategy.class)
   private String taxId;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(CompanyDepartmentStrategy.class)
   private String departmentName;
 }

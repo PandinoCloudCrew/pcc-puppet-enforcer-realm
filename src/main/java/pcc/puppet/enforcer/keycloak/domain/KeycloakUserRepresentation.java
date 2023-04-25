@@ -15,7 +15,6 @@
  */
 package pcc.puppet.enforcer.keycloak.domain;
 
-import io.micronaut.core.annotation.Introspected;
 import java.util.List;
 import java.util.Map;
 import lombok.Builder;
@@ -24,7 +23,6 @@ import lombok.Singular;
 
 @Data
 @Builder
-@Introspected
 public class KeycloakUserRepresentation {
   @Singular private Map<String, Object> attributes;
   private Map<String, String> clientRoles;

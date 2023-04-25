@@ -15,7 +15,6 @@
  */
 package pcc.puppet.enforcer.keycloak.domain;
 
-import io.micronaut.core.annotation.Introspected;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.AllArgsConstructor;
@@ -25,7 +24,6 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@Introspected
 @NoArgsConstructor
 @AllArgsConstructor
 public class KeycloakUserInfoRepresentation {

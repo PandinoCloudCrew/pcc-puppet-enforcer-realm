@@ -15,7 +15,6 @@
  */
 package pcc.puppet.enforcer.keycloak.domain;
 
-import io.micronaut.core.annotation.Introspected;
 import java.util.ArrayList;
 import java.util.Map;
 import lombok.Data;
@@ -28,7 +27,6 @@ import pcc.puppet.enforcer.realm.common.generator.values.UsernameStrategy;
 import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
-@Introspected
 @NoArgsConstructor
 public class KeycloakTokenDetails {
   @PodamStrategyValue(UnixtimeStrategy.class)
