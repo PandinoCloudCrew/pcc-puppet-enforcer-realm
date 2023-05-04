@@ -18,15 +18,12 @@ package pcc.puppet.enforcer.app;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.web.reactive.config.EnableWebFlux;
+import reactor.core.publisher.Hooks;
 
-@EnableWebFlux
 @EnableScheduling
 @EnableConfigurationProperties
 @SpringBootApplication(scanBasePackages = {"pcc.puppet.*"})
-@EnableR2dbcRepositories(basePackages = {"pcc.puppet.*"})
 public class Application {
   /**
    * Entry point for app
@@ -34,6 +31,7 @@ public class Application {
    * @param args program arguments
    */
   public static void main(final String[] args) {
+    Hooks.enableAutomaticContextPropagation();
     SpringApplication.run(Application.class, args);
   }
 }

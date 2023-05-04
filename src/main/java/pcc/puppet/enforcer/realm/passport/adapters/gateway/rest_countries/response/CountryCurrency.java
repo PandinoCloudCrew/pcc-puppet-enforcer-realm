@@ -18,12 +18,13 @@ package pcc.puppet.enforcer.realm.passport.adapters.gateway.rest_countries.respo
 import jakarta.annotation.Nullable;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 
 @Data
 @Builder
+@Jacksonized
 public class CountryCurrency {
 
-  @Nullable
-  private String name;
+  @Nullable private String name;
   @Nullable private String symbol;
 }

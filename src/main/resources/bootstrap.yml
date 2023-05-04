@@ -1,23 +1,8 @@
-micronaut:
+spring:
   application:
     name: pcc-puppet-enforcer-realm
-  config-client:
-    enabled: true
 
-spring:
-  cloud:
-    vault:
-      enabled: true
-      application-name: ${spring.application.name},global
-      authentication: token
-      host: vault-dev.ops.pandino.co
-      token: hvs.V0diJA9HjKPClSMAkIS1L8QW
-      port: 443
-      scheme: https
-      connection-timeout: 5000
-      read-timeout: 15000
-      kv:
-        backend: kv
+
 tracing:
   jaeger:
     enabled: true

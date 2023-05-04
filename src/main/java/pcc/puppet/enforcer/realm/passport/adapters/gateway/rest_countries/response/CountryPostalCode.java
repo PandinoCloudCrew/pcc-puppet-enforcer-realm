@@ -16,18 +16,15 @@
 package pcc.puppet.enforcer.realm.passport.adapters.gateway.rest_countries.response;
 
 import jakarta.annotation.Nullable;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.extern.jackson.Jacksonized;
 
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Jacksonized
 public class CountryPostalCode {
 
-  @Nullable
-  private String format;
+  @Nullable private String format;
   @Nullable private String regex;
 }

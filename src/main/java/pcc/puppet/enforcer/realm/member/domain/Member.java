@@ -20,30 +20,34 @@ import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Version;
-import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import pcc.puppet.enforcer.realm.common.contact.domain.ContactInformation;
 
 @Data
 @Builder
-@Table
+@Document
+@Jacksonized
 public class Member {
-  @Id
-  private String id;
+  @Id private String id;
   @NotNull private String organizationId;
   @NotNull private String departmentId;
   @NotNull private String username;
   @NotNull private String password;
 
-  @NotNull
-  private ContactInformation contactId;
+  @NotNull @DocumentReference private ContactInformation contactId;
 
-  @NotNull private String createdBy;
-  @NotNull private Instant createdAt;
-  @Nullable
-  private String updatedBy;
-  @Nullable private Instant updatedAt;
+  @NotNull @CreatedBy private String createdBy;
+  @NotNull @CreatedDate private Instant createdAt;
+  @Nullable @LastModifiedBy private String updatedBy;
+  @Nullable @LastModifiedDate private Instant updatedAt;
   @Version private Integer version;
 
   public Member setContact(ContactInformation contactInformation) {

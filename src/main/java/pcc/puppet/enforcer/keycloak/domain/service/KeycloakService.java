@@ -15,16 +15,18 @@
  */
 package pcc.puppet.enforcer.keycloak.domain.service;
 
-import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 import java.util.Optional;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakTokenDetails;
 import pcc.puppet.enforcer.realm.passport.ports.event.ConsumerPassportCreateEvent;
 import reactor.core.publisher.Mono;
 
 public interface KeycloakService {
-  Mono<BearerAccessToken> token();
+  Mono<OAuth2AccessTokenResponse> adminLogin();
 
-  Mono<BearerAccessToken> token(String clientId, String clientSecret);
+  Mono<OAuth2AccessTokenResponse> clientLogin(String clientId, String clientSecret);
+
+  Mono<OAuth2AccessTokenResponse> userLogin(String username, String password);
 
   Mono<KeycloakTokenDetails> introspect(String token);
 

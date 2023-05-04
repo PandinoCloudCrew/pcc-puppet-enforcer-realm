@@ -37,7 +37,7 @@ import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import reactor.core.publisher.Mono;
 
 @RestController
-    @RequestMapping("/keycloak")
+@RequestMapping("/keycloak")
 public class KeycloakController {
 
   @PostMapping(
@@ -45,7 +45,7 @@ public class KeycloakController {
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<BearerAccessToken> getToken(
-      String realm, @RequestBody KeycloakClientCredentials credentials) {
+      @PathVariable String realm, @RequestBody KeycloakClientCredentials credentials) {
     return Mono.just(new BearerAccessToken());
   }
 

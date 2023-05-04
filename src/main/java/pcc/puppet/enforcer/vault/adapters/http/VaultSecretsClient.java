@@ -15,9 +15,12 @@
  */
 package pcc.puppet.enforcer.vault.adapters.http;
 
+import io.micrometer.observation.annotation.Observed;
 import jakarta.validation.constraints.NotNull;
+import java.net.URI;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -27,28 +30,29 @@ import pcc.puppet.enforcer.app.Project;
 import pcc.puppet.enforcer.vault.adapters.http.request.VaultSecretCreateRequest;
 import reactor.core.publisher.Mono;
 
-@HttpExchange("${spring.http.services.provider-vault.url}")
+@HttpExchange
 public interface VaultSecretsClient {
-String USER_AGENT = "VaultSecretsClient/" + Project.VERSION + " (" + Project.NAME + ")";
+  String USER_AGENT = "VaultSecretsClient/" + Project.VERSION + " (" + Project.NAME + ")";
+
   @PostExchange(
-      value = "/v1/{backend}/data/{secretKey}",
       contentType = MediaType.APPLICATION_JSON_VALUE,
       accept = MediaType.APPLICATION_JSON_VALUE)
-  Mono<String> createSecret(
+  Mono<ResponseEntity<String>> createSecret(
+      URI uri,
       @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
       @NotNull @RequestHeader("X-Vault-Token") String token,
       @NotNull @PathVariable String backend,
       @NotNull @PathVariable String secretKey,
       @NotNull @RequestBody VaultSecretCreateRequest request);
-  @PostExchange(
-      value = "/v1/{backend}/data/{secretKey}",
-      contentType = MediaType.APPLICATION_JSON_VALUE,
-      accept = MediaType.APPLICATION_JSON_VALUE)
- default  Mono<String> createSecret(
+
+  @Observed(name = "vault-secrets-client::create-secret")
+  default Mono<ResponseEntity<String>> createSecret(
+      @NotNull String baseUrl,
       @NotNull String token,
       @NotNull String backend,
       @NotNull String secretKey,
       @NotNull VaultSecretCreateRequest request) {
-    return createSecret(USER_AGENT, token, backend, secretKey, request);
+    String requestPath = String.format("%s/v1/%s/data%s", baseUrl, backend, secretKey);
+    return createSecret(URI.create(requestPath), USER_AGENT, token, backend, secretKey, request);
   }
 }

@@ -15,9 +15,9 @@
  */
 package pcc.puppet.enforcer.realm.organization.domain;
 
-import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 import jakarta.validation.constraints.NotNull;
 import javax.validation.Valid;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
 import pcc.puppet.enforcer.realm.organization.adapters.presenter.OrganizationPresenter;
 import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
 import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEvent;
@@ -36,6 +36,6 @@ public interface OrganizationOperations {
   Flux<OrganizationPresenter> findChildOrganizations(
       @NotNull String requester, @NotNull String organizationId);
 
-  Mono<BearerAccessToken> organizationLogin(
+  Mono<OAuth2AccessTokenResponse> organizationLogin(
       @NotNull String organizationId, @NotNull UsernamePasswordCredentials credentials);
 }

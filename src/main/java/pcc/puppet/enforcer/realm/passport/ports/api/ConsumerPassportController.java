@@ -17,14 +17,14 @@ package pcc.puppet.enforcer.realm.passport.ports.api;
 
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
-import io.micrometer.core.annotation.Counted;
-import io.micrometer.core.annotation.Timed;
-import io.micrometer.tracing.annotation.NewSpan;
+import io.micrometer.observation.annotation.Observed;
 import io.micrometer.tracing.annotation.SpanTag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,20 +34,19 @@ import pcc.puppet.enforcer.realm.passport.ports.command.ConsumerPassportCreateCo
 import pcc.puppet.enforcer.realm.passport.ports.event.ConsumerPassportCreateEvent;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
-    @RequestMapping("${micronaut.http.services.pcc-realm-passport.path}")
+@RequestMapping("${spring.http.services.pcc-realm-passport.path}")
 public class ConsumerPassportController implements ConsumerPassportOperations {
 
   private final ConsumerPassportService passportService;
 
-  @Timed
-  @Counted
-  @NewSpan
-  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping
+  @Observed(name = "consumer-passport-controller::create-consumer-passport")
   public Mono<ConsumerPassportCreateEvent> createConsumerPassport(
-      @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,
-      @NotNull ConsumerPassportCreateCommand passportCommand) {
+      @NotNull @SpanTag(REQUESTER) @RequestHeader(REQUESTER) String requester,
+      @NotNull @Valid @RequestBody ConsumerPassportCreateCommand passportCommand) {
     return passportService.createConsumerPassport(requester, passportCommand);
   }
 }

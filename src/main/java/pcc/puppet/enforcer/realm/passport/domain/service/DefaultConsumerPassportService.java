@@ -15,13 +15,14 @@
  */
 package pcc.puppet.enforcer.realm.passport.domain.service;
 
+import io.micrometer.observation.annotation.Observed;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pcc.puppet.enforcer.keycloak.domain.service.KeycloakService;
-import pcc.puppet.enforcer.realm.common.adapters.http.RealmClient;
 import pcc.puppet.enforcer.realm.common.contact.ports.command.CreateContactInformationCommand;
 import pcc.puppet.enforcer.realm.department.adapters.http.DepartmentClient;
 import pcc.puppet.enforcer.realm.department.ports.command.DepartmentCreateCommand;
@@ -35,11 +36,11 @@ import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEven
 import pcc.puppet.enforcer.realm.passport.adapters.gateway.rest_countries.RestCountriesApiClient;
 import pcc.puppet.enforcer.realm.passport.adapters.gateway.rest_countries.response.CountryCurrency;
 import pcc.puppet.enforcer.realm.passport.adapters.gateway.rest_countries.response.RestCountriesResponse;
-import pcc.puppet.enforcer.realm.passport.domain.UsernamePasswordCredentials;
 import pcc.puppet.enforcer.realm.passport.ports.command.ConsumerPassportCreateCommand;
 import pcc.puppet.enforcer.realm.passport.ports.event.ConsumerPassportCreateEvent;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DefaultConsumerPassportService implements ConsumerPassportService {
@@ -48,11 +49,11 @@ public class DefaultConsumerPassportService implements ConsumerPassportService {
   private final OrganizationClient organizationClient;
   private final DepartmentClient departmentClient;
   private final MemberClient memberClient;
-  private final RealmClient realmClient;
   private final RestCountriesApiClient countriesApiClient;
   private final KeycloakService keycloakService;
 
   @Override
+  @Observed(name = "default-consumer-passport-service::create-consumer-passport")
   public Mono<ConsumerPassportCreateEvent> createConsumerPassport(
       String requester, ConsumerPassportCreateCommand passportCommand) {
     ConsumerPassportCreateEvent consumerPassportEvent =
@@ -65,6 +66,7 @@ public class DefaultConsumerPassportService implements ConsumerPassportService {
               CreateContactInformationCommand createContactInformationCommand =
                   getCreateContactInformationCommand(passportCommand, restCountriesResponse);
               return createOrganization(requester, passportCommand, createContactInformationCommand)
+                  .doOnError(throwable -> log.error("error creating organization", throwable))
                   .map(consumerPassportEvent::organization)
                   .flatMap(
                       passportEvent ->
@@ -73,6 +75,7 @@ public class DefaultConsumerPassportService implements ConsumerPassportService {
                               passportEvent,
                               passportCommand,
                               createContactInformationCommand))
+                  .doOnError(throwable -> log.error("error creating department", throwable))
                   .map(consumerPassportEvent::department)
                   .flatMap(
                       passportEvent ->
@@ -81,6 +84,7 @@ public class DefaultConsumerPassportService implements ConsumerPassportService {
                               passportEvent,
                               passportCommand,
                               createContactInformationCommand))
+                  .doOnError(throwable -> log.error("error creating member", throwable))
                   .map(consumerPassportEvent::member)
                   .flatMap(
                       passportCreateEvent -> {
@@ -94,16 +98,15 @@ public class DefaultConsumerPassportService implements ConsumerPassportService {
                                 passportCommand.getPassword())
                             .flatMap(
                                 optional ->
-                                    realmClient.login(
-                                        requester,
-                                        new UsernamePasswordCredentials(
-                                            passportCommand.getEmail(),
-                                            passportCommand.getPassword())));
+                                    keycloakService.userLogin(
+                                        passportCommand.getEmail(), passportCommand.getPassword()));
                       })
+                  .doOnError(throwable -> log.error("error creating user in keycloak", throwable))
                   .map(consumerPassportEvent::token);
             });
   }
 
+  @Observed(name = "default-consumer-passport-service::create-member")
   private Mono<MemberCreateEvent> createMember(
       String requester,
       ConsumerPassportCreateEvent passportEvent,
@@ -117,6 +120,7 @@ public class DefaultConsumerPassportService implements ConsumerPassportService {
             .username(passportCommand.getEmail())
             .password(passportCommand.getPassword())
             .build();
+    log.info("creating member {}", memberCreateCommand.getUsername());
     return memberClient.memberCreate(
         requester,
         passportEvent.organizationId(),
@@ -124,15 +128,18 @@ public class DefaultConsumerPassportService implements ConsumerPassportService {
         memberCreateCommand);
   }
 
+  @Observed(name = "default-consumer-passport-service::create-organization")
   private Mono<OrganizationCreateEvent> createOrganization(
       String requester,
       ConsumerPassportCreateCommand passportCommand,
       CreateContactInformationCommand contactInformationCommand) {
     OrganizationCreateCommand organizationCreateCommand =
         getOrganizationCreateCommand(passportCommand, contactInformationCommand);
+    log.info("creating organization {}", organizationCreateCommand.getName());
     return organizationClient.organizationCreate(requester, organizationCreateCommand);
   }
 
+  @Observed(name = "default-consumer-passport-service::create-department")
   private Mono<DepartmentCreateEvent> createDepartment(
       String requester,
       ConsumerPassportCreateEvent passportEvent,
@@ -145,6 +152,7 @@ public class DefaultConsumerPassportService implements ConsumerPassportService {
             .location(passportCommand.getLocation())
             .contactId(contactInformationCommand)
             .build();
+    log.info("creating department {}", departmentCreateCommand.getName());
     return departmentClient.departmentCreate(
         requester, passportEvent.organizationId(), departmentCreateCommand);
   }

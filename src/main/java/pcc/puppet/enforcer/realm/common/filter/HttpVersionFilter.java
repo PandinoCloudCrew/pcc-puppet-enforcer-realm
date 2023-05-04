@@ -29,10 +29,8 @@ import reactor.core.publisher.Mono;
 public class HttpVersionFilter implements WebFilter {
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-    HttpHeaders headers = exchange.getResponse()
-        .getHeaders();
-    headers
-        .add("Version", Project.VERSION);
+    HttpHeaders headers = exchange.getResponse().getHeaders();
+    headers.add("Version", Project.VERSION);
     headers.add("Service", Project.NAME);
     return chain.filter(exchange);
   }

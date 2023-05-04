@@ -22,4 +22,5 @@ public class HttpHeaders {
   public static final String ORGANIZATION = "X-Org-Id";
   public static final String DEPARTMENT = "X-Dept-Id";
   public static final String REQUESTER = "X-Member-Id";
+  public static final String CONSUMER = "X-User-Agent";
 }

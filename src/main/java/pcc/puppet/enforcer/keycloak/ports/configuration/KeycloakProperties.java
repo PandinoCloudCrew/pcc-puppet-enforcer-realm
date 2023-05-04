@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties("provider.keycloak")
 public class KeycloakProperties {
 
+  private String adminClientId;
   private String clientId;
   private String clientSecret;
   private String realm;

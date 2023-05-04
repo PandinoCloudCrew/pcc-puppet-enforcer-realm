@@ -19,15 +19,12 @@ import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.DEPARTMENT;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.ORGANIZATION;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
-import io.micrometer.core.annotation.Counted;
-import io.micrometer.core.annotation.Timed;
-import io.micrometer.tracing.annotation.NewSpan;
+import io.micrometer.observation.annotation.Observed;
 import io.micrometer.tracing.annotation.SpanTag;
 import jakarta.validation.constraints.NotNull;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,29 +42,26 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @RestController
-    @RequestMapping("${spring.http.services.pcc-realm-member.path}")
+@RequestMapping("${spring.http.services.pcc-realm-member.path}")
 @RequiredArgsConstructor
 public class MemberController implements MemberOperations {
   private final MemberService memberService;
 
-  @Timed
-  @Counted
   @Override
-  @NewSpan
-  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping
+  @Observed(name = "member-controller::member-create")
   public Mono<MemberCreateEvent> memberCreate(
       @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,
       @SpanTag(ORGANIZATION) @NotNull @RequestHeader(ORGANIZATION) String organizationId,
       @SpanTag(DEPARTMENT) @NotNull @RequestHeader(DEPARTMENT) String departmentId,
       @NotNull @Valid @RequestBody MemberCreateCommand createCommand) {
+    log.debug("create member {} request by {}", createCommand.getUsername(), requester);
     return memberService.create(requester, createCommand);
   }
 
-  @Timed
-  @Counted
   @Override
-  @NewSpan
-  @GetMapping(value = "/{memberId}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/{memberId}")
+  @Observed(name = "member-controller::find-member")
   public Mono<MemberPresenter> findMember(
       @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,
       @SpanTag(ORGANIZATION) @NotNull @RequestHeader(ORGANIZATION) String organizationId,
@@ -76,11 +70,9 @@ public class MemberController implements MemberOperations {
     return memberService.findById(requester, memberId);
   }
 
-  @Timed
-  @Counted
   @Override
-  @NewSpan
-  @GetMapping(value = "/organization/{parentOrganizationId}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/organization/{parentOrganizationId}")
+  @Observed(name = "member-controller::find-organization-members")
   public Flux<MemberPresenter> findOrganizationMembers(
       @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,
       @SpanTag(ORGANIZATION) @NotNull @RequestHeader(ORGANIZATION) String organizationId,
@@ -89,11 +81,9 @@ public class MemberController implements MemberOperations {
     return memberService.findByOrganizationId(requester, parentOrganizationId);
   }
 
-  @Timed
-  @Counted
   @Override
-  @NewSpan
-  @GetMapping(value = "/department/{parentDepartmentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/department/{parentDepartmentId}")
+  @Observed(name = "member-controller::find-department-members")
   public Flux<MemberPresenter> findDepartmentMembers(
       @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,
       @SpanTag(ORGANIZATION) @NotNull @RequestHeader(ORGANIZATION) String organizationId,

@@ -21,21 +21,24 @@ import static pcc.puppet.enforcer.realm.TestDomainGenerator.REQUESTER_ID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import pcc.puppet.enforcer.realm.passport.adapters.http.ConsumerPassportClient;
 import pcc.puppet.enforcer.realm.passport.ports.command.ConsumerPassportCreateCommand;
 import pcc.puppet.enforcer.realm.passport.ports.event.ConsumerPassportCreateEvent;
 
-@SpringBootTest
+@SpringBootTest(
+    webEnvironment = WebEnvironment.RANDOM_PORT,
+    classes = ConsumerPassportController.class)
 class ConsumerPassportControllerTest {
 
-  @Autowired
-  private ConsumerPassportClient client;
+  @Autowired private ConsumerPassportClient client;
 
   @Test
   void createConsumerPassport() {
     ConsumerPassportCreateCommand passportCreateCommand =
         DomainFactory.consumerPassportCreateCommand();
+    // TODO fix this test
     ConsumerPassportCreateEvent passportCreateEvent =
         client.createConsumerPassport(REQUESTER_ID, passportCreateCommand).block();
     assertNotNull(passportCreateEvent);

@@ -15,16 +15,19 @@
  */
 package pcc.puppet.enforcer.realm.passport.ports.event;
 
-import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
 import pcc.puppet.enforcer.realm.department.ports.event.DepartmentCreateEvent;
 import pcc.puppet.enforcer.realm.member.ports.event.MemberCreateEvent;
 import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEvent;
 
 @Data
 @Builder
+@Jacksonized
 public class ConsumerPassportCreateEvent {
 
   @NotNull private String memberId;
@@ -32,8 +35,7 @@ public class ConsumerPassportCreateEvent {
   @NotNull private MemberCreateEvent member;
   @NotNull private OrganizationCreateEvent organization;
   @NotNull private DepartmentCreateEvent department;
-  @NotNull
-  private BearerAccessToken accessRefreshToken;
+  @NotNull private OAuth2AccessToken accessRefreshToken;
 
   public ConsumerPassportCreateEvent organization(OrganizationCreateEvent organizationCreateEvent) {
     this.organization = organizationCreateEvent;
@@ -50,8 +52,8 @@ public class ConsumerPassportCreateEvent {
     return this;
   }
 
-  public ConsumerPassportCreateEvent token(BearerAccessToken token) {
-    this.accessRefreshToken = token;
+  public ConsumerPassportCreateEvent token(OAuth2AccessTokenResponse token) {
+    this.accessRefreshToken = token.getAccessToken();
     return this;
   }
 

@@ -15,6 +15,7 @@
  */
 package pcc.puppet.enforcer.realm.passport.adapters.gateway.rest_countries;
 
+import io.micrometer.observation.annotation.Observed;
 import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,9 +24,10 @@ import org.springframework.web.service.annotation.HttpExchange;
 import pcc.puppet.enforcer.realm.passport.adapters.gateway.rest_countries.response.RestCountriesResponse;
 import reactor.core.publisher.Mono;
 
-@HttpExchange("${spring.http.services.provider-rest-countries.url}")
+@HttpExchange
 public interface RestCountriesApiClient {
 
   @GetExchange(value = "/name/{name}", accept = MediaType.APPLICATION_JSON_VALUE)
+  @Observed(name = "rest-countries-api-client::get-by-name")
   Mono<List<RestCountriesResponse>> getByName(@PathVariable String name);
 }

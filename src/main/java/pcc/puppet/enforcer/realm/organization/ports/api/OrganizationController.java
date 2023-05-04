@@ -17,16 +17,13 @@ package pcc.puppet.enforcer.realm.organization.ports.api;
 
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
-import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
-import io.micrometer.core.annotation.Counted;
-import io.micrometer.core.annotation.Timed;
-import io.micrometer.tracing.annotation.NewSpan;
+import io.micrometer.observation.annotation.Observed;
 import io.micrometer.tracing.annotation.SpanTag;
 import jakarta.validation.constraints.NotNull;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,52 +43,42 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @RestController
-    @RequestMapping("${spring.http.services.pcc-realm-organization.path}")
+@RequestMapping("${spring.http.services.pcc-realm-organization.path}")
 @RequiredArgsConstructor
 public class OrganizationController implements OrganizationOperations {
   private final OrganizationService organizationService;
   private final KeycloakService keycloakService;
 
-  @Timed
-  @Counted
-  @NewSpan
-  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping
+  @Observed(name = "organization-controller::organization-create")
   public Mono<OrganizationCreateEvent> organizationCreate(
       @NotNull @SpanTag(REQUESTER) @RequestHeader(REQUESTER) String requester,
       @NotNull @Valid @RequestBody OrganizationCreateCommand createCommand) {
+    log.debug("create organization {} request by {}", createCommand.getName(), requester);
     return organizationService.create(requester, createCommand);
   }
 
-  @Timed
-  @Counted
-  @NewSpan
-  @GetMapping(value = "/{organizationId}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/{organizationId}")
+  @Observed(name = "organization-controller::find-organization")
   public Mono<OrganizationPresenter> findOrganization(
       @NotNull @SpanTag(REQUESTER) @RequestHeader(REQUESTER) String requester,
       @NotNull @SpanTag @PathVariable String organizationId) {
     return organizationService.findById(requester, organizationId);
   }
 
-  @Timed
-  @Counted
-  @NewSpan
-  @GetMapping(value = "/{organizationId}/child", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/{organizationId}/child")
+  @Observed(name = "organization-controller::find-child-organizations")
   public Flux<OrganizationPresenter> findChildOrganizations(
       @NotNull @SpanTag(REQUESTER) @RequestHeader(REQUESTER) String requester,
       @NotNull @SpanTag @PathVariable String organizationId) {
     return organizationService.findByParentId(requester, organizationId);
   }
 
-  @Timed
-  @Counted
-  @NewSpan
-  @PostMapping(
-      value = "/{organizationId}/login",
-      consumes = MediaType.APPLICATION_JSON_VALUE,
-      produces = MediaType.APPLICATION_JSON_VALUE)
-  public Mono<BearerAccessToken> organizationLogin(
+  @PostMapping(value = "/{organizationId}/login")
+  @Observed(name = "organization-controller::organization-login")
+  public Mono<OAuth2AccessTokenResponse> organizationLogin(
       @NotNull @SpanTag @PathVariable String organizationId,
       @NotNull @RequestBody UsernamePasswordCredentials credentials) {
-    return keycloakService.token(credentials.getUsername(), credentials.getPassword());
+    return keycloakService.clientLogin(credentials.getUsername(), credentials.getPassword());
   }
 }

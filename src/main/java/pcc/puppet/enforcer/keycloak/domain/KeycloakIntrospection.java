@@ -18,14 +18,28 @@ package pcc.puppet.enforcer.keycloak.domain;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 @Data
 @Builder
+@Jacksonized
 public class KeycloakIntrospection {
 
   private String token;
+
   @JsonProperty("client_id")
   private String clientId;
+
   @JsonProperty("client_secret")
   private String clientSecret;
+
+  public MultiValueMap<String, String> toFormData() {
+    MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+    formData.add("token", token);
+    formData.add("client_id", clientId);
+    formData.add("client_secret", clientSecret);
+    return formData;
+  }
 }

@@ -20,9 +20,11 @@ import java.util.Map;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Singular;
+import lombok.extern.jackson.Jacksonized;
 
 @Data
 @Builder
+@Jacksonized
 public class KeycloakUserRepresentation {
   @Singular private Map<String, Object> attributes;
   private Map<String, String> clientRoles;

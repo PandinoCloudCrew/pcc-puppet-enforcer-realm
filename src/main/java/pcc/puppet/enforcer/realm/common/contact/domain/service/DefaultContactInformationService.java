@@ -15,8 +15,7 @@
  */
 package pcc.puppet.enforcer.realm.common.contact.domain.service;
 
-import io.micrometer.tracing.annotation.NewSpan;
-import java.time.Instant;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pcc.puppet.enforcer.realm.common.contact.adapters.repository.ContactInformationRepository;
@@ -33,26 +32,24 @@ public class DefaultContactInformationService implements ContactInformationServi
   private final ContactInformationRepository repository;
   private final ContactInformationInputMapper inputMapper;
 
-  @NewSpan
   @Override
+  @Observed(name = "default-contact-information-service::save")
   public Mono<ContactInformation> save(
       String requester, String ownerId, CreateContactInformationCommand command) {
     ContactInformation contactInformation = inputMapper.commandToDomain(command);
     contactInformation.setId(DomainFactory.id());
-    contactInformation.setCreatedBy(requester);
-    contactInformation.setCreatedAt(Instant.now());
     contactInformation.setOwnerId(ownerId);
     return repository.save(contactInformation);
   }
 
-  @NewSpan
   @Override
+  @Observed(name = "default-contact-information-service::find-by-id")
   public Mono<ContactInformation> findById(String contactInformationId) {
     return repository.findById(contactInformationId);
   }
 
-  @NewSpan
   @Override
+  @Observed(name = "default-contact-information-service::find-by-owner-id")
   public Mono<ContactInformation> findByOwnerId(String ownerId) {
     return repository.findByOwnerId(ownerId);
   }

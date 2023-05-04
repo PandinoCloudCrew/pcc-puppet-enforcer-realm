@@ -3,7 +3,7 @@ import java.time.Instant
 plugins {
     id("java")
     id("jacoco")
-    id("org.springframework.boot") version "3.0.5"
+    id("org.springframework.boot") version "3.0.6"
     id("io.spring.dependency-management") version "1.1.0"
     id("com.diffplug.spotless") version "6.17.0"
     id("com.google.cloud.tools.jib") version "3.3.1"
@@ -12,7 +12,6 @@ plugins {
     id("com.pasam.gradle.buildinfo") version "0.1.3"
     id("net.kyori.blossom") version "1.3.1"
     id("org.asciidoctor.convert") version "2.4.0"
-    id("org.graalvm.buildtools.native") version "0.9.20"
     id("org.sonarqube") version "4.0.0.2929"
 }
 
@@ -23,6 +22,26 @@ sourceCompatibility = "$javaVersion"
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+
     }
 }
 
@@ -39,9 +58,10 @@ dependencies {
     annotationProcessor ("org.projectlombok:lombok")
     annotationProcessor ("org.springframework.boot:spring-boot-configuration-processor")
     annotationProcessor ("org.mapstruct:mapstruct-processor:$mapstructProcessorVersion")
+    implementation ("org.springframework.boot:spring-boot-starter-aop")
     implementation ("org.springframework.boot:spring-boot-starter-actuator")
     implementation ("org.springframework.boot:spring-boot-starter-cache")
-    implementation ("org.springframework.boot:spring-boot-starter-data-r2dbc")
+    implementation ("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     implementation ("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation ("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation ("org.springframework.boot:spring-boot-starter-security")
@@ -49,11 +69,9 @@ dependencies {
     implementation ("org.springframework.boot:spring-boot-starter-webflux")
     implementation ("org.springframework.cloud:spring-cloud-starter-circuitbreaker-reactor-resilience4j")
     implementation ("org.springframework.cloud:spring-cloud-starter-vault-config")
-    implementation ("io.micrometer:micrometer-tracing-bridge-brave")
-    implementation ("io.zipkin.reporter2:zipkin-reporter-brave")
-    implementation ("org.flywaydb:flyway-core")
+    implementation ("io.micrometer:micrometer-tracing-bridge-otel")
+    implementation ("io.opentelemetry:opentelemetry-exporter-zipkin")
     implementation ("org.springframework:spring-jdbc")
-    implementation ("io.r2dbc:r2dbc-pool:$r2dbcPoolVersion")
     implementation ("org.passay:passay:$passayVersion")
     implementation ("org.mapstruct:mapstruct:$mapstructProcessorVersion")
     implementation ("net.datafaker:datafaker:$datafakerVersion")
@@ -62,10 +80,6 @@ dependencies {
     compileOnly ("org.projectlombok:lombok")
     runtimeOnly ("io.micrometer:micrometer-registry-prometheus")
     runtimeOnly ("ch.qos.logback:logback-classic")
-    runtimeOnly ("org.postgresql:postgresql")
-    runtimeOnly ("org.postgresql:r2dbc-postgresql")
-    runtimeOnly ("com.h2database:h2")
-    runtimeOnly ("io.r2dbc:r2dbc-h2")
     testImplementation ("org.springframework.boot:spring-boot-starter-test")
     testImplementation ("io.projectreactor:reactor-test")
     testImplementation ("org.springframework.restdocs:spring-restdocs-mockmvc")
@@ -73,7 +87,6 @@ dependencies {
     testImplementation ("org.springframework.security:spring-security-test")
     testImplementation ("org.mockito:mockito-core")
     testImplementation ("org.awaitility:awaitility:$awaitilityVersion")
-
 }
 
 java {
@@ -93,21 +106,6 @@ def dockerLabels = [
 ]
 
 tasks {
-//    dockerBuild {
-//        images = [
-//                "${System.env.DOCKER_IMAGE ?: project.name}:$project.version",
-//                "${System.env.DOCKER_IMAGE ?: project.name}:latest"
-//        ]
-//        labels = dockerLabels
-//    }
-//
-//    dockerBuildNative {
-//        images = [
-//                "${System.env.DOCKER_IMAGE ?: project.name}-native:$project.version",
-//                "${System.env.DOCKER_IMAGE ?: project.name}-native:latest"
-//        ]
-//        labels = dockerLabels
-//    }
     tasks {
         jib {
             from {
@@ -117,6 +115,9 @@ tasks {
                 image = "${System.env.DOCKER_IMAGE ?: "gcr.io/myapp/$project.name"}:$project.version"
                 tags = [version, "latest"] as List<String>
 
+            }
+            container {
+                labels = dockerLabels
             }
         }
     }

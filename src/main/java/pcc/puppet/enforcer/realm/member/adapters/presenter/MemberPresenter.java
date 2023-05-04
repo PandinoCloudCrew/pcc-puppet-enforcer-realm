@@ -18,13 +18,14 @@ package pcc.puppet.enforcer.realm.member.adapters.presenter;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 import pcc.puppet.enforcer.realm.common.contact.adapters.presenter.ContactInformationPresenter;
 
 @Data
 @Builder
+@Jacksonized
 public class MemberPresenter {
-  @NotNull
-  private String id;
+  @NotNull private String id;
   @NotNull private String organizationId;
   @NotNull private String departmentId;
   @NotNull private String username;

@@ -21,27 +21,28 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static pcc.puppet.enforcer.realm.TestDomainGenerator.REQUESTER_ID;
 
-import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
 import pcc.puppet.enforcer.realm.TestDomainGenerator;
 import pcc.puppet.enforcer.realm.common.format.DateFormat;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import pcc.puppet.enforcer.realm.organization.adapters.http.OrganizationClient;
 import pcc.puppet.enforcer.realm.organization.adapters.presenter.OrganizationPresenter;
+import pcc.puppet.enforcer.realm.organization.ports.api.OrganizationController;
 import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
 import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEvent;
 import pcc.puppet.enforcer.realm.passport.domain.UsernamePasswordCredentials;
 import pcc.puppet.enforcer.security.password.SecurePasswordGenerator;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = OrganizationController.class)
 class OrganizationControllerTest {
 
-  @Autowired
-  private OrganizationClient client;
+  @Autowired private OrganizationClient client;
   @Autowired private TestDomainGenerator generator;
   @Autowired private SecurePasswordGenerator passwordGenerator;
 
@@ -162,7 +163,7 @@ class OrganizationControllerTest {
         new UsernamePasswordCredentials(organizationId, passwordGenerator.password(16));
     Assertions.assertAll(
         () -> {
-          BearerAccessToken accessRefreshToken =
+          OAuth2AccessTokenResponse accessRefreshToken =
               client.organizationLogin(organizationId, credentials).block();
           assertNotNull(accessRefreshToken);
         });

@@ -17,15 +17,13 @@ package pcc.puppet.enforcer.keycloak.domain;
 
 import java.util.HashMap;
 import java.util.Map;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.extern.jackson.Jacksonized;
 
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Jacksonized
 public class KeycloakUserInfoRepresentation {
   private KeycloakAddressClaimSetRepresentation address;
   private Map<String, Object> otherClaims;

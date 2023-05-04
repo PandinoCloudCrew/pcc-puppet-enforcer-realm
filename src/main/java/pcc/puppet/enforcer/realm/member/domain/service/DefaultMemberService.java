@@ -15,9 +15,8 @@
  */
 package pcc.puppet.enforcer.realm.member.domain.service;
 
-import io.micrometer.tracing.annotation.NewSpan;
+import io.micrometer.observation.annotation.Observed;
 import io.micrometer.tracing.annotation.SpanTag;
-import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -43,14 +42,12 @@ public class DefaultMemberService implements MemberService {
   private final MemberInputMapper inputMapper;
   private final ContactInformationService contactInformationService;
 
-  @NewSpan
   @Override
+  @Observed(name = "default-member-service::create")
   public Mono<MemberCreateEvent> create(
       @SpanTag String requester, MemberCreateCommand createCommand) {
     Member member = inputMapper.commandToDomain(createCommand);
     member.setId(DomainFactory.id());
-    member.setCreatedBy(requester);
-    member.setCreatedAt(Instant.now());
     return contactInformationService
         .save(requester, member.getId(), createCommand.getContactId())
         .flatMap(
@@ -61,8 +58,8 @@ public class DefaultMemberService implements MemberService {
         .map(inputMapper::domainToEvent);
   }
 
-  @NewSpan
   @Override
+  @Observed(name = "default-member-service::find-by-id")
   public Mono<MemberPresenter> findById(@SpanTag String requester, @SpanTag String memberId) {
     return contactInformationService
         .findByOwnerId(memberId)
@@ -78,8 +75,8 @@ public class DefaultMemberService implements MemberService {
                     .map(outputMapper::domainToPresenter));
   }
 
-  @NewSpan
   @Override
+  @Observed(name = "default-member-service::find-by-organization-id")
   public Flux<MemberPresenter> findByOrganizationId(
       @SpanTag String requester, @SpanTag String organizationId) {
     return repository
@@ -92,8 +89,8 @@ public class DefaultMemberService implements MemberService {
         .map(outputMapper::domainToPresenter);
   }
 
-  @NewSpan
   @Override
+  @Observed(name = "default-member-service::find-by-department-id")
   public Flux<MemberPresenter> findByDepartmentId(
       @SpanTag String requester, @SpanTag String departmentId) {
     return repository

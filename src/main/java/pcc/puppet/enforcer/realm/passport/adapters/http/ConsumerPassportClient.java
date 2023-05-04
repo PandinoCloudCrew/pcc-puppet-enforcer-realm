@@ -15,35 +15,45 @@
  */
 package pcc.puppet.enforcer.realm.passport.adapters.http;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static pcc.puppet.enforcer.app.Project.NAME;
 import static pcc.puppet.enforcer.app.Project.VERSION;
+import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.CONSUMER;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
 import io.micrometer.tracing.annotation.SpanTag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
+import pcc.puppet.enforcer.realm.common.util.JwtTool;
 import pcc.puppet.enforcer.realm.passport.domain.ConsumerPassportOperations;
 import pcc.puppet.enforcer.realm.passport.ports.command.ConsumerPassportCreateCommand;
 import pcc.puppet.enforcer.realm.passport.ports.event.ConsumerPassportCreateEvent;
 import reactor.core.publisher.Mono;
 
-@HttpExchange("${spring.http.services.pcc-realm-passport.url}")
+@HttpExchange
 public interface ConsumerPassportClient extends ConsumerPassportOperations {
-String USER_AGENT =  "ConsumerPassportClient/" + VERSION + " (" + NAME + ")";
+  String USER_AGENT = "ConsumerPassportClient/" + VERSION + " (" + NAME + ")";
+
   @PostExchange(accept = APPLICATION_JSON_VALUE, contentType = APPLICATION_JSON_VALUE)
   Mono<ConsumerPassportCreateEvent> createConsumerPassport(
-      @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+      @NotNull @SpanTag(CONSUMER) @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+      @NotNull @RequestHeader(AUTHORIZATION) String authorization,
       @NotNull @SpanTag(REQUESTER) @RequestHeader(REQUESTER) String requester,
       @NotNull @RequestBody ConsumerPassportCreateCommand passportCommand);
+
   @Override
- default  Mono<ConsumerPassportCreateEvent> createConsumerPassport(
-      @NotNull String requester,
-      @NotNull ConsumerPassportCreateCommand passportCommand){
-    return createConsumerPassport(USER_AGENT, requester, passportCommand);
+  default Mono<ConsumerPassportCreateEvent> createConsumerPassport(
+      @NotNull String requester, @NotNull @Valid ConsumerPassportCreateCommand passportCommand) {
+    return JwtTool.authentication()
+        .flatMap(
+            token ->
+                createConsumerPassport(
+                    USER_AGENT, JwtTool.toBearer(token), requester, passportCommand));
   }
 }

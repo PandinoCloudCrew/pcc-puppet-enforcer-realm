@@ -19,13 +19,14 @@ import jakarta.annotation.Nullable;
 import java.util.Map;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 
 @Data
 @Builder
+@Jacksonized
 public class CountryName {
 
-  @Nullable
-  private String common;
+  @Nullable private String common;
   @Nullable private String official;
   @Nullable private Map<String, NativeCountryName> nativeName;
 }

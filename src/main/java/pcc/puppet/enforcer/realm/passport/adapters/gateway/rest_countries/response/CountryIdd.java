@@ -19,12 +19,13 @@ import jakarta.annotation.Nullable;
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 
 @Data
 @Builder
+@Jacksonized
 public class CountryIdd {
 
-  @Nullable
-  private String root;
+  @Nullable private String root;
   @Nullable private List<String> suffixes;
 }

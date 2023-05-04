@@ -18,6 +18,7 @@ package pcc.puppet.enforcer.realm.common.contact.ports.command;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 import pcc.puppet.enforcer.realm.common.generator.values.CityNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.CountryNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.CurrencyCodeStrategy;
@@ -32,6 +33,7 @@ import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
+@Jacksonized
 public class CreateContactInformationCommand {
   @NotNull
   @PodamStrategyValue(FirstNameStrategy.class)

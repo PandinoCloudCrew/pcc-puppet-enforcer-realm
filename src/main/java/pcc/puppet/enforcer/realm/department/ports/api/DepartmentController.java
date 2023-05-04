@@ -53,7 +53,9 @@ public class DepartmentController implements DepartmentOperations {
   @Counted
   @Override
   @NewSpan
-  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping(
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<DepartmentCreateEvent> departmentCreate(
       @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,
       @SpanTag(ORGANIZATION) @NotNull @RequestHeader(ORGANIZATION) String organizationId,

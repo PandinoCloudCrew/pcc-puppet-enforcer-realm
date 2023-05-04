@@ -40,7 +40,7 @@ public class RestCountriesController {
 
   private String getJsonResponse() {
     try {
-      return  loader.getResource("rest-countries.json").getContentAsString(StandardCharsets.UTF_8);
+      return loader.getResource("rest-countries.json").getContentAsString(StandardCharsets.UTF_8);
     } catch (IOException e) {
       return e.getMessage();
     }

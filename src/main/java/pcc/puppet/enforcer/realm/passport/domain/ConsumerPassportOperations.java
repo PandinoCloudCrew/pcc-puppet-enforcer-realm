@@ -15,6 +15,7 @@
  */
 package pcc.puppet.enforcer.realm.passport.domain;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import pcc.puppet.enforcer.realm.passport.ports.command.ConsumerPassportCreateCommand;
 import pcc.puppet.enforcer.realm.passport.ports.event.ConsumerPassportCreateEvent;
@@ -22,5 +23,5 @@ import reactor.core.publisher.Mono;
 
 public interface ConsumerPassportOperations {
   Mono<ConsumerPassportCreateEvent> createConsumerPassport(
-      @NotNull String requester, @NotNull ConsumerPassportCreateCommand passportCommand);
+      @NotNull String requester, @NotNull @Valid ConsumerPassportCreateCommand passportCommand);
 }

@@ -19,11 +19,12 @@ import jakarta.annotation.Nullable;
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 
 @Data
 @Builder
+@Jacksonized
 public class CountryCarInfo {
-  @Nullable
-  private String side;
+  @Nullable private String side;
   @Nullable private List<String> signs;
 }

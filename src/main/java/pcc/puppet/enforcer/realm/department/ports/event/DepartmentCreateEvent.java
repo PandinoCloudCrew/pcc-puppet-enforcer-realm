@@ -20,16 +20,16 @@ import jakarta.validation.constraints.NotNull;
 import javax.validation.Valid;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 import pcc.puppet.enforcer.realm.common.contact.ports.event.CreateContactInformationEvent;
 
 @Data
 @Builder
+@Jacksonized
 public class DepartmentCreateEvent {
   @NotNull private String id;
-  @Nullable
-  private String parentId;
-  @NotNull
-  private String organizationId;
+  @Nullable private String parentId;
+  @NotNull private String organizationId;
   @NotNull private String name;
   @NotNull private String location;
   @NotNull private String createdAt;

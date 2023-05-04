@@ -20,9 +20,10 @@ import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
-import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.data.mongodb.core.mapping.Document;
 import pcc.puppet.enforcer.realm.common.generator.values.CityNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.CountryNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.CurrencyCodeStrategy;
@@ -38,7 +39,8 @@ import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
-@Table
+@Document
+@Jacksonized
 public class ContactInformation {
 
   @Id
@@ -90,8 +92,7 @@ public class ContactInformation {
 
   @NotNull private String createdBy;
   @NotNull private Instant createdAt;
-  @Nullable
-  private String updatedBy;
+  @Nullable private String updatedBy;
   @Nullable private Instant updatedAt;
   @Version private Integer version;
 }

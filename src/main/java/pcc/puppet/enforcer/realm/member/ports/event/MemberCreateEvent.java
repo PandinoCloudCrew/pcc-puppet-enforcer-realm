@@ -18,13 +18,14 @@ package pcc.puppet.enforcer.realm.member.ports.event;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 import pcc.puppet.enforcer.realm.common.contact.ports.event.CreateContactInformationEvent;
 
 @Data
 @Builder
+@Jacksonized
 public class MemberCreateEvent {
-  @NotNull
-  private String id;
+  @NotNull private String id;
   @NotNull private String organizationId;
   @NotNull private String departmentId;
   @NotNull private String username;

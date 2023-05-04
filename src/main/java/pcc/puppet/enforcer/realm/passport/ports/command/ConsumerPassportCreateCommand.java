@@ -18,6 +18,7 @@ package pcc.puppet.enforcer.realm.passport.ports.command;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 import pcc.puppet.enforcer.realm.common.generator.values.AddressStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.CityNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.CompanyDepartmentStrategy;
@@ -34,6 +35,7 @@ import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
+@Jacksonized
 public class ConsumerPassportCreateCommand {
 
   @NotNull

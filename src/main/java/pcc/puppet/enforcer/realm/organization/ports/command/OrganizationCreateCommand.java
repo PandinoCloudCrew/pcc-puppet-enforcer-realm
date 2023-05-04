@@ -20,6 +20,7 @@ import jakarta.validation.constraints.NotNull;
 import javax.validation.Valid;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 import pcc.puppet.enforcer.realm.common.contact.ports.command.CreateContactInformationCommand;
 import pcc.puppet.enforcer.realm.common.generator.values.AddressStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.CityNameStrategy;
@@ -31,6 +32,7 @@ import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
+@Jacksonized
 public class OrganizationCreateCommand {
   @NotNull
   @PodamStrategyValue(CompanyNameStrategy.class)

@@ -17,9 +17,11 @@ package pcc.puppet.enforcer.keycloak.domain;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 
 @Data
 @Builder
+@Jacksonized
 public class KeycloakCredentialRepresentation {
   private String type;
   private boolean temporary;

@@ -17,7 +17,6 @@ package pcc.puppet.enforcer.realm.department.domain.service;
 
 import io.micrometer.tracing.annotation.NewSpan;
 import io.micrometer.tracing.annotation.SpanTag;
-import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -48,8 +47,6 @@ public class DefaultDepartmentService implements DepartmentService {
       @SpanTag String requester, @SpanTag DepartmentCreateCommand createCommand) {
     Department department = inputMapper.commandToDomain(createCommand);
     department.setId(DomainFactory.id());
-    department.setCreatedBy(requester);
-    department.setCreatedAt(Instant.now());
     return contactInformationService
         .save(requester, department.getId(), createCommand.getContactId())
         .flatMap(

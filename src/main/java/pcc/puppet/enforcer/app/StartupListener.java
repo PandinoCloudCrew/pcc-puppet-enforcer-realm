@@ -15,16 +15,17 @@
  */
 package pcc.puppet.enforcer.app;
 
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class StartupListener  {
+public class StartupListener implements ApplicationListener<ApplicationStartedEvent> {
 
-  @PostConstruct
-  public void onApplicationEvent() {
+  @Override
+  public void onApplicationEvent(ApplicationStartedEvent event) {
     log.info("application: {}, version: {}", Project.NAME, Project.VERSION);
   }
 }

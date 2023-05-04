@@ -18,12 +18,13 @@ package pcc.puppet.enforcer.realm.passport.adapters.gateway.rest_countries.respo
 import jakarta.annotation.Nullable;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 
 @Data
 @Builder
+@Jacksonized
 public class CountryOnlineMaps {
 
-  @Nullable
-  private String googleMaps;
+  @Nullable private String googleMaps;
   @Nullable private String openStreetMaps;
 }

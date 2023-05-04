@@ -31,8 +31,7 @@ import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEven
 
 @Service
 public class TestDomainGenerator {
-  @Autowired
-  private MemberClient memberClient;
+  @Autowired private MemberClient memberClient;
   @Autowired private DepartmentClient departmentClient;
   @Autowired private OrganizationClient organizationClient;
   public static final String REQUESTER_ID = "test@pandino.co";

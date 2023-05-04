@@ -17,10 +17,12 @@ package pcc.puppet.enforcer.realm.organization.adapters.presenter;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 import pcc.puppet.enforcer.realm.common.contact.adapters.presenter.ContactInformationPresenter;
 
 @Data
 @Builder
+@Jacksonized
 public class OrganizationPresenter {
   private String id;
   private String parentId;

@@ -18,16 +18,17 @@ package pcc.puppet.enforcer.keycloak.domain;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 
 @Data
 @Builder
+@Jacksonized
 public class KeycloakClientRepresentation {
 
   public static final String CLIENT_NAME = "name";
   public static final String CLIENT_ID = "clientId";
   public static final String CLIENT_SECRET = "secret";
-  @NotNull
-  private String name;
+  @NotNull private String name;
   @NotNull private String description;
   @NotNull private Boolean serviceAccountsEnabled;
   @NotNull private String clientId;

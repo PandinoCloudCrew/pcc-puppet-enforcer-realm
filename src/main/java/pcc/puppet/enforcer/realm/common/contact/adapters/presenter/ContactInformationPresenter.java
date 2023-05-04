@@ -17,9 +17,11 @@ package pcc.puppet.enforcer.realm.common.contact.adapters.presenter;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 
 @Data
 @Builder
+@Jacksonized
 public class ContactInformationPresenter {
 
   private String firstName;

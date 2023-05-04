@@ -19,6 +19,7 @@ import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 import pcc.puppet.enforcer.realm.common.contact.ports.event.CreateContactInformationEvent;
 import pcc.puppet.enforcer.realm.common.generator.values.AddressStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.CityNameStrategy;
@@ -30,6 +31,7 @@ import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
+@Jacksonized
 public class OrganizationCreateEvent {
 
   @NotNull
