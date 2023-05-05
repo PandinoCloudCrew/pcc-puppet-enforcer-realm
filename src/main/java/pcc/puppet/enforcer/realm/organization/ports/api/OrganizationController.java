@@ -23,7 +23,6 @@ import jakarta.validation.constraints.NotNull;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pcc.puppet.enforcer.keycloak.domain.BearerTokenResponse;
 import pcc.puppet.enforcer.keycloak.domain.service.KeycloakService;
 import pcc.puppet.enforcer.realm.organization.adapters.presenter.OrganizationPresenter;
 import pcc.puppet.enforcer.realm.organization.domain.OrganizationOperations;
@@ -76,7 +76,7 @@ public class OrganizationController implements OrganizationOperations {
 
   @PostMapping(value = "/{organizationId}/login")
   @Observed(name = "organization-controller::organization-login")
-  public Mono<OAuth2AccessTokenResponse> organizationLogin(
+  public Mono<BearerTokenResponse> organizationLogin(
       @NotNull @SpanTag @PathVariable String organizationId,
       @NotNull @RequestBody UsernamePasswordCredentials credentials) {
     return keycloakService.clientLogin(credentials.getUsername(), credentials.getPassword());

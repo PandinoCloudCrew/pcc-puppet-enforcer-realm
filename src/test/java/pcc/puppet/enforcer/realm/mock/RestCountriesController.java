@@ -17,30 +17,28 @@ package pcc.puppet.enforcer.realm.mock;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.http.MediaType;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
-@RestController("/rest-countries")
+@Profile("test")
+@RestController
+@RequestMapping("/rest-countries")
 public class RestCountriesController {
 
-  private final ResourceLoader loader;
-
-  public RestCountriesController(ResourceLoader loader) {
-    this.loader = loader;
-  }
-
-  @GetMapping(value = "/name/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/name/{name}")
   public Mono<String> getCountryResponse(@PathVariable String name) {
     return Mono.just(getJsonResponse());
   }
 
   private String getJsonResponse() {
     try {
-      return loader.getResource("rest-countries.json").getContentAsString(StandardCharsets.UTF_8);
+      return new ClassPathResource("rest-countries.json")
+          .getContentAsString(StandardCharsets.UTF_8);
     } catch (IOException e) {
       return e.getMessage();
     }

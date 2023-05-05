@@ -19,13 +19,10 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 import io.micrometer.observation.annotation.Observed;
 import jakarta.validation.constraints.NotNull;
-import java.util.Map;
 import javax.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.core.endpoint.DefaultMapOAuth2AccessTokenResponseConverter;
-import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
 import pcc.puppet.enforcer.app.Project;
+import pcc.puppet.enforcer.keycloak.domain.BearerTokenResponse;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientCredentials;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakIntrospection;
@@ -44,28 +42,26 @@ import reactor.core.publisher.Mono;
 @HttpExchange
 public interface KeycloakAdminClient {
   String USER_AGENT = "KeycloakAdminClient/" + Project.VERSION + " (" + Project.NAME + ")";
-  DefaultMapOAuth2AccessTokenResponseConverter converter =
-      new DefaultMapOAuth2AccessTokenResponseConverter();
 
   @PostExchange(
       value = "/realms/{realm}/protocol/openid-connect/token",
       contentType = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       accept = MediaType.APPLICATION_JSON_VALUE)
-  Mono<Map<String, Object>> token(
+  Mono<BearerTokenResponse> token(
       @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
       @NotNull @PathVariable String realm,
       @Valid @RequestBody MultiValueMap<String, String> credentials);
 
   @Observed(name = "keycloak-admin-client::token")
-  default Mono<OAuth2AccessTokenResponse> clientLogin(
+  default Mono<BearerTokenResponse> clientLogin(
       @NotNull String realm, @Valid KeycloakClientCredentials credentials) {
-    return token(USER_AGENT, realm, credentials.toFormData()).map(converter::convert);
+    return token(USER_AGENT, realm, credentials.toFormData());
   }
 
   @Observed(name = "keycloak-admin-client::token")
-  default Mono<OAuth2AccessTokenResponse> userLogin(
+  default Mono<BearerTokenResponse> userLogin(
       @NotNull String realm, @Valid KeycloakUserCredentials credentials) {
-    return token(USER_AGENT, realm, credentials.toFormData()).map(converter::convert);
+    return token(USER_AGENT, realm, credentials.toFormData());
   }
 
   @PostExchange(

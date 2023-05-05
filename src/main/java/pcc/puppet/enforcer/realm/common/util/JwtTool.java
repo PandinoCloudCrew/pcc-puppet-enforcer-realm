@@ -19,21 +19,23 @@ import lombok.experimental.UtilityClass;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
 import org.springframework.security.oauth2.jwt.Jwt;
+import pcc.puppet.enforcer.keycloak.domain.BearerTokenResponse;
 import reactor.core.publisher.Mono;
 
 @UtilityClass
 public class JwtTool {
 
+  private static final String DEFAULT_TOKEN =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaW"
+          + "F0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+
   public String toBearer(Jwt authentication) {
     return "Bearer " + authentication.getTokenValue();
   }
 
-  public String toBearer(OAuth2AccessTokenResponse authentication) {
-    return authentication.getAccessToken().getTokenType().getValue()
-        + " "
-        + authentication.getAccessToken().getTokenValue();
+  public String toBearer(BearerTokenResponse authentication) {
+    return "Bearer " + authentication.getAccessToken();
   }
 
   public static Mono<Jwt> authentication() {
@@ -41,6 +43,15 @@ public class JwtTool {
         .map(SecurityContext::getAuthentication)
         .filter(Authentication::isAuthenticated)
         .map(Authentication::getPrincipal)
-        .map(Jwt.class::cast);
+        .map(Jwt.class::cast)
+        .defaultIfEmpty(getJwt());
+  }
+
+  private static Jwt getJwt() {
+    return Jwt.withTokenValue(DEFAULT_TOKEN)
+        .header("typ", "JWT")
+        .header("alg", "HS256")
+        .claim("preferred_username", "default-not-valid")
+        .build();
   }
 }

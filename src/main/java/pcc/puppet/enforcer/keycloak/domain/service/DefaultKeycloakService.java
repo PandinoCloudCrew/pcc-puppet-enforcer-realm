@@ -22,9 +22,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
 import org.springframework.stereotype.Service;
 import pcc.puppet.enforcer.keycloak.adapters.http.KeycloakAdminClient;
+import pcc.puppet.enforcer.keycloak.domain.BearerTokenResponse;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakAddressClaimSetRepresentation;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientCredentials;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation;
@@ -50,7 +50,7 @@ public class DefaultKeycloakService implements KeycloakService {
 
   @Override
   @Observed(name = "default-keycloak-service::token")
-  public Mono<OAuth2AccessTokenResponse> adminLogin() {
+  public Mono<BearerTokenResponse> adminLogin() {
     KeycloakClientCredentials credentials =
         KeycloakClientCredentials.builder()
             .clientId(keycloakProperties.getClientId())
@@ -73,14 +73,14 @@ public class DefaultKeycloakService implements KeycloakService {
 
   @Override
   @Observed(name = "default-keycloak-service::token")
-  public Mono<OAuth2AccessTokenResponse> clientLogin(String clientId, String clientSecret) {
+  public Mono<BearerTokenResponse> clientLogin(String clientId, String clientSecret) {
     KeycloakClientCredentials credentials =
         KeycloakClientCredentials.builder().clientId(clientId).clientSecret(clientSecret).build();
     return adminClient.clientLogin(keycloakProperties.getRealm(), credentials);
   }
 
   @Override
-  public Mono<OAuth2AccessTokenResponse> userLogin(String username, String password) {
+  public Mono<BearerTokenResponse> userLogin(String username, String password) {
     KeycloakUserCredentials credentials =
         KeycloakUserCredentials.builder()
             .username(username)

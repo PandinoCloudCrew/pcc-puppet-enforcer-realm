@@ -16,27 +16,24 @@
 package pcc.puppet.enforcer.realm.mock;
 
 import jakarta.validation.constraints.NotNull;
-import org.springframework.http.MediaType;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pcc.puppet.enforcer.vault.adapters.http.request.VaultSecretCreateRequest;
 import reactor.core.publisher.Mono;
 
-@RestController("/vault")
+@Profile("test")
+@RestController
+@RequestMapping("/vault")
 public class VaultController {
 
-  @PostMapping(
-      value = "/v1/{backend}/data/{secretKey}",
-      consumes = MediaType.APPLICATION_JSON_VALUE,
-      produces = MediaType.APPLICATION_JSON_VALUE)
-  public Mono<String> getToken(
+  @PostMapping(value = "/v1/{backend}/data/client-credentials/{secretKey}")
+  public Mono<String> createSecret(
       @NotNull @RequestHeader("X-Vault-Token") String token,
       @NotNull @PathVariable String backend,
-      @NotNull @PathVariable String secretKey,
-      @NotNull @RequestBody VaultSecretCreateRequest credentials) {
+      @NotNull @PathVariable String secretKey) {
     return Mono.just("created");
   }
 }

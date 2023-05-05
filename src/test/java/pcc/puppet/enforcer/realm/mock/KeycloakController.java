@@ -17,10 +17,11 @@ package pcc.puppet.enforcer.realm.mock;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
-import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 import jakarta.validation.constraints.NotNull;
+import java.util.Map;
 import java.util.Optional;
 import javax.validation.Valid;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,14 +29,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pcc.puppet.enforcer.keycloak.domain.KeycloakClientCredentials;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation;
-import pcc.puppet.enforcer.keycloak.domain.KeycloakIntrospection;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakTokenDetails;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakUserRepresentation;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
+import pcc.puppet.enforcer.realm.common.util.JwtTool;
 import reactor.core.publisher.Mono;
 
+@Profile("test")
 @RestController
 @RequestMapping("/keycloak")
 public class KeycloakController {
@@ -44,17 +45,31 @@ public class KeycloakController {
       value = "/realms/{realm}/protocol/openid-connect/token",
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public Mono<BearerAccessToken> getToken(
-      @PathVariable String realm, @RequestBody KeycloakClientCredentials credentials) {
-    return Mono.just(new BearerAccessToken());
+  public Mono<Map<String, Object>> getToken(@PathVariable String realm) {
+
+    return JwtTool.authentication()
+        .map(
+            token ->
+                Map.of(
+                    "access_token",
+                    token.getTokenValue(),
+                    "expires_in",
+                    10800,
+                    "refresh_expires_in",
+                    0,
+                    "token_type",
+                    "Bearer",
+                    "not-before-policy",
+                    0,
+                    "scope",
+                    "email profile"));
   }
 
   @PostMapping(
       value = "/realms/{realm}/protocol/openid-connect/token/introspect",
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public Mono<KeycloakTokenDetails> tokenIntrospect(
-      @PathVariable String realm, @RequestBody KeycloakIntrospection introspection) {
+  public Mono<KeycloakTokenDetails> tokenIntrospect(@PathVariable String realm) {
     return Mono.just(DomainFactory.keycloakTokenDetails());
   }
 

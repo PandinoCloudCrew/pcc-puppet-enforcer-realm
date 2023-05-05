@@ -21,8 +21,13 @@ import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Version;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import pcc.puppet.enforcer.realm.common.generator.values.CityNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.CountryNameStrategy;
@@ -48,7 +53,9 @@ public class ContactInformation {
   @PodamStrategyValue(ObjectIdStrategy.class)
   private String id;
 
-  @NotNull private String ownerId;
+  @NotNull
+  @Indexed(background = true)
+  private String ownerId;
 
   @NotNull
   @PodamStrategyValue(FirstNameStrategy.class)
@@ -63,6 +70,7 @@ public class ContactInformation {
   private String phoneNumber;
 
   @NotNull
+  @Indexed(background = true)
   @PodamStrategyValue(EmailStrategy.class)
   private String email;
 
@@ -90,9 +98,9 @@ public class ContactInformation {
   @PodamStrategyValue(CurrencyCodeStrategy.class)
   private String currency;
 
-  @NotNull private String createdBy;
-  @NotNull private Instant createdAt;
-  @Nullable private String updatedBy;
-  @Nullable private Instant updatedAt;
+  @NotNull @CreatedBy private String createdBy;
+  @NotNull @CreatedDate private Instant createdAt;
+  @Nullable @LastModifiedBy private String updatedBy;
+  @Nullable @LastModifiedDate private Instant updatedAt;
   @Version private Integer version;
 }

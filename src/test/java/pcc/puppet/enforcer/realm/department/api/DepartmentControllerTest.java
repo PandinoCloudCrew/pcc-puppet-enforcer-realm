@@ -26,17 +26,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.test.context.ActiveProfiles;
+import pcc.puppet.enforcer.app.Application;
 import pcc.puppet.enforcer.realm.TestDomainGenerator;
 import pcc.puppet.enforcer.realm.common.format.DateFormat;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import pcc.puppet.enforcer.realm.department.adapters.http.DepartmentClient;
 import pcc.puppet.enforcer.realm.department.adapters.presenter.DepartmentPresenter;
-import pcc.puppet.enforcer.realm.department.ports.api.DepartmentController;
 import pcc.puppet.enforcer.realm.department.ports.command.DepartmentCreateCommand;
 import pcc.puppet.enforcer.realm.department.ports.event.DepartmentCreateEvent;
 import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEvent;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = DepartmentController.class)
+@ActiveProfiles("test")
+@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT, classes = Application.class)
 class DepartmentControllerTest {
   @Autowired private DepartmentClient client;
   @Autowired private TestDomainGenerator generator;

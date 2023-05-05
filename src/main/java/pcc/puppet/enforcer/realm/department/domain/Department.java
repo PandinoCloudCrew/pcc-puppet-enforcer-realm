@@ -27,6 +27,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Version;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import pcc.puppet.enforcer.realm.common.contact.domain.ContactInformation;
@@ -47,10 +48,12 @@ public class Department {
   private String id;
 
   @Nullable
+  @Indexed(background = true)
   @PodamStrategyValue(ObjectIdStrategy.class)
   private String parentId;
 
   @NotNull
+  @Indexed(background = true)
   @PodamStrategyValue(ObjectIdStrategy.class)
   private String organizationId;
 

@@ -25,6 +25,7 @@ import pcc.puppet.enforcer.realm.common.generator.values.AddressStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.CityNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.CompanyNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.CountryNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.InstantStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.ObjectIdStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.TaxIdStrategy;
 import uk.co.jemos.podam.common.PodamStrategyValue;
@@ -64,5 +65,6 @@ public class OrganizationCreateEvent {
 
   @NotNull private CreateContactInformationEvent contactId;
 
+  @PodamStrategyValue(InstantStrategy.class)
   private String createdAt;
 }

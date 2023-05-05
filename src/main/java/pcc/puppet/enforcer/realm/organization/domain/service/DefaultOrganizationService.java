@@ -154,7 +154,7 @@ public class DefaultOrganizationService implements OrganizationService {
         .flatMap(
             organization ->
                 contactInformationService
-                    .findById(organization.getContactId().getId())
+                    .findByOwnerId(organization.getId())
                     .map(organization::setContact))
         .map(outputMapper::domainToPresenter);
   }

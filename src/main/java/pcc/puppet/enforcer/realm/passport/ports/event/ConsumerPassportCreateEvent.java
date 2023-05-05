@@ -19,8 +19,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
-import org.springframework.security.oauth2.core.OAuth2AccessToken;
-import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
+import pcc.puppet.enforcer.keycloak.domain.BearerTokenResponse;
 import pcc.puppet.enforcer.realm.department.ports.event.DepartmentCreateEvent;
 import pcc.puppet.enforcer.realm.member.ports.event.MemberCreateEvent;
 import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEvent;
@@ -35,7 +34,7 @@ public class ConsumerPassportCreateEvent {
   @NotNull private MemberCreateEvent member;
   @NotNull private OrganizationCreateEvent organization;
   @NotNull private DepartmentCreateEvent department;
-  @NotNull private OAuth2AccessToken accessRefreshToken;
+  @NotNull private String accessRefreshToken;
 
   public ConsumerPassportCreateEvent organization(OrganizationCreateEvent organizationCreateEvent) {
     this.organization = organizationCreateEvent;
@@ -52,7 +51,7 @@ public class ConsumerPassportCreateEvent {
     return this;
   }
 
-  public ConsumerPassportCreateEvent token(OAuth2AccessTokenResponse token) {
+  public ConsumerPassportCreateEvent token(BearerTokenResponse token) {
     this.accessRefreshToken = token.getAccessToken();
     return this;
   }

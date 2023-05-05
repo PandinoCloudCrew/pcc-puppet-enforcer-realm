@@ -83,9 +83,7 @@ public class DefaultMemberService implements MemberService {
         .findByOrganizationId(organizationId)
         .flatMap(
             member ->
-                contactInformationService
-                    .findById(member.getContactId().getId())
-                    .map(member::setContact))
+                contactInformationService.findByOwnerId(member.getId()).map(member::setContact))
         .map(outputMapper::domainToPresenter);
   }
 
@@ -97,9 +95,7 @@ public class DefaultMemberService implements MemberService {
         .findByDepartmentId(departmentId)
         .flatMap(
             member ->
-                contactInformationService
-                    .findById(member.getContactId().getId())
-                    .map(member::setContact))
+                contactInformationService.findByOwnerId(member.getId()).map(member::setContact))
         .map(outputMapper::domainToPresenter);
   }
 }

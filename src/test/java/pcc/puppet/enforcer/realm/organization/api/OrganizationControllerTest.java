@@ -27,19 +27,21 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
+import org.springframework.test.context.ActiveProfiles;
+import pcc.puppet.enforcer.app.Application;
+import pcc.puppet.enforcer.keycloak.domain.BearerTokenResponse;
 import pcc.puppet.enforcer.realm.TestDomainGenerator;
 import pcc.puppet.enforcer.realm.common.format.DateFormat;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import pcc.puppet.enforcer.realm.organization.adapters.http.OrganizationClient;
 import pcc.puppet.enforcer.realm.organization.adapters.presenter.OrganizationPresenter;
-import pcc.puppet.enforcer.realm.organization.ports.api.OrganizationController;
 import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
 import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEvent;
 import pcc.puppet.enforcer.realm.passport.domain.UsernamePasswordCredentials;
 import pcc.puppet.enforcer.security.password.SecurePasswordGenerator;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = OrganizationController.class)
+@ActiveProfiles("test")
+@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT, classes = Application.class)
 class OrganizationControllerTest {
 
   @Autowired private OrganizationClient client;
@@ -163,7 +165,7 @@ class OrganizationControllerTest {
         new UsernamePasswordCredentials(organizationId, passwordGenerator.password(16));
     Assertions.assertAll(
         () -> {
-          OAuth2AccessTokenResponse accessRefreshToken =
+          BearerTokenResponse accessRefreshToken =
               client.organizationLogin(organizationId, credentials).block();
           assertNotNull(accessRefreshToken);
         });

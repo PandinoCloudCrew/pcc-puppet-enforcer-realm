@@ -24,6 +24,7 @@ import pcc.puppet.enforcer.realm.common.generator.values.CountryNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.CurrencyCodeStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.EmailStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.FirstNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.InstantStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.JobPositionStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.LastNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.LocaleStrategy;
@@ -83,5 +84,7 @@ public class CreateContactInformationEvent {
   @PodamStrategyValue(CurrencyCodeStrategy.class)
   private String currency;
 
-  @NotNull private String createdAt;
+  @NotNull
+  @PodamStrategyValue(InstantStrategy.class)
+  private String createdAt;
 }

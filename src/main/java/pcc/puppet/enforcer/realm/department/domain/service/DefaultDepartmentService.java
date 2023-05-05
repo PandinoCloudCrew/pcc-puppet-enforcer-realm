@@ -84,7 +84,7 @@ public class DefaultDepartmentService implements DepartmentService {
         .flatMap(
             department ->
                 contactInformationService
-                    .findById(department.getContactId().getId())
+                    .findByOwnerId(department.getId())
                     .map(department::setContact))
         .map(outputMapper::domainToPresenter);
   }

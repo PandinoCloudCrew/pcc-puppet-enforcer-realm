@@ -27,6 +27,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Version;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import pcc.puppet.enforcer.realm.common.contact.domain.ContactInformation;
@@ -37,9 +38,19 @@ import pcc.puppet.enforcer.realm.common.contact.domain.ContactInformation;
 @Jacksonized
 public class Member {
   @Id private String id;
-  @NotNull private String organizationId;
-  @NotNull private String departmentId;
-  @NotNull private String username;
+
+  @NotNull
+  @Indexed(background = true)
+  private String organizationId;
+
+  @NotNull
+  @Indexed(background = true)
+  private String departmentId;
+
+  @NotNull
+  @Indexed(background = true)
+  private String username;
+
   @NotNull private String password;
 
   @NotNull @DocumentReference private ContactInformation contactId;

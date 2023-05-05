@@ -1,85 +1,82 @@
-micronaut:
-  application:
-    name: test-pcc-puppet-enforcer-realm
-  server:
-    port: ${random.port}
-    netty:
-      access-logger:
-        enabled: true
-        loggerName: HTTP_ACCESS_LOGGER
-        log-format: "%h %r %s %b"
-  metrics:
-    enabled: false
-    export:
-      prometheus:
-        enabled: false
-  otel:
-    enabled: false
+server:
+  port: 7997
+  shutdown: graceful
+
+spring:
   security:
-    enabled: false
+    oauth2:
+      resourceserver:
+        jwk:
+          issuer-uri: http://localhost:${server.port}
+  application:
+    name: pcc-puppet-enforcer-realm
+  main:
+    web-application-type: reactive
+
+  data:
+    mongodb:
+      auto-index-creation: true
+      uri: mongodb://pcc:123456789@mbp.lan:27017/fuimos
+
+  cloud:
+    vault:
+      enabled: false
   http:
     services:
       pcc-realm-organization:
-        url: http://localhost:${micronaut.server.port}
+        url: http://localhost:${server.port}
         path: /realm/organization
       pcc-realm-department:
-        url: http://localhost:${micronaut.server.port}
+        url: http://localhost:${server.port}
         path: /realm/department
       pcc-realm-member:
-        url: http://localhost:${micronaut.server.port}
+        url: http://localhost:${server.port}
         path: /realm/member
       pcc-realm-passport:
-        url: http://localhost:${micronaut.server.port}
+        url: http://localhost:${server.port}
         path: /realm/passport
       provider-rest-countries:
-        url: http://localhost:${micronaut.server.port}
+        url: http://localhost:${server.port}
         path: /rest-countries
       provider-keycloak:
-        url: http://localhost:${micronaut.server.port}
+        url: http://localhost:${server.port}
         path: /keycloak
       provider-vault:
-        url: http://localhost:${micronaut.server.port}
+        url: http://localhost:${server.port}
         path: /vault
 
-flyway:
-  enabled: true
-  datasources:
-    default:
-      enabled: true
-      url: 'jdbc:h2:mem:test-realm;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;'
-      username: sa
-      password: ''
-      locations:
-        - classpath:migration
-
-datasources:
-  default:
-    pooled: true
-    jmxExport: true
-    dbCreate: none
-    url: 'jdbc:h2:mem:test-realm;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;'
-    driverClassName: org.h2.Driver
-    dialect: H2
-    username: sa
-    password: ''
-
-r2dbc:
-  datasources:
-    default:
-      url: 'r2dbc:h2:mem:///test-realm;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;'
-      driverClassName: org.h2.Driver
-      username: sa
-      password: ''
-      dialect: h2
-      options:
-        driver: pool
-        protocol: h2:mem
+management:
+  tracing:
+    baggage:
+      correlation:
+        enabled: true
+        fields:
+          - track-id
+      remote-fields:
+        - track-id
+    sampling:
+      probability: 0.0
+    propagation:
+      type: w3c
 
 provider:
   keycloak:
+    adminClientId: adminClientId
     clientId: testPlaceholderClient
     clientSecret: testPlaceholderSecret
     realm: test
   vault:
-    uri: http://localhost:${random.port}/vault
+    uri: http://localhost:${server.port}/vault
     token: testPlaceholderToken
+
+logging:
+  pattern:
+    console: "[${spring.application.name}] [%t] [%-5p] [%X{traceId}] [%X{spanId}] [%X{track-id}] [%logger{15}] [%m]%n"
+  level:
+    reactor:
+      netty:
+        http:
+          client: DEBUG
+    io.micrometer: INFO
+    pcc: DEBUG
+    web: debug

@@ -21,8 +21,13 @@ import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Version;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import pcc.puppet.enforcer.realm.common.contact.domain.ContactInformation;
@@ -45,6 +50,7 @@ public class Organization {
   private String id;
 
   @Nullable
+  @Indexed(background = true)
   @PodamStrategyValue(ObjectIdStrategy.class)
   private String parentId;
 
@@ -70,10 +76,10 @@ public class Organization {
 
   @NotNull @DocumentReference private ContactInformation contactId;
 
-  @NotNull private String createdBy;
-  @NotNull private Instant createdAt;
-  @Nullable private String updatedBy;
-  @Nullable private Instant updatedAt;
+  @NotNull @CreatedBy private String createdBy;
+  @NotNull @CreatedDate private Instant createdAt;
+  @Nullable @LastModifiedBy private String updatedBy;
+  @Nullable @LastModifiedDate private Instant updatedAt;
   @Version private Integer version;
 
   public Organization setContact(ContactInformation contactInformation) {
