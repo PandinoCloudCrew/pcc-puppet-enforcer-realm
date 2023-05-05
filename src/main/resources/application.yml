@@ -14,7 +14,7 @@ spring:
   data:
     mongodb:
       auto-index-creation: true
-      uri: mongodb://pcc:123456789@mbp.lan:27017/fuimos
+      uri: ${mongo-uri}
 
   security:
     oauth2:
@@ -54,34 +54,15 @@ spring:
       provider-vault:
         url: ${provider-vault-url}
 
-  flyway:
-    url: ${jdbc-uri}
-    user: ${jdbc-username}
-    password: ${jdbc-password}
-    locations:
-      - classpath:db/migration
-
   r2dbc:
-    name: pcc_realm
+    name: ${r2dbc-database}
     url: ${r2dbc-uri}
-    dialect: ${jdbc-dialect}
     username: ${jdbc-username}
     password: ${jdbc-password}
     pool:
       enabled: true
       initial-size: 10
       max-size: 50
-
-datasources:
-  default:
-    pooled: true
-    jmxExport: true
-    dbCreate: none
-    url: ${jdbc-uri}
-    dialect: ${jdbc-dialect}
-    username: ${jdbc-username}
-    password: ${jdbc-password}
-
 
 management:
   tracing:
@@ -98,11 +79,11 @@ management:
       type: w3c
   zipkin:
     tracing:
-      endpoint: http://mbp.lan:9411/api/v2/spans
+      endpoint: ${zipkin-url}
 
 provider:
   keycloak:
-    adminClientId: admin-cli
+    adminClientId: ${keycloak-admin-clientId}
     clientId: ${keycloak-clientId}
     clientSecret: ${keycloak-clientSecret}
     realm: ${keycloak-realm}
