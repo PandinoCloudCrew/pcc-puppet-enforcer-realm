@@ -1,23 +1,7 @@
 server:
-  port: 7997
   shutdown: graceful
 
 spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwk:
-          issuer-uri: http://localhost:${server.port}
-  application:
-    name: pcc-puppet-enforcer-realm
-  main:
-    web-application-type: reactive
-
-  data:
-    mongodb:
-      auto-index-creation: true
-      uri: mongodb://pcc:123456789@mbp.lan:27017/fuimos
-
   cloud:
     vault:
       enabled: false
@@ -45,20 +29,6 @@ spring:
         url: http://localhost:${server.port}
         path: /vault
 
-management:
-  tracing:
-    baggage:
-      correlation:
-        enabled: true
-        fields:
-          - track-id
-      remote-fields:
-        - track-id
-    sampling:
-      probability: 0.0
-    propagation:
-      type: w3c
-
 provider:
   keycloak:
     adminClientId: adminClientId
@@ -70,13 +40,11 @@ provider:
     token: testPlaceholderToken
 
 logging:
-  pattern:
-    console: "[${spring.application.name}] [%t] [%-5p] [%X{traceId}] [%X{spanId}] [%X{track-id}] [%logger{15}] [%m]%n"
   level:
     reactor:
       netty:
         http:
-          client: DEBUG
+          client: INFO
     io.micrometer: INFO
     pcc: DEBUG
-    web: debug
+    web: DEBUG
