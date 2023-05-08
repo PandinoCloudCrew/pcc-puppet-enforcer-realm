@@ -23,6 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.junit.jupiter.Container;
 import pcc.puppet.enforcer.app.Application;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import pcc.puppet.enforcer.realm.passport.adapters.http.ConsumerPassportClient;
@@ -30,16 +34,28 @@ import pcc.puppet.enforcer.realm.passport.ports.command.ConsumerPassportCreateCo
 import pcc.puppet.enforcer.realm.passport.ports.event.ConsumerPassportCreateEvent;
 
 @ActiveProfiles("test")
-@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT, classes = Application.class)
+@SpringBootTest(
+    webEnvironment = WebEnvironment.DEFINED_PORT,
+    classes = Application.class,
+    properties = {"server.port=59992"})
 class ConsumerPassportControllerTest {
 
   @Autowired private ConsumerPassportClient client;
+
+  @Container
+  private static final MongoDBContainer mongoDBContainer =
+      new MongoDBContainer("mongo:6.0").withExposedPorts(27017);
+
+  @DynamicPropertySource
+  static void mongoDbProperties(DynamicPropertyRegistry registry) {
+    mongoDBContainer.start();
+    registry.add("spring.data.mongodb.uri", mongoDBContainer::getReplicaSetUrl);
+  }
 
   @Test
   void createConsumerPassport() {
     ConsumerPassportCreateCommand passportCreateCommand =
         DomainFactory.consumerPassportCreateCommand();
-    // TODO fix this test
     ConsumerPassportCreateEvent passportCreateEvent =
         client.createConsumerPassport(REQUESTER_ID, passportCreateCommand).block();
     assertNotNull(passportCreateEvent);
