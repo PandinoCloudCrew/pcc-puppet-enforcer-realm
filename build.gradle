@@ -101,7 +101,10 @@ tasks {
     tasks {
         bootBuildImage {
             imageName = "${System.env.DOCKER_IMAGE ?: "pcc.fyi/realm/$project.name"}"
-            tags = [version, "latest"] as List<String>
+            tags = [
+                    "${System.env.DOCKER_IMAGE ?: "pcc.fyi/realm/$project.name"}:$project.version",
+                    "${System.env.DOCKER_IMAGE ?: "pcc.fyi/realm/$project.name"}:latest"
+            ]
 
             docker {
                 publishRegistry {
