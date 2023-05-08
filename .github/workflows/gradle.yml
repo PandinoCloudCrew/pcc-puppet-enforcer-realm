@@ -43,6 +43,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build And Push Docker Image
         env:
+          REGISTRY_USERNAME: ${{ github.actor }}
+          REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          REGISTRY_URL: ${{ secrets.DOCKER_REGISTRY_URL }}
           TESTCONTAINERS_RYUK_DISABLED: true
         run: |
           ./gradlew check bootBuildImage --publishImage
