@@ -15,11 +15,15 @@
  */
 package pcc.puppet.enforcer.app;
 
-import io.micronaut.runtime.Micronaut;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import reactor.core.publisher.Hooks;
 
-@OpenAPIDefinition(info = @Info(title = Project.NAME, version = Project.VERSION))
+@EnableScheduling
+@EnableConfigurationProperties
+@SpringBootApplication(scanBasePackages = {"pcc.puppet.*"})
 public class Application {
   /**
    * Entry point for app
@@ -27,6 +31,7 @@ public class Application {
    * @param args program arguments
    */
   public static void main(final String[] args) {
-    Micronaut.run(Application.class, args);
+    Hooks.enableAutomaticContextPropagation();
+    SpringApplication.run(Application.class, args);
   }
 }

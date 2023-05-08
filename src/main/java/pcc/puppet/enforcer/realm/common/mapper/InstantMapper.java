@@ -16,11 +16,13 @@
 package pcc.puppet.enforcer.realm.common.mapper;
 
 import java.time.Instant;
+import java.util.Objects;
 import pcc.puppet.enforcer.realm.common.format.DateFormat;
 
 public class InstantMapper {
 
   public String asString(Instant timestamp) {
+    if (Objects.isNull(timestamp)) return null;
     return DateFormat.FORMATTER.format(timestamp);
   }
 

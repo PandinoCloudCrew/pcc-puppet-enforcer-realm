@@ -15,15 +15,16 @@
  */
 package pcc.puppet.enforcer.realm.common.contact.ports.event;
 
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.NonNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 import pcc.puppet.enforcer.realm.common.generator.values.CityNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.CountryNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.CurrencyCodeStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.EmailStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.FirstNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.InstantStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.JobPositionStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.LastNameStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.LocaleStrategy;
@@ -34,54 +35,56 @@ import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
-@Introspected
+@Jacksonized
 public class CreateContactInformationEvent {
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(ObjectIdStrategy.class)
   private String id;
 
-  @NonNull private String ownerId;
+  @NotNull private String ownerId;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(FirstNameStrategy.class)
   private String firstName;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(LastNameStrategy.class)
   private String lastName;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(PhoneNumberStrategy.class)
   private String phoneNumber;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(EmailStrategy.class)
   private String email;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(JobPositionStrategy.class)
   private String position;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(TimeZoneStrategy.class)
   private String zoneId;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(LocaleStrategy.class)
   private String locale;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(CountryNameStrategy.class)
   private String country;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(CityNameStrategy.class)
   private String city;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(CurrencyCodeStrategy.class)
   private String currency;
 
-  @NonNull private String createdAt;
+  @NotNull
+  @PodamStrategyValue(InstantStrategy.class)
+  private String createdAt;
 }

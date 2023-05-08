@@ -15,16 +15,14 @@
  */
 package pcc.puppet.enforcer.realm.organization.domain.service;
 
-import io.micronaut.cache.annotation.CacheConfig;
-import io.micronaut.cache.annotation.Cacheable;
-import io.micronaut.tracing.annotation.NewSpan;
-import io.micronaut.tracing.annotation.SpanTag;
-import jakarta.inject.Singleton;
-import java.time.Instant;
+import io.micrometer.observation.annotation.Observed;
+import io.micrometer.tracing.annotation.SpanTag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation;
 import pcc.puppet.enforcer.keycloak.domain.service.KeycloakService;
+import pcc.puppet.enforcer.realm.common.contact.domain.ContactInformation;
 import pcc.puppet.enforcer.realm.common.contact.domain.service.ContactInformationService;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import pcc.puppet.enforcer.realm.organization.adapters.mapper.OrganizationOutputMapper;
@@ -40,8 +38,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
-@Singleton
-@CacheConfig("organization")
+@Service
+@Observed
 @RequiredArgsConstructor
 public class DefaultOrganizationService implements OrganizationService {
 
@@ -54,33 +52,14 @@ public class DefaultOrganizationService implements OrganizationService {
   private final SecurePasswordGenerator passwordGenerator;
   public static final int DEFAULT_PASSWORD_LENGTH = 16;
 
-  @NewSpan
   @Override
+  @Observed(name = "default-organization-service::create")
   public Mono<OrganizationCreateEvent> create(
       @SpanTag String requester, OrganizationCreateCommand createCommand) {
     Organization organization = inputMapper.commandToDomain(createCommand);
     organization.setId(DomainFactory.id());
-    organization.setCreatedBy(requester);
-    organization.setCreatedAt(Instant.now());
     KeycloakClientRepresentation clientRepresentation =
-        KeycloakClientRepresentation.builder()
-            .clientId(organization.getId())
-            .name(organization.getName())
-            .description(
-                String.format(
-                    """
-                Country: %s
-                City: %s
-                TaxId: %s
-                ParentId: %s
-                """,
-                    organization.getCountry(),
-                    organization.getCity(),
-                    organization.getTaxId(),
-                    organization.getParentId()))
-            .serviceAccountsEnabled(true)
-            .secret(passwordGenerator.password(DEFAULT_PASSWORD_LENGTH))
-            .build();
+        getKeycloakClientRepresentation(organization);
     return keycloakService
         .createClient(
             clientRepresentation.getName(),
@@ -88,24 +67,60 @@ public class DefaultOrganizationService implements OrganizationService {
             clientRepresentation.getClientId(),
             clientRepresentation.getSecret())
         .flatMap(
-            created ->
-                secretService
-                    .createClientSecret(clientRepresentation)
-                    .flatMap(
-                        vaultResponseV2 ->
-                            contactInformationService
-                                .save(requester, organization.getId(), createCommand.getContactId())
-                                .flatMap(
-                                    contactInformation -> {
-                                      organization.setContactId(contactInformation);
-                                      return repository.save(organization);
-                                    })
-                                .map(inputMapper::domainToEvent)));
+            created -> {
+              log.debug("create keycloak client response {}", created);
+              return secretService
+                  .createClientSecret(clientRepresentation)
+                  .flatMap(
+                      vaultResponseV2 ->
+                          saveContactInformation(
+                              requester, createCommand, organization, vaultResponseV2));
+            });
   }
 
-  @NewSpan
+  @Observed(name = "default-organization-service::save-contact-information")
+  private Mono<OrganizationCreateEvent> saveContactInformation(
+      String requester,
+      OrganizationCreateCommand createCommand,
+      Organization organization,
+      String vaultResponseV2) {
+    log.debug("vault client response {}", vaultResponseV2);
+    return contactInformationService
+        .save(requester, organization.getId(), createCommand.getContactId())
+        .flatMap(contactInformation -> updateOrganizationContact(organization, contactInformation))
+        .map(inputMapper::domainToEvent);
+  }
+
+  @Observed(name = "default-organization-service::update-organization-contact")
+  private Mono<Organization> updateOrganizationContact(
+      Organization organization, ContactInformation contactInformation) {
+    organization.setContactId(contactInformation);
+    return repository.save(organization);
+  }
+
+  private KeycloakClientRepresentation getKeycloakClientRepresentation(Organization organization) {
+    return KeycloakClientRepresentation.builder()
+        .clientId(organization.getId())
+        .name(organization.getName())
+        .description(
+            String.format(
+                """
+                    Country: %s
+                    City: %s
+                    TaxId: %s
+                    ParentId: %s
+                    """,
+                organization.getCountry(),
+                organization.getCity(),
+                organization.getTaxId(),
+                organization.getParentId()))
+        .serviceAccountsEnabled(true)
+        .secret(passwordGenerator.password(DEFAULT_PASSWORD_LENGTH))
+        .build();
+  }
+
   @Override
-  @Cacheable
+  @Observed(name = "default-organization-service::find-by-id")
   public Mono<OrganizationPresenter> findById(
       @SpanTag String requester, @SpanTag String organizationId) {
     return contactInformationService
@@ -122,8 +137,8 @@ public class DefaultOrganizationService implements OrganizationService {
                     .map(outputMapper::domainToPresenter));
   }
 
-  @NewSpan
   @Override
+  @Observed(name = "default-organization-service::find-by-parent-id")
   public Flux<OrganizationPresenter> findByParentId(
       @SpanTag String requester, @SpanTag String organizationId) {
     return repository
@@ -131,7 +146,7 @@ public class DefaultOrganizationService implements OrganizationService {
         .flatMap(
             organization ->
                 contactInformationService
-                    .findById(organization.getContactId().getId())
+                    .findByOwnerId(organization.getId())
                     .map(organization::setContact))
         .map(outputMapper::domainToPresenter);
   }

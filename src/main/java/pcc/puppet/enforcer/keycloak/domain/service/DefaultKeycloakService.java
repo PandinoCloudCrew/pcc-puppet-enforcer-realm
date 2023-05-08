@@ -15,28 +15,33 @@
  */
 package pcc.puppet.enforcer.keycloak.domain.service;
 
-import io.micronaut.cache.annotation.CacheConfig;
-import io.micronaut.cache.annotation.Cacheable;
-import io.micronaut.security.token.jwt.render.AccessRefreshToken;
-import jakarta.inject.Singleton;
+import io.micrometer.observation.annotation.Observed;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import pcc.puppet.enforcer.keycloak.adapters.http.KeycloakAdminClient;
+import pcc.puppet.enforcer.keycloak.domain.BearerTokenResponse;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakAddressClaimSetRepresentation;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientCredentials;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakCredentialRepresentation;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakIntrospection;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakTokenDetails;
+import pcc.puppet.enforcer.keycloak.domain.KeycloakUserCredentials;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakUserInfoRepresentation;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakUserRepresentation;
 import pcc.puppet.enforcer.keycloak.ports.configuration.KeycloakProperties;
+import pcc.puppet.enforcer.realm.common.util.JwtTool;
 import pcc.puppet.enforcer.realm.passport.ports.event.ConsumerPassportCreateEvent;
 import reactor.core.publisher.Mono;
 
-@Singleton
-@CacheConfig("keycloak")
+@Slf4j
+@Service
+@CacheConfig
 @RequiredArgsConstructor
 public class DefaultKeycloakService implements KeycloakService {
 
@@ -44,40 +49,54 @@ public class DefaultKeycloakService implements KeycloakService {
   private final KeycloakProperties keycloakProperties;
 
   @Override
-  @Cacheable
-  public Mono<AccessRefreshToken> token() {
+  @Observed(name = "default-keycloak-service::token")
+  public Mono<BearerTokenResponse> adminLogin() {
     KeycloakClientCredentials credentials =
         KeycloakClientCredentials.builder()
-            .client_id(keycloakProperties.getClientId())
-            .client_secret(keycloakProperties.getClientSecret())
+            .clientId(keycloakProperties.getClientId())
+            .clientSecret(keycloakProperties.getClientSecret())
             .build();
-    return adminClient.token(keycloakProperties.getRealm(), credentials);
+    return adminClient.clientLogin(keycloakProperties.getRealm(), credentials);
   }
 
   @Override
+  @Observed(name = "default-keycloak-service::introspect")
   public Mono<KeycloakTokenDetails> introspect(String token) {
     KeycloakIntrospection introspection =
         KeycloakIntrospection.builder()
             .token(token)
-            .client_id(keycloakProperties.getClientId())
-            .client_secret(keycloakProperties.getClientSecret())
+            .clientId(keycloakProperties.getClientId())
+            .clientSecret(keycloakProperties.getClientSecret())
             .build();
     return adminClient.introspect(keycloakProperties.getRealm(), introspection);
   }
 
   @Override
-  public Mono<AccessRefreshToken> token(String clientId, String clientSecret) {
+  @Observed(name = "default-keycloak-service::token")
+  public Mono<BearerTokenResponse> clientLogin(String clientId, String clientSecret) {
     KeycloakClientCredentials credentials =
-        KeycloakClientCredentials.builder().client_id(clientId).client_secret(clientSecret).build();
-    return adminClient.token(keycloakProperties.getRealm(), credentials);
+        KeycloakClientCredentials.builder().clientId(clientId).clientSecret(clientSecret).build();
+    return adminClient.clientLogin(keycloakProperties.getRealm(), credentials);
   }
 
   @Override
+  public Mono<BearerTokenResponse> userLogin(String username, String password) {
+    KeycloakUserCredentials credentials =
+        KeycloakUserCredentials.builder()
+            .username(username)
+            .password(password)
+            .clientId(keycloakProperties.getAdminClientId())
+            .build();
+    return adminClient.userLogin(keycloakProperties.getRealm(), credentials);
+  }
+
+  @Override
+  @Observed(name = "default-keycloak-service::create-client")
   public Mono<Optional<String>> createClient(
       String name, String description, String clientId, String clientSecret) {
-    return token()
+    return adminLogin()
         .flatMap(
-            bearerAccessRefreshToken -> {
+            tokenResponse -> {
               KeycloakClientRepresentation clientRepresentation =
                   KeycloakClientRepresentation.builder()
                       .clientId(clientId)
@@ -86,63 +105,81 @@ public class DefaultKeycloakService implements KeycloakService {
                       .description(description)
                       .serviceAccountsEnabled(Boolean.TRUE)
                       .build();
-              return adminClient.createClient(
-                  String.format("Bearer %s", bearerAccessRefreshToken.getAccessToken()),
-                  keycloakProperties.getRealm(),
-                  clientRepresentation);
+              log.debug("create keycloak client {}", clientId);
+              return adminClient
+                  .createClient(
+                      JwtTool.toBearer(tokenResponse),
+                      keycloakProperties.getRealm(),
+                      clientRepresentation)
+                  .map(response -> handleKeycloakResponse(clientId, response));
             });
   }
 
   @Override
+  @Observed(name = "default-keycloak-service::create-user")
   public Mono<Optional<String>> createUser(
       ConsumerPassportCreateEvent createEvent, String username, String password) {
-    return token()
+    return adminLogin() // TODO create users using organization's client_id
         .flatMap(
-            bearerAccessRefreshToken -> {
+            tokenResponse -> {
               KeycloakUserRepresentation userRepresentation =
-                  KeycloakUserRepresentation.builder()
-                      .firstName(createEvent.getMember().getContactId().getFirstName())
-                      .lastName(createEvent.getMember().getContactId().getLastName())
-                      .email(createEvent.getMember().getContactId().getEmail())
-                      .username(username)
-                      .credentials(
-                          List.of(
-                              KeycloakCredentialRepresentation.builder()
-                                  .type("password")
-                                  .temporary(false)
-                                  .value(password)
-                                  .build()))
-                      .emailVerified(true)
-                      .enabled(true)
-                      .attributes(
-                          KeycloakUserInfoRepresentation.builder()
-                              .website(createEvent.getMember().getId())
-                              .phoneNumber(createEvent.getMember().getContactId().getPhoneNumber())
-                              .phoneNumberVerified(true)
-                              .email(createEvent.getMember().getContactId().getEmail())
-                              .emailVerified(true)
-                              .locale(createEvent.getMember().getContactId().getLocale())
-                              .zoneinfo(createEvent.getMember().getContactId().getZoneId())
-                              .address(
-                                  KeycloakAddressClaimSetRepresentation.builder()
-                                      .streetAddress(createEvent.getOrganization().getLocation())
-                                      .locality(createEvent.getOrganization().getCity())
-                                      .country(createEvent.getOrganization().getCountry())
-                                      .build())
-                              .build()
-                              .asAttributes())
-                      .attribute("memberId", createEvent.getMember().getId())
-                      .attribute("organizationId", createEvent.getOrganization().getId())
-                      .attribute("organizationName", createEvent.getOrganization().getName())
-                      .attribute("departmentId", createEvent.getDepartment().getId())
-                      .attribute("departmentName", createEvent.getDepartment().getName())
-                      .attribute(
-                          "currency", createEvent.getOrganization().getContactId().getCurrency())
-                      .build();
+                  getUserRepresentation(createEvent, username, password);
               return adminClient.createUser(
-                  String.format("Bearer %s", bearerAccessRefreshToken.getAccessToken()),
+                  JwtTool.toBearer(tokenResponse),
                   keycloakProperties.getRealm(),
                   userRepresentation);
-            });
+            })
+        .map(response -> handleKeycloakResponse(username, response));
+  }
+
+  private static Optional<String> handleKeycloakResponse(
+      String entityId, ResponseEntity<Void> response) {
+    if (response.getStatusCode().is2xxSuccessful()) {
+      return Optional.of("created-" + entityId);
+    }
+    log.warn("keycloak creation issues {}", response);
+    return Optional.empty();
+  }
+
+  private static KeycloakUserRepresentation getUserRepresentation(
+      ConsumerPassportCreateEvent createEvent, String username, String password) {
+    return KeycloakUserRepresentation.builder()
+        .firstName(createEvent.getMember().getContactId().getFirstName())
+        .lastName(createEvent.getMember().getContactId().getLastName())
+        .email(createEvent.getMember().getContactId().getEmail())
+        .username(username)
+        .credentials(
+            List.of(
+                KeycloakCredentialRepresentation.builder()
+                    .type("password")
+                    .temporary(false)
+                    .value(password)
+                    .build()))
+        .emailVerified(true)
+        .enabled(true)
+        .attributes(
+            KeycloakUserInfoRepresentation.builder()
+                .website(createEvent.getMember().getId())
+                .phoneNumber(createEvent.getMember().getContactId().getPhoneNumber())
+                .phoneNumberVerified(true)
+                .email(createEvent.getMember().getContactId().getEmail())
+                .emailVerified(true)
+                .locale(createEvent.getMember().getContactId().getLocale())
+                .zoneinfo(createEvent.getMember().getContactId().getZoneId())
+                .address(
+                    KeycloakAddressClaimSetRepresentation.builder()
+                        .streetAddress(createEvent.getOrganization().getLocation())
+                        .locality(createEvent.getOrganization().getCity())
+                        .country(createEvent.getOrganization().getCountry())
+                        .build())
+                .build()
+                .asAttributes())
+        .attribute("memberId", createEvent.getMember().getId())
+        .attribute("organizationId", createEvent.getOrganization().getId())
+        .attribute("organizationName", createEvent.getOrganization().getName())
+        .attribute("departmentId", createEvent.getDepartment().getId())
+        .attribute("departmentName", createEvent.getDepartment().getName())
+        .attribute("currency", createEvent.getOrganization().getContactId().getCurrency())
+        .build();
   }
 }

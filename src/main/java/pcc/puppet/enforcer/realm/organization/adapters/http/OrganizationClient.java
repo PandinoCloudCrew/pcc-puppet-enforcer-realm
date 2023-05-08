@@ -15,57 +15,103 @@
  */
 package pcc.puppet.enforcer.realm.organization.adapters.http;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.http.HttpHeaders;
-import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Header;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.client.annotation.Client;
-import io.micronaut.security.authentication.UsernamePasswordCredentials;
-import io.micronaut.security.token.jwt.render.AccessRefreshToken;
-import io.micronaut.tracing.annotation.SpanTag;
+import io.micrometer.observation.annotation.Observed;
+import io.micrometer.tracing.annotation.SpanTag;
+import jakarta.validation.constraints.NotNull;
 import javax.validation.Valid;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.service.annotation.GetExchange;
+import org.springframework.web.service.annotation.HttpExchange;
+import org.springframework.web.service.annotation.PostExchange;
 import pcc.puppet.enforcer.app.Project;
+import pcc.puppet.enforcer.keycloak.domain.BearerTokenResponse;
+import pcc.puppet.enforcer.realm.common.util.JwtTool;
 import pcc.puppet.enforcer.realm.organization.adapters.presenter.OrganizationPresenter;
 import pcc.puppet.enforcer.realm.organization.domain.OrganizationOperations;
 import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
 import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEvent;
+import pcc.puppet.enforcer.realm.passport.domain.UsernamePasswordCredentials;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Client("pcc-realm-organization")
-@Header(name = HttpHeaders.ACCEPT_ENCODING, value = "gzip, deflate")
-@Header(
-    name = HttpHeaders.USER_AGENT,
-    value = "OrganizationClient/" + Project.VERSION + " (" + Project.NAME + ")")
+@HttpExchange
 public interface OrganizationClient extends OrganizationOperations {
+  String USER_AGENT = "OrganizationClient/" + Project.VERSION + " (" + Project.NAME + ")";
 
-  @Override
-  @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+  @PostExchange(
+      accept = MediaType.APPLICATION_JSON_VALUE,
+      contentType = MediaType.APPLICATION_JSON_VALUE)
   Mono<OrganizationCreateEvent> organizationCreate(
-      @NonNull @SpanTag(REQUESTER) @Header(REQUESTER) String requester,
-      @NonNull @Body @Valid OrganizationCreateCommand createCommand);
+      @RequestHeader(name = HttpHeaders.USER_AGENT) String userAgent,
+      @NotNull @RequestHeader(AUTHORIZATION) String authorization,
+      @NotNull @SpanTag(REQUESTER) @RequestHeader(REQUESTER) String requester,
+      @NotNull @RequestBody @Valid OrganizationCreateCommand createCommand);
 
   @Override
-  @Get(uri = "/{organizationId}", produces = MediaType.APPLICATION_JSON)
+  @Observed(name = "organization-client::organization-create")
+  default Mono<OrganizationCreateEvent> organizationCreate(
+      @NotNull String requester, @NotNull @Valid OrganizationCreateCommand createCommand) {
+    return JwtTool.authentication()
+        .flatMap(
+            token ->
+                organizationCreate(USER_AGENT, JwtTool.toBearer(token), requester, createCommand));
+  }
+
+  @GetExchange(value = "/{organizationId}", accept = MediaType.APPLICATION_JSON_VALUE)
   Mono<OrganizationPresenter> findOrganization(
-      @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
-      @SpanTag @NonNull String organizationId);
+      @RequestHeader(name = HttpHeaders.USER_AGENT) String userAgent,
+      @NotNull @RequestHeader(AUTHORIZATION) String authorization,
+      @NotNull @SpanTag(REQUESTER) @RequestHeader(REQUESTER) String requester,
+      @NotNull @SpanTag @PathVariable String organizationId);
 
   @Override
-  @Get(uri = "/{organizationId}/child", produces = MediaType.APPLICATION_JSON)
-  Flux<OrganizationPresenter> findChildOrganizations(
-      @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
-      @SpanTag @NonNull String organizationId);
+  @Observed(name = "organization-client::find-organization")
+  default Mono<OrganizationPresenter> findOrganization(
+      @NotNull String requester, @NotNull String organizationId) {
+    return JwtTool.authentication()
+        .flatMap(
+            token ->
+                findOrganization(USER_AGENT, JwtTool.toBearer(token), requester, organizationId));
+  }
 
-  @Post(
-      uri = "/{organizationId}/login",
-      consumes = MediaType.APPLICATION_JSON,
-      produces = MediaType.APPLICATION_JSON)
-  Mono<AccessRefreshToken> organizationLogin(
-      @NonNull String organizationId, @NonNull @Body UsernamePasswordCredentials credentials);
+  @GetExchange(value = "/{organizationId}/child", accept = MediaType.APPLICATION_JSON_VALUE)
+  Flux<OrganizationPresenter> findChildOrganizations(
+      @RequestHeader(name = HttpHeaders.USER_AGENT) String userAgent,
+      @NotNull @RequestHeader(AUTHORIZATION) String authorization,
+      @NotNull @SpanTag(REQUESTER) @RequestHeader(REQUESTER) String requester,
+      @NotNull @SpanTag @PathVariable String organizationId);
+
+  @Override
+  @Observed(name = "organization-client::find-child-organizations")
+  default Flux<OrganizationPresenter> findChildOrganizations(
+      @NotNull String requester, @NotNull String organizationId) {
+    return JwtTool.authentication()
+        .flatMapMany(
+            token ->
+                findChildOrganizations(
+                    USER_AGENT, JwtTool.toBearer(token), requester, organizationId));
+  }
+
+  @PostExchange(
+      value = "/{organizationId}/login",
+      accept = MediaType.APPLICATION_JSON_VALUE,
+      contentType = MediaType.APPLICATION_JSON_VALUE)
+  Mono<BearerTokenResponse> organizationLogin(
+      @RequestHeader(name = HttpHeaders.USER_AGENT) String userAgent,
+      @NotNull @PathVariable String organizationId,
+      @NotNull @RequestBody UsernamePasswordCredentials credentials);
+
+  @Override
+  @Observed(name = "organization-client::organization-login")
+  default Mono<BearerTokenResponse> organizationLogin(
+      @NotNull String organizationId, @NotNull UsernamePasswordCredentials credentials) {
+    return organizationLogin(USER_AGENT, organizationId, credentials);
+  }
 }

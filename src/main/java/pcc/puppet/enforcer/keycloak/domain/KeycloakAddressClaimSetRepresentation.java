@@ -15,17 +15,13 @@
  */
 package pcc.puppet.enforcer.keycloak.domain;
 
-import io.micronaut.core.annotation.Introspected;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.extern.jackson.Jacksonized;
 
 @Data
 @Builder
-@Introspected
-@NoArgsConstructor
-@AllArgsConstructor
+@Jacksonized
 public class KeycloakAddressClaimSetRepresentation {
   private String country;
   private String formattedAddress;

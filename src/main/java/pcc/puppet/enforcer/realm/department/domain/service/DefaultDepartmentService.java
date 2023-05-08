@@ -15,14 +15,11 @@
  */
 package pcc.puppet.enforcer.realm.department.domain.service;
 
-import io.micronaut.cache.annotation.CacheConfig;
-import io.micronaut.cache.annotation.Cacheable;
-import io.micronaut.tracing.annotation.NewSpan;
-import io.micronaut.tracing.annotation.SpanTag;
-import jakarta.inject.Singleton;
-import java.time.Instant;
+import io.micrometer.tracing.annotation.NewSpan;
+import io.micrometer.tracing.annotation.SpanTag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import pcc.puppet.enforcer.realm.common.contact.domain.service.ContactInformationService;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import pcc.puppet.enforcer.realm.department.adapters.mapper.DepartmentOutputMapper;
@@ -36,8 +33,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
-@Singleton
-@CacheConfig("department")
+@Service
 @RequiredArgsConstructor
 public class DefaultDepartmentService implements DepartmentService {
   private final DepartmentOutputMapper outputMapper;
@@ -51,8 +47,6 @@ public class DefaultDepartmentService implements DepartmentService {
       @SpanTag String requester, @SpanTag DepartmentCreateCommand createCommand) {
     Department department = inputMapper.commandToDomain(createCommand);
     department.setId(DomainFactory.id());
-    department.setCreatedBy(requester);
-    department.setCreatedAt(Instant.now());
     return contactInformationService
         .save(requester, department.getId(), createCommand.getContactId())
         .flatMap(
@@ -65,7 +59,6 @@ public class DefaultDepartmentService implements DepartmentService {
 
   @NewSpan
   @Override
-  @Cacheable
   public Mono<DepartmentPresenter> findById(
       @SpanTag String requester, @SpanTag String departmentId) {
     return contactInformationService
@@ -91,7 +84,7 @@ public class DefaultDepartmentService implements DepartmentService {
         .flatMap(
             department ->
                 contactInformationService
-                    .findById(department.getContactId().getId())
+                    .findByOwnerId(department.getId())
                     .map(department::setContact))
         .map(outputMapper::domainToPresenter);
   }

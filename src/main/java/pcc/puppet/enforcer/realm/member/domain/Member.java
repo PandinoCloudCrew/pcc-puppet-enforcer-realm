@@ -15,41 +15,51 @@
  */
 package pcc.puppet.enforcer.realm.member.domain;
 
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.core.annotation.Nullable;
-import io.micronaut.data.annotation.AutoPopulated;
-import io.micronaut.data.annotation.Id;
-import io.micronaut.data.annotation.MappedEntity;
-import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.annotation.Version;
-import io.micronaut.data.model.DataType;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
-import pcc.puppet.enforcer.realm.common.contact.adapters.repository.converter.ContactInformationConverter;
+import lombok.extern.jackson.Jacksonized;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.Version;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import pcc.puppet.enforcer.realm.common.contact.domain.ContactInformation;
 
 @Data
 @Builder
-@Introspected
-@MappedEntity(value = "member")
+@Document
+@Jacksonized
 public class Member {
   @Id private String id;
-  @NonNull private String organizationId;
-  @NonNull private String departmentId;
-  @NonNull private String username;
-  @NonNull private String password;
 
-  @NonNull
-  @TypeDef(type = DataType.STRING, converter = ContactInformationConverter.class)
-  private ContactInformation contactId;
+  @NotNull
+  @Indexed(background = true)
+  private String organizationId;
 
-  @NonNull private String createdBy;
-  @NonNull private Instant createdAt;
-  @Nullable private String updatedBy;
-  @Nullable private Instant updatedAt;
-  @Version @AutoPopulated private Integer version;
+  @NotNull
+  @Indexed(background = true)
+  private String departmentId;
+
+  @NotNull
+  @Indexed(background = true)
+  private String username;
+
+  @NotNull private String password;
+
+  @NotNull @DocumentReference private ContactInformation contactId;
+
+  @NotNull @CreatedBy private String createdBy;
+  @NotNull @CreatedDate private Instant createdAt;
+  @Nullable @LastModifiedBy private String updatedBy;
+  @Nullable @LastModifiedDate private Instant updatedAt;
+  @Version private Integer version;
 
   public Member setContact(ContactInformation contactInformation) {
     this.contactId = contactInformation;

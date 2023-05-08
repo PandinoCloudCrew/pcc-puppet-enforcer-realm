@@ -15,7 +15,7 @@
  */
 package pcc.puppet.enforcer.realm.common.generator.values;
 
-import com.github.shamil.Xid;
+import com.github.f4b6a3.ulid.Ulid;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import uk.co.jemos.podam.common.AttributeStrategy;
@@ -23,6 +23,6 @@ import uk.co.jemos.podam.common.AttributeStrategy;
 public class ObjectIdStrategy implements AttributeStrategy<String> {
   @Override
   public String getValue(Class<?> attrType, List<Annotation> attrAnnotations) {
-    return Xid.string();
+    return Ulid.fast().toLowerCase();
   }
 }

@@ -15,13 +15,13 @@
  */
 package pcc.puppet.enforcer.keycloak.domain;
 
-import io.micronaut.core.annotation.Introspected;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 
 @Data
 @Builder
-@Introspected
+@Jacksonized
 public class KeycloakCredentialRepresentation {
   private String type;
   private boolean temporary;

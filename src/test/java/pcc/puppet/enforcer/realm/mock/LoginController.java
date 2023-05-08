@@ -15,18 +15,18 @@
  */
 package pcc.puppet.enforcer.realm.mock;
 
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.security.authentication.UsernamePasswordCredentials;
-import io.micronaut.security.token.jwt.render.AccessRefreshToken;
+import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import pcc.puppet.enforcer.realm.passport.domain.UsernamePasswordCredentials;
 import reactor.core.publisher.Mono;
 
-@Controller
+@RestController
 public class LoginController {
 
-  @Post(uri = "/login")
-  public Mono<AccessRefreshToken> login(@Body UsernamePasswordCredentials credentials) {
-    return Mono.just(new AccessRefreshToken());
+  @PostMapping(value = "/login")
+  public Mono<BearerAccessToken> login(@RequestBody UsernamePasswordCredentials credentials) {
+    return Mono.just(new BearerAccessToken());
   }
 }

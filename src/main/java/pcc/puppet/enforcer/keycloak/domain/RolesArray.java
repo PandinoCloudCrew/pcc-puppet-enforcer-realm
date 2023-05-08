@@ -15,12 +15,10 @@
  */
 package pcc.puppet.enforcer.keycloak.domain;
 
-import io.micronaut.core.annotation.Introspected;
 import java.util.ArrayList;
 import lombok.Data;
 
 @Data
-@Introspected
 public class RolesArray {
   private ArrayList<String> roles;
 }

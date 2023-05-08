@@ -15,10 +15,9 @@
  */
 package pcc.puppet.enforcer.realm.common.contact.domain.service;
 
-import io.micronaut.tracing.annotation.NewSpan;
-import jakarta.inject.Singleton;
-import java.time.Instant;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import pcc.puppet.enforcer.realm.common.contact.adapters.repository.ContactInformationRepository;
 import pcc.puppet.enforcer.realm.common.contact.domain.ContactInformation;
 import pcc.puppet.enforcer.realm.common.contact.ports.command.CreateContactInformationCommand;
@@ -26,33 +25,31 @@ import pcc.puppet.enforcer.realm.common.contact.ports.mapper.ContactInformationI
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import reactor.core.publisher.Mono;
 
-@Singleton
+@Service
 @RequiredArgsConstructor
 public class DefaultContactInformationService implements ContactInformationService {
 
   private final ContactInformationRepository repository;
   private final ContactInformationInputMapper inputMapper;
 
-  @NewSpan
   @Override
+  @Observed(name = "default-contact-information-service::save")
   public Mono<ContactInformation> save(
       String requester, String ownerId, CreateContactInformationCommand command) {
     ContactInformation contactInformation = inputMapper.commandToDomain(command);
     contactInformation.setId(DomainFactory.id());
-    contactInformation.setCreatedBy(requester);
-    contactInformation.setCreatedAt(Instant.now());
     contactInformation.setOwnerId(ownerId);
     return repository.save(contactInformation);
   }
 
-  @NewSpan
   @Override
+  @Observed(name = "default-contact-information-service::find-by-id")
   public Mono<ContactInformation> findById(String contactInformationId) {
     return repository.findById(contactInformationId);
   }
 
-  @NewSpan
   @Override
+  @Observed(name = "default-contact-information-service::find-by-owner-id")
   public Mono<ContactInformation> findByOwnerId(String ownerId) {
     return repository.findByOwnerId(ownerId);
   }

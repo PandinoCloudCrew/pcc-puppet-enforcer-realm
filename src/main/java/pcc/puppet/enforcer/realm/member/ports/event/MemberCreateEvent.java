@@ -15,20 +15,20 @@
  */
 package pcc.puppet.enforcer.realm.member.ports.event;
 
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.NonNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 import pcc.puppet.enforcer.realm.common.contact.ports.event.CreateContactInformationEvent;
 
 @Data
 @Builder
-@Introspected
+@Jacksonized
 public class MemberCreateEvent {
-  @NonNull private String id;
-  @NonNull private String organizationId;
-  @NonNull private String departmentId;
-  @NonNull private String username;
-  @NonNull private String createdAt;
-  @NonNull private CreateContactInformationEvent contactId;
+  @NotNull private String id;
+  @NotNull private String organizationId;
+  @NotNull private String departmentId;
+  @NotNull private String username;
+  @NotNull private String createdAt;
+  @NotNull private CreateContactInformationEvent contactId;
 }

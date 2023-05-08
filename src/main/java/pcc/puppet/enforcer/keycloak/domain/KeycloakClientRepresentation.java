@@ -15,22 +15,22 @@
  */
 package pcc.puppet.enforcer.keycloak.domain;
 
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.NonNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 
 @Data
 @Builder
-@Introspected
+@Jacksonized
 public class KeycloakClientRepresentation {
 
   public static final String CLIENT_NAME = "name";
   public static final String CLIENT_ID = "clientId";
   public static final String CLIENT_SECRET = "secret";
-  @NonNull private String name;
-  @NonNull private String description;
-  @NonNull private Boolean serviceAccountsEnabled;
-  @NonNull private String clientId;
-  @NonNull private String secret;
+  @NotNull private String name;
+  @NotNull private String description;
+  @NotNull private Boolean serviceAccountsEnabled;
+  @NotNull private String clientId;
+  @NotNull private String secret;
 }

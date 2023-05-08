@@ -15,10 +15,10 @@
  */
 package pcc.puppet.enforcer.realm.member.ports.command;
 
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.NonNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 import pcc.puppet.enforcer.realm.common.contact.ports.command.CreateContactInformationCommand;
 import pcc.puppet.enforcer.realm.common.generator.values.ObjectIdStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.PasswordStrategy;
@@ -27,23 +27,23 @@ import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
-@Introspected
+@Jacksonized
 public class MemberCreateCommand {
-  @NonNull
+  @NotNull
   @PodamStrategyValue(ObjectIdStrategy.class)
   private String organizationId;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(ObjectIdStrategy.class)
   private String departmentId;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(UsernameStrategy.class)
   private String username;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(PasswordStrategy.class)
   private String password;
 
-  @NonNull private CreateContactInformationCommand contactId;
+  @NotNull private CreateContactInformationCommand contactId;
 }

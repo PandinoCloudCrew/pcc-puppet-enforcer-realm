@@ -18,18 +18,39 @@ package pcc.puppet.enforcer.realm.passport.ports.api;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static pcc.puppet.enforcer.realm.TestDomainGenerator.REQUESTER_ID;
 
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import pcc.puppet.enforcer.app.Application;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import pcc.puppet.enforcer.realm.passport.adapters.http.ConsumerPassportClient;
 import pcc.puppet.enforcer.realm.passport.ports.command.ConsumerPassportCreateCommand;
 import pcc.puppet.enforcer.realm.passport.ports.event.ConsumerPassportCreateEvent;
 
-@MicronautTest(transactional = false)
+@ActiveProfiles("test")
+@SpringBootTest(
+    webEnvironment = WebEnvironment.DEFINED_PORT,
+    classes = Application.class,
+    properties = {"server.port=59992"})
 class ConsumerPassportControllerTest {
 
-  @Inject private ConsumerPassportClient client;
+  @Autowired private ConsumerPassportClient client;
+
+  @Container
+  private static final MongoDBContainer mongoDBContainer =
+      new MongoDBContainer("mongo:6.0").withExposedPorts(27017);
+
+  @DynamicPropertySource
+  static void mongoDbProperties(DynamicPropertyRegistry registry) {
+    mongoDBContainer.start();
+    registry.add("spring.data.mongodb.uri", mongoDBContainer::getReplicaSetUrl);
+  }
 
   @Test
   void createConsumerPassport() {

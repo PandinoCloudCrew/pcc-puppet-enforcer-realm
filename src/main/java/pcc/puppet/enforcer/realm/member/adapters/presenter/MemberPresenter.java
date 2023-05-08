@@ -15,21 +15,21 @@
  */
 package pcc.puppet.enforcer.realm.member.adapters.presenter;
 
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.NonNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 import pcc.puppet.enforcer.realm.common.contact.adapters.presenter.ContactInformationPresenter;
 
 @Data
 @Builder
-@Introspected
+@Jacksonized
 public class MemberPresenter {
-  @NonNull private String id;
-  @NonNull private String organizationId;
-  @NonNull private String departmentId;
-  @NonNull private String username;
-  @NonNull private ContactInformationPresenter contactId;
-  @NonNull private String createdAt;
-  @NonNull private Integer version;
+  @NotNull private String id;
+  @NotNull private String organizationId;
+  @NotNull private String departmentId;
+  @NotNull private String username;
+  @NotNull private ContactInformationPresenter contactId;
+  @NotNull private String createdAt;
+  @NotNull private Integer version;
 }

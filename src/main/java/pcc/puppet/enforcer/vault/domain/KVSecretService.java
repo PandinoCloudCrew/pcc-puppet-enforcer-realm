@@ -15,10 +15,9 @@
  */
 package pcc.puppet.enforcer.vault.domain;
 
-import io.micronaut.discovery.vault.config.v2.VaultResponseV2;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation;
 import reactor.core.publisher.Mono;
 
 public interface KVSecretService {
-  Mono<VaultResponseV2> createClientSecret(KeycloakClientRepresentation clientRepresentation);
+  Mono<String> createClientSecret(KeycloakClientRepresentation clientRepresentation);
 }

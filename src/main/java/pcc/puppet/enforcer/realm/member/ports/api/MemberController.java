@@ -19,25 +19,19 @@ import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.DEPARTMENT;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.ORGANIZATION;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
-import io.micrometer.core.annotation.Counted;
-import io.micrometer.core.annotation.Timed;
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Header;
-import io.micronaut.http.annotation.PathVariable;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.scheduling.TaskExecutors;
-import io.micronaut.scheduling.annotation.ExecuteOn;
-import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.rules.SecurityRule;
-import io.micronaut.tracing.annotation.NewSpan;
-import io.micronaut.tracing.annotation.SpanTag;
+import io.micrometer.observation.annotation.Observed;
+import io.micrometer.tracing.annotation.SpanTag;
+import jakarta.validation.constraints.NotNull;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import pcc.puppet.enforcer.realm.member.adapters.presenter.MemberPresenter;
 import pcc.puppet.enforcer.realm.member.domain.MemberOperations;
 import pcc.puppet.enforcer.realm.member.domain.service.MemberService;
@@ -47,62 +41,54 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
-@ExecuteOn(TaskExecutors.IO)
-@Secured(SecurityRule.IS_AUTHENTICATED)
-@Controller("${micronaut.http.services.pcc-realm-member.path}")
+@RestController
+@RequestMapping("${spring.http.services.pcc-realm-member.path}")
 @RequiredArgsConstructor
 public class MemberController implements MemberOperations {
   private final MemberService memberService;
 
-  @Timed
-  @Counted
   @Override
-  @NewSpan
-  @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+  @PostMapping
+  @Observed(name = "member-controller::member-create")
   public Mono<MemberCreateEvent> memberCreate(
-      @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
-      @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
-      @SpanTag(DEPARTMENT) @NonNull @Header(DEPARTMENT) String departmentId,
-      @NonNull @Valid @Body MemberCreateCommand createCommand) {
+      @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,
+      @SpanTag(ORGANIZATION) @NotNull @RequestHeader(ORGANIZATION) String organizationId,
+      @SpanTag(DEPARTMENT) @NotNull @RequestHeader(DEPARTMENT) String departmentId,
+      @NotNull @Valid @RequestBody MemberCreateCommand createCommand) {
+    log.debug("create member {} request by {}", createCommand.getUsername(), requester);
     return memberService.create(requester, createCommand);
   }
 
-  @Timed
-  @Counted
   @Override
-  @NewSpan
-  @Get(uri = "/{memberId}", produces = MediaType.APPLICATION_JSON)
+  @GetMapping(value = "/{memberId}")
+  @Observed(name = "member-controller::find-member")
   public Mono<MemberPresenter> findMember(
-      @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
-      @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
-      @SpanTag(DEPARTMENT) @NonNull @Header(DEPARTMENT) String departmentId,
-      @SpanTag @NonNull @PathVariable String memberId) {
+      @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,
+      @SpanTag(ORGANIZATION) @NotNull @RequestHeader(ORGANIZATION) String organizationId,
+      @SpanTag(DEPARTMENT) @NotNull @RequestHeader(DEPARTMENT) String departmentId,
+      @SpanTag @NotNull @PathVariable String memberId) {
     return memberService.findById(requester, memberId);
   }
 
-  @Timed
-  @Counted
   @Override
-  @NewSpan
-  @Get(uri = "/organization/{parentOrganizationId}", produces = MediaType.APPLICATION_JSON)
+  @GetMapping(value = "/organization/{parentOrganizationId}")
+  @Observed(name = "member-controller::find-organization-members")
   public Flux<MemberPresenter> findOrganizationMembers(
-      @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
-      @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
-      @SpanTag(DEPARTMENT) @NonNull @Header(DEPARTMENT) String departmentId,
-      @SpanTag @NonNull @PathVariable String parentOrganizationId) {
+      @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,
+      @SpanTag(ORGANIZATION) @NotNull @RequestHeader(ORGANIZATION) String organizationId,
+      @SpanTag(DEPARTMENT) @NotNull @RequestHeader(DEPARTMENT) String departmentId,
+      @SpanTag @NotNull @PathVariable String parentOrganizationId) {
     return memberService.findByOrganizationId(requester, parentOrganizationId);
   }
 
-  @Timed
-  @Counted
   @Override
-  @NewSpan
-  @Get(uri = "/department/{parentDepartmentId}", produces = MediaType.APPLICATION_JSON)
+  @GetMapping(value = "/department/{parentDepartmentId}")
+  @Observed(name = "member-controller::find-department-members")
   public Flux<MemberPresenter> findDepartmentMembers(
-      @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
-      @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
-      @SpanTag(DEPARTMENT) @NonNull @Header(DEPARTMENT) String departmentId,
-      @SpanTag @NonNull @PathVariable String parentDepartmentId) {
+      @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,
+      @SpanTag(ORGANIZATION) @NotNull @RequestHeader(ORGANIZATION) String organizationId,
+      @SpanTag(DEPARTMENT) @NotNull @RequestHeader(DEPARTMENT) String departmentId,
+      @SpanTag @NotNull @PathVariable String parentDepartmentId) {
     return memberService.findByDepartmentId(requester, parentDepartmentId);
   }
 }

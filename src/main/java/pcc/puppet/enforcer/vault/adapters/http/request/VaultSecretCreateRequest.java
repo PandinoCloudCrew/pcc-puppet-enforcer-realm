@@ -15,15 +15,15 @@
  */
 package pcc.puppet.enforcer.vault.adapters.http.request;
 
-import io.micronaut.core.annotation.Introspected;
 import java.util.Map;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Singular;
+import lombok.extern.jackson.Jacksonized;
 
 @Data
 @Builder
-@Introspected
+@Jacksonized
 public class VaultSecretCreateRequest {
 
   @Singular("property")

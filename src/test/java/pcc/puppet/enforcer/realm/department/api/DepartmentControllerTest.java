@@ -21,10 +21,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static pcc.puppet.enforcer.realm.TestDomainGenerator.REQUESTER_ID;
 
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import jakarta.inject.Inject;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import pcc.puppet.enforcer.app.Application;
 import pcc.puppet.enforcer.realm.TestDomainGenerator;
 import pcc.puppet.enforcer.realm.common.format.DateFormat;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
@@ -34,10 +41,24 @@ import pcc.puppet.enforcer.realm.department.ports.command.DepartmentCreateComman
 import pcc.puppet.enforcer.realm.department.ports.event.DepartmentCreateEvent;
 import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEvent;
 
-@MicronautTest(transactional = false)
+@ActiveProfiles("test")
+@SpringBootTest(
+    webEnvironment = WebEnvironment.DEFINED_PORT,
+    classes = Application.class,
+    properties = {"server.port=59990"})
 class DepartmentControllerTest {
-  @Inject private DepartmentClient client;
-  @Inject private TestDomainGenerator generator;
+  @Autowired private DepartmentClient client;
+  @Autowired private TestDomainGenerator generator;
+
+  @Container
+  private static final MongoDBContainer mongoDBContainer =
+      new MongoDBContainer("mongo:6.0").withExposedPorts(27017);
+
+  @DynamicPropertySource
+  static void mongoDbProperties(DynamicPropertyRegistry registry) {
+    mongoDBContainer.start();
+    registry.add("spring.data.mongodb.uri", mongoDBContainer::getReplicaSetUrl);
+  }
 
   @Test
   void departmentCreate_GivenValidParameters_ShouldReturnOk() {

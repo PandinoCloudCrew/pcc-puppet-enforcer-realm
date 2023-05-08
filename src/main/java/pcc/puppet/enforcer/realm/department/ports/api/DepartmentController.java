@@ -20,22 +20,20 @@ import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
 import io.micrometer.core.annotation.Counted;
 import io.micrometer.core.annotation.Timed;
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Header;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.scheduling.TaskExecutors;
-import io.micronaut.scheduling.annotation.ExecuteOn;
-import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.rules.SecurityRule;
-import io.micronaut.tracing.annotation.NewSpan;
-import io.micronaut.tracing.annotation.SpanTag;
+import io.micrometer.tracing.annotation.NewSpan;
+import io.micrometer.tracing.annotation.SpanTag;
+import jakarta.validation.constraints.NotNull;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import pcc.puppet.enforcer.realm.department.adapters.presenter.DepartmentPresenter;
 import pcc.puppet.enforcer.realm.department.domain.DepartmentOperations;
 import pcc.puppet.enforcer.realm.department.domain.service.DepartmentService;
@@ -45,9 +43,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
-@ExecuteOn(TaskExecutors.IO)
-@Secured(SecurityRule.IS_AUTHENTICATED)
-@Controller("${micronaut.http.services.pcc-realm-department.path}")
+@RestController
+@RequestMapping("${spring.http.services.pcc-realm-department.path}")
 @RequiredArgsConstructor
 public class DepartmentController implements DepartmentOperations {
   private final DepartmentService departmentService;
@@ -56,11 +53,13 @@ public class DepartmentController implements DepartmentOperations {
   @Counted
   @Override
   @NewSpan
-  @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+  @PostMapping(
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<DepartmentCreateEvent> departmentCreate(
-      @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
-      @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
-      @NonNull @Valid @Body DepartmentCreateCommand createCommand) {
+      @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,
+      @SpanTag(ORGANIZATION) @NotNull @RequestHeader(ORGANIZATION) String organizationId,
+      @NotNull @Valid @RequestBody DepartmentCreateCommand createCommand) {
     return departmentService.create(requester, createCommand);
   }
 
@@ -68,11 +67,11 @@ public class DepartmentController implements DepartmentOperations {
   @Counted
   @Override
   @NewSpan
-  @Get(uri = "/{departmentId}", produces = MediaType.APPLICATION_JSON)
+  @GetMapping(value = "/{departmentId}", produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<DepartmentPresenter> findDepartment(
-      @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
-      @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
-      @SpanTag @NonNull String departmentId) {
+      @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,
+      @SpanTag(ORGANIZATION) @NotNull @RequestHeader(ORGANIZATION) String organizationId,
+      @SpanTag @NotNull @PathVariable String departmentId) {
     return departmentService.findById(requester, departmentId);
   }
 
@@ -80,11 +79,11 @@ public class DepartmentController implements DepartmentOperations {
   @Counted
   @Override
   @NewSpan
-  @Get(uri = "/{departmentId}/child", produces = MediaType.APPLICATION_JSON)
+  @GetMapping(value = "/{departmentId}/child", produces = MediaType.APPLICATION_JSON_VALUE)
   public Flux<DepartmentPresenter> findChildDepartments(
-      @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
-      @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
-      @SpanTag @NonNull String departmentId) {
+      @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,
+      @SpanTag(ORGANIZATION) @NotNull @RequestHeader(ORGANIZATION) String organizationId,
+      @SpanTag @NotNull @PathVariable String departmentId) {
     return departmentService.findByParentId(requester, departmentId);
   }
 }

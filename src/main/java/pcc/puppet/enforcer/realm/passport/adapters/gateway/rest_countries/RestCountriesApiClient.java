@@ -15,16 +15,19 @@
  */
 package pcc.puppet.enforcer.realm.passport.adapters.gateway.rest_countries;
 
-import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.client.annotation.Client;
+import io.micrometer.observation.annotation.Observed;
 import java.util.List;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.service.annotation.GetExchange;
+import org.springframework.web.service.annotation.HttpExchange;
 import pcc.puppet.enforcer.realm.passport.adapters.gateway.rest_countries.response.RestCountriesResponse;
 import reactor.core.publisher.Mono;
 
-@Client("provider-rest-countries")
+@HttpExchange
 public interface RestCountriesApiClient {
 
-  @Get(uri = "/name/{name}", consumes = MediaType.APPLICATION_JSON)
-  Mono<List<RestCountriesResponse>> getByName(String name);
+  @GetExchange(value = "/name/{name}", accept = MediaType.APPLICATION_JSON_VALUE)
+  @Observed(name = "rest-countries-api-client::get-by-name")
+  Mono<List<RestCountriesResponse>> getByName(@PathVariable String name);
 }

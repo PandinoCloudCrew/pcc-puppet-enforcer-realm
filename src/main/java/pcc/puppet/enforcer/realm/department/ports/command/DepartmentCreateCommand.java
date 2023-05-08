@@ -15,12 +15,12 @@
  */
 package pcc.puppet.enforcer.realm.department.ports.command;
 
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.core.annotation.Nullable;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
 import javax.validation.Valid;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 import pcc.puppet.enforcer.realm.common.contact.ports.command.CreateContactInformationCommand;
 import pcc.puppet.enforcer.realm.common.generator.values.CompanyDepartmentStrategy;
 import pcc.puppet.enforcer.realm.common.generator.values.InternalAddressStrategy;
@@ -29,24 +29,24 @@ import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
-@Introspected
+@Jacksonized
 public class DepartmentCreateCommand {
 
   @Nullable
   @PodamStrategyValue(ObjectIdStrategy.class)
   private String parentId;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(ObjectIdStrategy.class)
   private String organizationId;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(CompanyDepartmentStrategy.class)
   private String name;
 
-  @NonNull
+  @NotNull
   @PodamStrategyValue(InternalAddressStrategy.class)
   private String location;
 
-  @NonNull @Valid private CreateContactInformationCommand contactId;
+  @NotNull @Valid private CreateContactInformationCommand contactId;
 }

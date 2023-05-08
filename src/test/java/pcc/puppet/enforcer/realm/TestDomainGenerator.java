@@ -15,10 +15,9 @@
  */
 package pcc.puppet.enforcer.realm;
 
-import io.micronaut.context.annotation.Requires;
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import pcc.puppet.enforcer.realm.department.adapters.http.DepartmentClient;
 import pcc.puppet.enforcer.realm.department.ports.command.DepartmentCreateCommand;
@@ -30,12 +29,11 @@ import pcc.puppet.enforcer.realm.organization.adapters.http.OrganizationClient;
 import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
 import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEvent;
 
-@Singleton
-@Requires(env = "test")
+@Service
 public class TestDomainGenerator {
-  @Inject private MemberClient memberClient;
-  @Inject private DepartmentClient departmentClient;
-  @Inject private OrganizationClient organizationClient;
+  @Autowired private MemberClient memberClient;
+  @Autowired private DepartmentClient departmentClient;
+  @Autowired private OrganizationClient organizationClient;
   public static final String REQUESTER_ID = "test@pandino.co";
 
   public OrganizationCreateEvent organization() {

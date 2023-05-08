@@ -15,9 +15,9 @@
  */
 package pcc.puppet.enforcer.realm.configuration;
 
-import io.micronaut.context.annotation.Factory;
-import jakarta.inject.Singleton;
 import org.mapstruct.factory.Mappers;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import pcc.puppet.enforcer.realm.common.contact.adapters.mapper.ContactInformationOutputMapper;
 import pcc.puppet.enforcer.realm.common.contact.ports.mapper.ContactInformationInputMapper;
 import pcc.puppet.enforcer.realm.department.adapters.mapper.DepartmentOutputMapper;
@@ -27,44 +27,44 @@ import pcc.puppet.enforcer.realm.member.ports.mapper.MemberInputMapper;
 import pcc.puppet.enforcer.realm.organization.adapters.mapper.OrganizationOutputMapper;
 import pcc.puppet.enforcer.realm.organization.ports.mapper.OrganizationInputMapper;
 
-@Factory
+@Configuration
 public class RealmFactory {
-  @Singleton
+  @Bean
   public OrganizationInputMapper organizationMapper() {
     return Mappers.getMapper(OrganizationInputMapper.class);
   }
 
-  @Singleton
+  @Bean
   public OrganizationOutputMapper organizationOutputMapper() {
     return Mappers.getMapper(OrganizationOutputMapper.class);
   }
 
-  @Singleton
+  @Bean
   public DepartmentOutputMapper departmentOutputMapper() {
     return Mappers.getMapper(DepartmentOutputMapper.class);
   }
 
-  @Singleton
+  @Bean
   public DepartmentInputMapper departmentInputMapper() {
     return Mappers.getMapper(DepartmentInputMapper.class);
   }
 
-  @Singleton
+  @Bean
   public MemberOutputMapper memberOutputMapper() {
     return Mappers.getMapper(MemberOutputMapper.class);
   }
 
-  @Singleton
+  @Bean
   public MemberInputMapper memberInputMapper() {
     return Mappers.getMapper(MemberInputMapper.class);
   }
 
-  @Singleton
+  @Bean
   public ContactInformationOutputMapper contactInformationOutputMapper() {
     return Mappers.getMapper(ContactInformationOutputMapper.class);
   }
 
-  @Singleton
+  @Bean
   public ContactInformationInputMapper contactInformationInputMapper() {
     return Mappers.getMapper(ContactInformationInputMapper.class);
   }

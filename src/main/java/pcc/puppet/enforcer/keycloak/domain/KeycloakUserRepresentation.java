@@ -15,16 +15,16 @@
  */
 package pcc.puppet.enforcer.keycloak.domain;
 
-import io.micronaut.core.annotation.Introspected;
 import java.util.List;
 import java.util.Map;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Singular;
+import lombok.extern.jackson.Jacksonized;
 
 @Data
 @Builder
-@Introspected
+@Jacksonized
 public class KeycloakUserRepresentation {
   @Singular private Map<String, Object> attributes;
   private Map<String, String> clientRoles;

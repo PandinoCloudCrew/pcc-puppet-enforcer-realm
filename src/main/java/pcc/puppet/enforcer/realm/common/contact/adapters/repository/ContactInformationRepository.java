@@ -15,15 +15,14 @@
  */
 package pcc.puppet.enforcer.realm.common.contact.adapters.repository;
 
-import io.micronaut.data.model.query.builder.sql.Dialect;
-import io.micronaut.data.r2dbc.annotation.R2dbcRepository;
-import io.micronaut.data.repository.reactive.ReactorPageableRepository;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.stereotype.Repository;
 import pcc.puppet.enforcer.realm.common.contact.domain.ContactInformation;
 import reactor.core.publisher.Mono;
 
-@R2dbcRepository(dialect = Dialect.POSTGRES)
+@Repository
 public interface ContactInformationRepository
-    extends ReactorPageableRepository<ContactInformation, String> {
+    extends ReactiveCrudRepository<ContactInformation, String> {
 
   Mono<ContactInformation> findByOwnerId(String organizationId);
 }

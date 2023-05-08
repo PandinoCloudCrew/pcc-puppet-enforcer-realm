@@ -19,11 +19,11 @@ import static pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation.C
 import static pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation.CLIENT_NAME;
 import static pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation.CLIENT_SECRET;
 
-import io.micronaut.discovery.vault.config.v2.VaultResponseV2;
-import io.micronaut.runtime.ApplicationConfiguration;
-import jakarta.inject.Singleton;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation;
 import pcc.puppet.enforcer.vault.adapters.http.VaultSecretsClient;
 import pcc.puppet.enforcer.vault.adapters.http.request.VaultSecretCreateRequest;
@@ -31,18 +31,19 @@ import pcc.puppet.enforcer.vault.ports.configuration.VaultProperties;
 import reactor.core.publisher.Mono;
 
 @Slf4j
-@Singleton
+@Service
 @RequiredArgsConstructor
 public class VaultDefaultSecretService implements KVSecretService {
 
   public static final String KEYCLOAK_CLIENT_SUFFIX = "client-credentials";
   private final VaultSecretsClient secretsClient;
-  private final ApplicationConfiguration applicationConfiguration;
+  private final ApplicationContext applicationConfiguration;
   private final VaultProperties vaultClientConfiguration;
 
-  public Mono<VaultResponseV2> createClientSecret(
-      KeycloakClientRepresentation clientRepresentation) {
-    String applicationName = applicationConfiguration.getName().orElseThrow();
+  @Observed(name = "vault-default-secret-service::create-client-secret")
+  public Mono<String> createClientSecret(KeycloakClientRepresentation clientRepresentation) {
+    String applicationName = applicationConfiguration.getApplicationName();
+    String uri = vaultClientConfiguration.getUri();
     String token = vaultClientConfiguration.getToken();
     String engine = vaultClientConfiguration.getSecretEngineName();
     VaultSecretCreateRequest request =
@@ -54,7 +55,19 @@ public class VaultDefaultSecretService implements KVSecretService {
     String secretKey =
         String.format(
             "%s/%s/%s",
-            applicationName, KEYCLOAK_CLIENT_SUFFIX, clientRepresentation.getClientId());
-    return secretsClient.createSecret(token, engine, secretKey, request);
+            applicationName,
+            KEYCLOAK_CLIENT_SUFFIX,
+            clientRepresentation.getClientId()); // TODO use organization id to get this information
+    log.info("creating vault key {}", secretKey);
+    return secretsClient
+        .createSecret(uri, token, engine, secretKey, request)
+        .mapNotNull(
+            response -> {
+              if (response.getStatusCode().is2xxSuccessful()) {
+                return response.getBody();
+              }
+              log.warn("error creating vault secret {}", response);
+              return response.getStatusCode().toString();
+            });
   }
 }

@@ -15,22 +15,25 @@
  */
 package pcc.puppet.enforcer.realm.member.adapters.http;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.DEPARTMENT;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.ORGANIZATION;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.http.HttpHeaders;
-import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Header;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.QueryValue;
-import io.micronaut.http.client.annotation.Client;
-import io.micronaut.tracing.annotation.SpanTag;
+import io.micrometer.observation.annotation.Observed;
+import io.micrometer.tracing.annotation.SpanTag;
+import jakarta.validation.constraints.NotNull;
 import javax.validation.Valid;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.service.annotation.GetExchange;
+import org.springframework.web.service.annotation.HttpExchange;
+import org.springframework.web.service.annotation.PostExchange;
 import pcc.puppet.enforcer.app.Project;
+import pcc.puppet.enforcer.realm.common.util.JwtTool;
 import pcc.puppet.enforcer.realm.member.adapters.presenter.MemberPresenter;
 import pcc.puppet.enforcer.realm.member.domain.MemberOperations;
 import pcc.puppet.enforcer.realm.member.ports.command.MemberCreateCommand;
@@ -38,42 +41,125 @@ import pcc.puppet.enforcer.realm.member.ports.event.MemberCreateEvent;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Client("pcc-realm-member")
-@Header(name = HttpHeaders.ACCEPT_ENCODING, value = "gzip, deflate")
-@Header(
-    name = HttpHeaders.USER_AGENT,
-    value = "MemberClient/" + Project.VERSION + " (" + Project.NAME + ")")
+@HttpExchange
 public interface MemberClient extends MemberOperations {
+  String USER_AGENT = "MemberClient/" + Project.VERSION + " (" + Project.NAME + ")";
 
-  @Override
-  @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+  @PostExchange(
+      accept = MediaType.APPLICATION_JSON_VALUE,
+      contentType = MediaType.APPLICATION_JSON_VALUE)
   Mono<MemberCreateEvent> memberCreate(
-      @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
-      @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
-      @SpanTag(DEPARTMENT) @NonNull @Header(DEPARTMENT) String departmentId,
-      @NonNull @Valid @Body MemberCreateCommand createCommand);
+      @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+      @NotNull @RequestHeader(AUTHORIZATION) String authorization,
+      @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,
+      @SpanTag(ORGANIZATION) @NotNull @RequestHeader(ORGANIZATION) String organizationId,
+      @SpanTag(DEPARTMENT) @NotNull @RequestHeader(DEPARTMENT) String departmentId,
+      @NotNull @Valid @RequestBody MemberCreateCommand createCommand);
 
   @Override
-  @Get(uri = "/{memberId}", consumes = MediaType.APPLICATION_JSON)
+  @Observed(name = "member-client::member-create")
+  default Mono<MemberCreateEvent> memberCreate(
+      @NotNull String requester,
+      @NotNull String organizationId,
+      @NotNull String departmentId,
+      @NotNull @Valid MemberCreateCommand createCommand) {
+    return JwtTool.authentication()
+        .flatMap(
+            token ->
+                memberCreate(
+                    USER_AGENT,
+                    JwtTool.toBearer(token),
+                    requester,
+                    organizationId,
+                    departmentId,
+                    createCommand));
+  }
+
+  @GetExchange(value = "/{memberId}", accept = MediaType.APPLICATION_JSON_VALUE)
   Mono<MemberPresenter> findMember(
-      @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
-      @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
-      @SpanTag(DEPARTMENT) @NonNull @Header(DEPARTMENT) String departmentId,
-      @SpanTag @NonNull @QueryValue("memberId") String memberId);
+      @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+      @NotNull @RequestHeader(AUTHORIZATION) String authorization,
+      @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,
+      @SpanTag(ORGANIZATION) @NotNull @RequestHeader(ORGANIZATION) String organizationId,
+      @SpanTag(DEPARTMENT) @NotNull @RequestHeader(DEPARTMENT) String departmentId,
+      @SpanTag @NotNull @PathVariable String memberId);
 
   @Override
-  @Get(uri = "/organization/{parentOrganizationId}", consumes = MediaType.APPLICATION_JSON)
+  @Observed(name = "member-client::find-member")
+  default Mono<MemberPresenter> findMember(
+      @NotNull String requester,
+      @NotNull String organizationId,
+      @NotNull String departmentId,
+      @NotNull String memberId) {
+    return JwtTool.authentication()
+        .flatMap(
+            token ->
+                findMember(
+                    USER_AGENT,
+                    JwtTool.toBearer(token),
+                    requester,
+                    organizationId,
+                    departmentId,
+                    memberId));
+  }
+
+  @GetExchange(
+      value = "/organization/{parentOrganizationId}",
+      accept = MediaType.APPLICATION_JSON_VALUE)
   Flux<MemberPresenter> findOrganizationMembers(
-      @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
-      @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
-      @SpanTag(DEPARTMENT) @NonNull @Header(DEPARTMENT) String departmentId,
-      @SpanTag @NonNull String parentOrganizationId);
+      @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+      @NotNull @RequestHeader(AUTHORIZATION) String authorization,
+      @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,
+      @SpanTag(ORGANIZATION) @NotNull @RequestHeader(ORGANIZATION) String organizationId,
+      @SpanTag(DEPARTMENT) @NotNull @RequestHeader(DEPARTMENT) String departmentId,
+      @SpanTag @NotNull @PathVariable String parentOrganizationId);
 
   @Override
-  @Get(uri = "/department/{parentDepartmentId}", consumes = MediaType.APPLICATION_JSON)
+  @Observed(name = "member-client::find-organization-members")
+  default Flux<MemberPresenter> findOrganizationMembers(
+      @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,
+      @SpanTag(ORGANIZATION) @NotNull @RequestHeader(ORGANIZATION) String organizationId,
+      @SpanTag(DEPARTMENT) @NotNull @RequestHeader(DEPARTMENT) String departmentId,
+      @SpanTag @NotNull @PathVariable String parentOrganizationId) {
+    return JwtTool.authentication()
+        .flatMapMany(
+            token ->
+                findOrganizationMembers(
+                    USER_AGENT,
+                    JwtTool.toBearer(token),
+                    requester,
+                    organizationId,
+                    departmentId,
+                    parentOrganizationId));
+  }
+
+  @GetExchange(
+      value = "/department/{parentDepartmentId}",
+      accept = MediaType.APPLICATION_JSON_VALUE)
   Flux<MemberPresenter> findDepartmentMembers(
-      @SpanTag(REQUESTER) @NonNull @Header(REQUESTER) String requester,
-      @SpanTag(ORGANIZATION) @NonNull @Header(ORGANIZATION) String organizationId,
-      @SpanTag(DEPARTMENT) @NonNull @Header(DEPARTMENT) String departmentId,
-      @SpanTag @NonNull String parentDepartmentId);
+      @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+      @NotNull @RequestHeader(AUTHORIZATION) String authorization,
+      @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,
+      @SpanTag(ORGANIZATION) @NotNull @RequestHeader(ORGANIZATION) String organizationId,
+      @SpanTag(DEPARTMENT) @NotNull @RequestHeader(DEPARTMENT) String departmentId,
+      @SpanTag @NotNull @PathVariable String parentDepartmentId);
+
+  @Override
+  @Observed(name = "member-client::find-department-members")
+  default Flux<MemberPresenter> findDepartmentMembers(
+      @NotNull String requester,
+      @NotNull String organizationId,
+      @NotNull String departmentId,
+      @NotNull String parentDepartmentId) {
+    return JwtTool.authentication()
+        .flatMapMany(
+            token ->
+                findDepartmentMembers(
+                    USER_AGENT,
+                    JwtTool.toBearer(token),
+                    requester,
+                    organizationId,
+                    departmentId,
+                    parentDepartmentId));
+  }
 }

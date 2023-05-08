@@ -15,26 +15,26 @@
  */
 package pcc.puppet.enforcer.realm.passport.ports.event;
 
-import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.NonNull;
-import io.micronaut.security.token.jwt.render.AccessRefreshToken;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
+import pcc.puppet.enforcer.keycloak.domain.BearerTokenResponse;
 import pcc.puppet.enforcer.realm.department.ports.event.DepartmentCreateEvent;
 import pcc.puppet.enforcer.realm.member.ports.event.MemberCreateEvent;
 import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEvent;
 
 @Data
 @Builder
-@Introspected
+@Jacksonized
 public class ConsumerPassportCreateEvent {
 
-  @NonNull private String memberId;
-  @NonNull private String username;
-  @NonNull private MemberCreateEvent member;
-  @NonNull private OrganizationCreateEvent organization;
-  @NonNull private DepartmentCreateEvent department;
-  @NonNull private AccessRefreshToken accessRefreshToken;
+  @NotNull private String memberId;
+  @NotNull private String username;
+  @NotNull private MemberCreateEvent member;
+  @NotNull private OrganizationCreateEvent organization;
+  @NotNull private DepartmentCreateEvent department;
+  @NotNull private String accessRefreshToken;
 
   public ConsumerPassportCreateEvent organization(OrganizationCreateEvent organizationCreateEvent) {
     this.organization = organizationCreateEvent;
@@ -51,8 +51,8 @@ public class ConsumerPassportCreateEvent {
     return this;
   }
 
-  public ConsumerPassportCreateEvent token(AccessRefreshToken token) {
-    this.accessRefreshToken = token;
+  public ConsumerPassportCreateEvent token(BearerTokenResponse token) {
+    this.accessRefreshToken = token.getAccessToken();
     return this;
   }
 
