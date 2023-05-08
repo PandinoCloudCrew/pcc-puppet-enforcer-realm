@@ -45,4 +45,4 @@ jobs:
         env:
           TESTCONTAINERS_RYUK_DISABLED: true
         run: |
-          ./gradlew check dockerPush --no-daemon
+          ./gradlew check bootBuildImage --publishImage
