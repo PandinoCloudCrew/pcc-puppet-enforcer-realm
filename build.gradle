@@ -6,7 +6,6 @@ plugins {
     id("org.springframework.boot") version "3.0.6"
     id("io.spring.dependency-management") version "1.1.0"
     id("com.diffplug.spotless") version "6.18.0"
-    id("com.google.cloud.tools.jib") version "3.3.1"
     id("com.gorylenko.gradle-git-properties") version "2.4.1"
     id("com.palantir.git-version") version "3.0.0"
     id("com.pasam.gradle.buildinfo") version "0.1.3"
@@ -76,17 +75,19 @@ dependencies {
     implementation ("org.mapstruct:mapstruct:$mapstructProcessorVersion")
     implementation ("net.datafaker:datafaker:$datafakerVersion")
     implementation ("uk.co.jemos.podam:podam:$podamVersion")
-    implementation ("com.github.f4b6a3:ulid-creator:5.1.0")
+    implementation ("com.github.f4b6a3:ulid-creator:$ulidVersion")
     compileOnly ("org.projectlombok:lombok")
     runtimeOnly ("io.micrometer:micrometer-registry-prometheus")
     runtimeOnly ("ch.qos.logback:logback-classic")
     testImplementation ("org.springframework.boot:spring-boot-starter-test")
-    testImplementation ("io.projectreactor:reactor-test")
     testImplementation ("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation ("org.springframework.restdocs:spring-restdocs-webtestclient")
     testImplementation ("org.springframework.security:spring-security-test")
+    testImplementation ("io.projectreactor:reactor-test")
     testImplementation ("org.mockito:mockito-core")
     testImplementation ("org.awaitility:awaitility:$awaitilityVersion")
+    testImplementation ("org.testcontainers:junit-jupiter")
+    testImplementation ("org.testcontainers:mongodb")
 }
 
 java {
@@ -95,30 +96,21 @@ java {
 }
 
 def details = versionDetails()
-def dockerLabels = [
-        "org.opencontainers.image.source": "https://github.com/PandinoCloudCrew/pcc-puppet-enforcer-realm",
-        "org.opencontainers.image.version": "$project.version",
-        "org.opencontainers.image.revision": details.gitHash,
-        "org.opencontainers.image.vendor": "PandinoCloudCrew",
-        "org.opencontainers.image.title": "$project.name",
-        "org.opencontainers.image.license": "Apache-2.0",
-        "org.opencontainers.image.created": Instant.now().toString()
-]
 
 tasks {
     tasks {
-        jib {
-            from {
-                image = "openjdk:$javaVersion"
-            }
-            to {
-                image = "${System.env.DOCKER_IMAGE ?: "gcr.io/myapp/$project.name"}:$project.version"
-                tags = [version, "latest"] as List<String>
-
-            }
-            container {
-                labels = dockerLabels
-            }
+        bootBuildImage {
+            imageName = "${System.env.DOCKER_IMAGE ?: "pcc.fyi/realm/$project.name"}"
+            tags  = [version, "latest"] as List<String>
+            environment = [
+                    'BP_OCI_SOURCE': "https://github.com/PandinoCloudCrew/pcc-puppet-enforcer-realm",
+                    'BP_OCI_VERSION': "$project.version",
+                    'BP_OCI_REVISION': details.gitHash,
+                    'BP_OCI_VENDOR': "PandinoCloudCrew",
+                    'BP_OCI_TITLE': "$project.name",
+                    'BP_OCI_LICENSES': "Apache-2.0",
+                    'BP_OCI_CREATED': Instant.now().toString()
+            ]
         }
     }
 }
@@ -194,6 +186,7 @@ tasks.named("asciidoctor") {
 
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
+        mavenBom "org.testcontainers:testcontainers-bom:$testcontainersVersion"
     }
 }
