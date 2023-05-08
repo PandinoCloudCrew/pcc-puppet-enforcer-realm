@@ -15,6 +15,11 @@
  */
 package pcc.puppet.enforcer.app;
 
+import lombok.Generated;
+import lombok.experimental.UtilityClass;
+
+@Generated
+@UtilityClass
 public class Project {
 
   public static final String VERSION = "@VERSION@";
