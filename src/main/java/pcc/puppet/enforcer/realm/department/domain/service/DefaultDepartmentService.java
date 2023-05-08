@@ -15,7 +15,7 @@
  */
 package pcc.puppet.enforcer.realm.department.domain.service;
 
-import io.micrometer.tracing.annotation.NewSpan;
+import io.micrometer.observation.annotation.Observed;
 import io.micrometer.tracing.annotation.SpanTag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,8 +41,8 @@ public class DefaultDepartmentService implements DepartmentService {
   private final DepartmentRepository repository;
   private final ContactInformationService contactInformationService;
 
-  @NewSpan
   @Override
+  @Observed(name = "default-department-service::create")
   public Mono<DepartmentCreateEvent> create(
       @SpanTag String requester, @SpanTag DepartmentCreateCommand createCommand) {
     Department department = inputMapper.commandToDomain(createCommand);
@@ -57,8 +57,8 @@ public class DefaultDepartmentService implements DepartmentService {
         .map(outputMapper::domainToEvent);
   }
 
-  @NewSpan
   @Override
+  @Observed(name = "default-department-service::find-by-id")
   public Mono<DepartmentPresenter> findById(
       @SpanTag String requester, @SpanTag String departmentId) {
     return contactInformationService
@@ -75,8 +75,8 @@ public class DefaultDepartmentService implements DepartmentService {
                     .map(outputMapper::domainToPresenter));
   }
 
-  @NewSpan
   @Override
+  @Observed(name = "default-department-service::find-by-parent-id")
   public Flux<DepartmentPresenter> findByParentId(
       @SpanTag String requester, @SpanTag String departmentId) {
     return repository

@@ -18,9 +18,7 @@ package pcc.puppet.enforcer.realm.department.ports.api;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.ORGANIZATION;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
-import io.micrometer.core.annotation.Counted;
-import io.micrometer.core.annotation.Timed;
-import io.micrometer.tracing.annotation.NewSpan;
+import io.micrometer.observation.annotation.Observed;
 import io.micrometer.tracing.annotation.SpanTag;
 import jakarta.validation.constraints.NotNull;
 import javax.validation.Valid;
@@ -49,13 +47,11 @@ import reactor.core.publisher.Mono;
 public class DepartmentController implements DepartmentOperations {
   private final DepartmentService departmentService;
 
-  @Timed
-  @Counted
   @Override
-  @NewSpan
   @PostMapping(
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
+  @Observed(name = "department-controller::department-create")
   public Mono<DepartmentCreateEvent> departmentCreate(
       @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,
       @SpanTag(ORGANIZATION) @NotNull @RequestHeader(ORGANIZATION) String organizationId,
@@ -63,11 +59,9 @@ public class DepartmentController implements DepartmentOperations {
     return departmentService.create(requester, createCommand);
   }
 
-  @Timed
-  @Counted
   @Override
-  @NewSpan
   @GetMapping(value = "/{departmentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @Observed(name = "department-controller::find-department")
   public Mono<DepartmentPresenter> findDepartment(
       @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,
       @SpanTag(ORGANIZATION) @NotNull @RequestHeader(ORGANIZATION) String organizationId,
@@ -75,11 +69,9 @@ public class DepartmentController implements DepartmentOperations {
     return departmentService.findById(requester, departmentId);
   }
 
-  @Timed
-  @Counted
   @Override
-  @NewSpan
   @GetMapping(value = "/{departmentId}/child", produces = MediaType.APPLICATION_JSON_VALUE)
+  @Observed(name = "department-controller::find-child-departments")
   public Flux<DepartmentPresenter> findChildDepartments(
       @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,
       @SpanTag(ORGANIZATION) @NotNull @RequestHeader(ORGANIZATION) String organizationId,
