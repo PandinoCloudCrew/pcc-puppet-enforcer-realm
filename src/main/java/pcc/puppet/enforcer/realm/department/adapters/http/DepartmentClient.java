@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package pcc.puppet.enforcer.realm.department.adapters.http;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;

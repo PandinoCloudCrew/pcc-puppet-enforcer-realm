@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package pcc.puppet.enforcer.vault.domain;
 
 import static pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation.CLIENT_ID;
