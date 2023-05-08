@@ -66,19 +66,11 @@ public class DefaultOrganizationService implements OrganizationService {
             clientRepresentation.getDescription(),
             clientRepresentation.getClientId(),
             clientRepresentation.getSecret())
-        .doOnError(
-            throwable -> {
-              log.error("error creating keycloak client", throwable);
-            })
         .flatMap(
             created -> {
               log.debug("create keycloak client response {}", created);
               return secretService
                   .createClientSecret(clientRepresentation)
-                  .doOnError(
-                      throwable -> {
-                        log.error("error creating vault secret", throwable);
-                      })
                   .flatMap(
                       vaultResponseV2 ->
                           saveContactInformation(
