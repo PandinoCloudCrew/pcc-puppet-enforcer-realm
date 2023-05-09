@@ -67,6 +67,3 @@ provider:
     clientId: ${keycloak-clientId}
     clientSecret: ${keycloak-clientSecret}
     realm: ${keycloak-realm}
-  vault:
-    uri: ${provider-vault-url}
-    token: ${provider-vault-token}

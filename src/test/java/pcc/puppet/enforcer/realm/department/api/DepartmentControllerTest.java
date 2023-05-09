@@ -52,8 +52,7 @@ class DepartmentControllerTest {
   @Autowired private TestDomainGenerator generator;
 
   @Container
-  private static final MongoDBContainer mongoDBContainer =
-      new MongoDBContainer("mongo:6.0");
+  private static final MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:6.0");
 
   @DynamicPropertySource
   static void mongoDbProperties(DynamicPropertyRegistry registry) {

@@ -35,9 +35,6 @@ provider:
     clientId: testPlaceholderClient
     clientSecret: testPlaceholderSecret
     realm: test
-  vault:
-    uri: http://localhost:${server.port}/vault
-    token: testPlaceholderToken
 
 logging:
   level:

@@ -28,6 +28,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.vault.VaultContainer;
 import pcc.puppet.enforcer.app.Application;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import pcc.puppet.enforcer.realm.passport.adapters.http.ConsumerPassportClient;
@@ -43,14 +44,28 @@ class ConsumerPassportControllerTest {
 
   @Autowired private ConsumerPassportClient client;
 
+  private static final String VAULT_TOKEN = "test-token";
+
   @Container
-  private static final MongoDBContainer mongoDBContainer =
-      new MongoDBContainer("mongo:6.0");
+  private static final MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:6.0");
+
+  @Container
+  private static final VaultContainer<?> vaultContainer =
+      new VaultContainer<>("hashicorp/vault:1.13")
+          .withVaultToken(VAULT_TOKEN)
+          .withSecretInVault("secret/testing1", "top_secret=password123")
+          .withInitCommand(
+              "secrets enable -version=2 -path=secret kv",
+              "secrets enable -version=2 -path=credentials kv");
 
   @DynamicPropertySource
   static void mongoDbProperties(DynamicPropertyRegistry registry) {
     mongoDBContainer.start();
+    vaultContainer.start();
     registry.add("spring.data.mongodb.uri", mongoDBContainer::getReplicaSetUrl);
+    registry.add("provider.vault.token", () -> VAULT_TOKEN);
+    registry.add("provider.vault.uri", vaultContainer::getHttpHostAddress);
+    registry.add("spring.http.services.provider-vault.url", vaultContainer::getHttpHostAddress);
   }
 
   @Test

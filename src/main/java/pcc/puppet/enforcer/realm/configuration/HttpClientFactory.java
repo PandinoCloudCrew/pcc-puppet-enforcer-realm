@@ -29,7 +29,6 @@ import pcc.puppet.enforcer.realm.member.adapters.http.MemberClient;
 import pcc.puppet.enforcer.realm.organization.adapters.http.OrganizationClient;
 import pcc.puppet.enforcer.realm.passport.adapters.gateway.rest_countries.RestCountriesApiClient;
 import pcc.puppet.enforcer.realm.passport.adapters.http.ConsumerPassportClient;
-import pcc.puppet.enforcer.vault.adapters.http.VaultSecretsClient;
 import reactor.netty.http.client.HttpClient;
 
 @Configuration
@@ -77,13 +76,6 @@ public class HttpClientFactory {
     HttpServiceProxyFactory factory =
         getFactory(builder, httpClient, serviceConfiguration.getPccRealmPassport().getUri());
     return factory.createClient(ConsumerPassportClient.class);
-  }
-
-  @Bean
-  public VaultSecretsClient vaultSecretsClient(WebClient.Builder builder, HttpClient httpClient) {
-    HttpServiceProxyFactory factory =
-        getFactory(builder, httpClient, serviceConfiguration.getProviderVault().getUri());
-    return factory.createClient(VaultSecretsClient.class);
   }
 
   @Bean
