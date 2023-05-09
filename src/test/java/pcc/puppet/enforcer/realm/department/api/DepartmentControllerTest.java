@@ -53,7 +53,7 @@ class DepartmentControllerTest {
 
   @Container
   private static final MongoDBContainer mongoDBContainer =
-      new MongoDBContainer("mongo:6.0").withExposedPorts(27017);
+      new MongoDBContainer("mongo:6.0");
 
   @DynamicPropertySource
   static void mongoDbProperties(DynamicPropertyRegistry registry) {
