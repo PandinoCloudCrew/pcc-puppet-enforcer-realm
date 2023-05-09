@@ -50,12 +50,12 @@ public class KeycloakTokenDetails {
   private String azp;
 
   @PodamStrategyValue(UsernameStrategy.class)
-  private String preferred_username;
+  private String preferredUsername;
 
-  private boolean email_verified;
+  private boolean emailVerified;
   private String acr;
-  private RolesArray realm_access;
-  private Map<String, RolesArray> resource_access;
+  private RolesArray realmAccess;
+  private Map<String, RolesArray> resourceAccess;
   private String scope;
 
   @PodamStrategyValue(ObjectIdStrategy.class)
@@ -66,9 +66,6 @@ public class KeycloakTokenDetails {
 
   @PodamStrategyValue(IpV4Strategy.class)
   private String clientAddress;
-
-  @PodamStrategyValue(ObjectIdStrategy.class)
-  private String client_id;
 
   @PodamStrategyValue(UsernameStrategy.class)
   private String username;
