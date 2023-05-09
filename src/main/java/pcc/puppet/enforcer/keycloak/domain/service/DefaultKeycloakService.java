@@ -119,8 +119,12 @@ public class DefaultKeycloakService implements KeycloakService {
   @Override
   @Observed(name = "default-keycloak-service::create-user")
   public Mono<Optional<String>> createUser(
-      ConsumerPassportCreateEvent createEvent, String username, String password) {
-    return adminLogin() // TODO create users using organization's client_id
+      String clientId,
+      String clientSecret,
+      ConsumerPassportCreateEvent createEvent,
+      String username,
+      String password) {
+    return clientLogin(clientId, clientSecret)
         .flatMap(
             tokenResponse -> {
               KeycloakUserRepresentation userRepresentation =

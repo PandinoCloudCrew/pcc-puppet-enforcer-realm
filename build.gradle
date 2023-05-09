@@ -89,6 +89,8 @@ dependencies {
     testImplementation("org.awaitility:awaitility:$awaitilityVersion")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:mongodb")
+    testImplementation("org.testcontainers:vault")
+
 }
 
 java {

@@ -71,21 +71,16 @@ public class DefaultOrganizationService implements OrganizationService {
             created -> {
               log.debug("create keycloak client response {}", created);
               return secretService
-                  .createClientSecret(clientRepresentation)
+                  .createClientSecret(organization.getId(), clientRepresentation)
                   .flatMap(
-                      vaultResponseV2 ->
-                          saveContactInformation(
-                              requester, createCommand, organization, vaultResponseV2));
+                      organizationCredentials ->
+                          saveContactInformation(requester, createCommand, organization));
             });
   }
 
   @Observed(name = "default-organization-service::save-contact-information")
   private Mono<OrganizationCreateEvent> saveContactInformation(
-      String requester,
-      OrganizationCreateCommand createCommand,
-      Organization organization,
-      String vaultResponseV2) {
-    log.debug("vault client response {}", vaultResponseV2);
+      String requester, OrganizationCreateCommand createCommand, Organization organization) {
     return contactInformationService
         .save(requester, organization.getId(), createCommand.getContactId())
         .flatMap(contactInformation -> updateOrganizationContact(organization, contactInformation))

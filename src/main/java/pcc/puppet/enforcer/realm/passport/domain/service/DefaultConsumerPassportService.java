@@ -39,6 +39,7 @@ import pcc.puppet.enforcer.realm.passport.adapters.gateway.rest_countries.respon
 import pcc.puppet.enforcer.realm.passport.adapters.gateway.rest_countries.response.RestCountriesResponse;
 import pcc.puppet.enforcer.realm.passport.ports.command.ConsumerPassportCreateCommand;
 import pcc.puppet.enforcer.realm.passport.ports.event.ConsumerPassportCreateEvent;
+import pcc.puppet.enforcer.vault.domain.KVSecretService;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -52,6 +53,7 @@ public class DefaultConsumerPassportService implements ConsumerPassportService {
   private final MemberClient memberClient;
   private final RestCountriesApiClient countriesApiClient;
   private final KeycloakService keycloakService;
+  private final KVSecretService secretService;
 
   @Override
   @Observed(name = "default-consumer-passport-service::create-consumer-passport")
@@ -88,19 +90,25 @@ public class DefaultConsumerPassportService implements ConsumerPassportService {
                   .doOnError(throwable -> log.error("error creating member", throwable))
                   .map(consumerPassportEvent::member)
                   .flatMap(
-                      passportCreateEvent -> {
-                        passportCreateEvent.setMemberId(passportCreateEvent.memberId());
-                        passportCreateEvent.setUsername(
-                            passportCreateEvent.getMember().getUsername());
-                        return keycloakService
-                            .createUser(
-                                consumerPassportEvent,
-                                passportCommand.getEmail(),
-                                passportCommand.getPassword())
+                      passportCreated -> {
+                        passportCreated.setMemberId(passportCreated.memberId());
+                        passportCreated.setUsername(passportCreated.getMember().getUsername());
+                        return secretService
+                            .getCredentials(passportCreated.organizationId())
                             .flatMap(
-                                optional ->
-                                    keycloakService.userLogin(
-                                        passportCommand.getEmail(), passportCommand.getPassword()));
+                                credentials ->
+                                    keycloakService
+                                        .createUser(
+                                            credentials.getClientId(),
+                                            credentials.getClientSecret(),
+                                            consumerPassportEvent,
+                                            passportCommand.getEmail(),
+                                            passportCommand.getPassword())
+                                        .flatMap(
+                                            optional ->
+                                                keycloakService.userLogin(
+                                                    passportCommand.getEmail(),
+                                                    passportCommand.getPassword())));
                       })
                   .doOnError(throwable -> log.error("error creating user in keycloak", throwable))
                   .map(consumerPassportEvent::token);

@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package pcc.puppet.enforcer.vault.adapters.http.request;
+package pcc.puppet.enforcer.realm.organization.adapters.repository;
 
-import java.util.Map;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Singular;
-import lombok.extern.jackson.Jacksonized;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.stereotype.Repository;
+import pcc.puppet.enforcer.realm.organization.domain.OrganizationCredentials;
 
-@Data
-@Builder
-@Jacksonized
-public class VaultSecretCreateRequest {
-
-  @Singular("property")
-  private Map<String, String> data;
-}
+@Repository
+public interface OrganizationCredentialsRepository
+    extends ReactiveCrudRepository<OrganizationCredentials, String> {}

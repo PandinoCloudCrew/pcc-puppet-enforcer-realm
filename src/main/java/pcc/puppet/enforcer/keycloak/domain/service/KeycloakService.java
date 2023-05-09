@@ -35,5 +35,9 @@ public interface KeycloakService {
       String name, String description, String clientId, String clientSecret);
 
   Mono<Optional<String>> createUser(
-      ConsumerPassportCreateEvent createEvent, String username, String password);
+      String clientId,
+      String clientSecret,
+      ConsumerPassportCreateEvent createEvent,
+      String username,
+      String password);
 }

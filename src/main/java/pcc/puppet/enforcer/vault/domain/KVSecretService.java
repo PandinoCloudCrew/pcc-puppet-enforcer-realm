@@ -17,8 +17,12 @@
 package pcc.puppet.enforcer.vault.domain;
 
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation;
+import pcc.puppet.enforcer.realm.organization.domain.OrganizationCredentials;
 import reactor.core.publisher.Mono;
 
 public interface KVSecretService {
-  Mono<String> createClientSecret(KeycloakClientRepresentation clientRepresentation);
+  Mono<OrganizationCredentials> createClientSecret(
+      String organizationId, KeycloakClientRepresentation clientRepresentation);
+
+  Mono<OrganizationCredentials> getCredentials(String organizationId);
 }
