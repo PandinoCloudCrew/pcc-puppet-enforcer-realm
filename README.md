@@ -96,3 +96,16 @@ Create service account with permission to edit GCR or use predefined Storage Adm
 
 - [Jib Gradle Plugin](https://plugins.gradle.org/plugin/com.google.cloud.tools.jib)
 - [Shadow Gradle Plugin](https://plugins.gradle.org/plugin/com.github.johnrengelman.shadow)
+
+# Vault Configuration
+
+Requires a secret engine named `credentials`
+Requires a secret engine named `kv`
+
+# Keycloak Configuration
+
+Requires that default-realm-roles is modified to add the realm roles `inpersonation` and `manage-users`
+
+Requires an existing client that has admin permissions to create other clients, groups and users.
+
+Organization's Client is used to create it's users.
