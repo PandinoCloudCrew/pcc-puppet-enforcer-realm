@@ -16,7 +16,6 @@
 
 package pcc.puppet.enforcer.keycloak.domain;
 
-import java.util.List;
 import java.util.Map;
 import lombok.Builder;
 import lombok.Data;
@@ -26,15 +25,9 @@ import lombok.extern.jackson.Jacksonized;
 @Data
 @Builder
 @Jacksonized
-public class KeycloakUserRepresentation {
-  private String id;
-  @Singular private Map<String, Object> attributes;
-  private Map<String, String> clientRoles;
-  private String username;
-  private String firstName;
-  private String lastName;
-  private String email;
-  private boolean emailVerified;
-  private boolean enabled;
-  private List<KeycloakCredentialRepresentation> credentials;
+public class KeycloakGroupRepresentation {
+
+  private String name;
+  private String path;
+  @Singular private Map<String, String[]> attributes;
 }

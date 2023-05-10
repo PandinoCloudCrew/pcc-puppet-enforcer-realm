@@ -18,7 +18,9 @@ package pcc.puppet.enforcer.keycloak.domain.service;
 
 import java.util.Optional;
 import pcc.puppet.enforcer.keycloak.domain.BearerTokenResponse;
+import pcc.puppet.enforcer.keycloak.domain.KeycloakGroupRepresentation;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakTokenDetails;
+import pcc.puppet.enforcer.realm.organization.domain.Organization;
 import pcc.puppet.enforcer.realm.passport.ports.event.ConsumerPassportCreateEvent;
 import reactor.core.publisher.Mono;
 
@@ -34,10 +36,25 @@ public interface KeycloakService {
   Mono<Optional<String>> createClient(
       String name, String description, String clientId, String clientSecret);
 
+  Mono<Optional<String>> createGroup(KeycloakGroupRepresentation group);
+
   Mono<Optional<String>> createUser(
       String clientId,
       String clientSecret,
       ConsumerPassportCreateEvent createEvent,
       String username,
       String password);
+
+  default KeycloakGroupRepresentation groupFromOrganization(Organization organization) {
+    return KeycloakGroupRepresentation.builder()
+        .name(organization.getId())
+        .path(organization.getId())
+        .attribute("name", new String[] {organization.getName()})
+        .attribute("parentId", new String[] {organization.getParentId()})
+        .attribute("country", new String[] {organization.getCountry()})
+        .attribute("city", new String[] {organization.getCity()})
+        .attribute("createdBy", new String[] {organization.getCreatedBy()})
+        .attribute("createdAt", new String[] {organization.getCreatedAt().toString()})
+        .build();
+  }
 }
