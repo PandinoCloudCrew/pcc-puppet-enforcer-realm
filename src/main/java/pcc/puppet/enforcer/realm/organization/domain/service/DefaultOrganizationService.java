@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation;
+import pcc.puppet.enforcer.keycloak.domain.KeycloakGroupRepresentation;
 import pcc.puppet.enforcer.keycloak.domain.service.KeycloakService;
 import pcc.puppet.enforcer.realm.common.contact.domain.ContactInformation;
 import pcc.puppet.enforcer.realm.common.contact.domain.service.ContactInformationService;
@@ -59,36 +60,39 @@ public class DefaultOrganizationService implements OrganizationService {
       @SpanTag String requester, OrganizationCreateCommand createCommand) {
     Organization organization = inputMapper.commandToDomain(createCommand);
     organization.setId(DomainFactory.id());
-    KeycloakClientRepresentation clientRepresentation =
-        getKeycloakClientRepresentation(organization);
+    KeycloakClientRepresentation client = getKeycloakClientRepresentation(organization);
     return keycloakService
         .createClient(
-            clientRepresentation.getName(),
-            clientRepresentation.getDescription(),
-            clientRepresentation.getClientId(),
-            clientRepresentation.getSecret())
-        .flatMap(
-            created -> {
-              log.debug("create keycloak client response {}", created);
-              return secretService
-                  .createClientSecret(organization.getId(), clientRepresentation)
-                  .flatMap(
-                      organizationCredentials ->
-                          saveContactInformation(requester, createCommand, organization));
-            });
-  }
-
-  @Observed(name = "default-organization-service::save-contact-information")
-  private Mono<OrganizationCreateEvent> saveContactInformation(
-      String requester, OrganizationCreateCommand createCommand, Organization organization) {
-    return contactInformationService
-        .save(requester, organization.getId(), createCommand.getContactId())
-        .flatMap(contactInformation -> updateOrganizationContact(organization, contactInformation))
+            client.getName(), client.getDescription(), client.getClientId(), client.getSecret())
+        .flatMap(created -> secretService.createClientSecret(organization.getId(), client))
+        .flatMap(credentials -> saveContactInformation(requester, createCommand, organization))
+        .flatMap(contactInformation -> saveOrganization(organization, contactInformation))
+        .flatMap(this::createGroup)
+        //        .flatMap(this::linkServiceAccountToGroup)
         .map(inputMapper::domainToEvent);
   }
 
+  @Observed(name = "default-organization-service::create-group")
+  private Mono<Organization> createGroup(Organization organization) {
+    KeycloakGroupRepresentation group = keycloakService.groupFromOrganization(organization);
+    return keycloakService.createGroup(group).map(response -> organization);
+  }
+
+  @Observed(name = "default-organization-service::link-service-account-to-group")
+  private Mono<Organization> linkServiceAccountToGroup(Organization organization) {
+    KeycloakGroupRepresentation group = keycloakService.groupFromOrganization(organization);
+    return keycloakService.createGroup(group).map(response -> organization);
+  }
+
+  @Observed(name = "default-organization-service::save-contact-information")
+  private Mono<ContactInformation> saveContactInformation(
+      String requester, OrganizationCreateCommand createCommand, Organization organization) {
+    return contactInformationService.save(
+        requester, organization.getId(), createCommand.getContactId());
+  }
+
   @Observed(name = "default-organization-service::update-organization-contact")
-  private Mono<Organization> updateOrganizationContact(
+  private Mono<Organization> saveOrganization(
       Organization organization, ContactInformation contactInformation) {
     organization.setContactId(contactInformation);
     return repository.save(organization);

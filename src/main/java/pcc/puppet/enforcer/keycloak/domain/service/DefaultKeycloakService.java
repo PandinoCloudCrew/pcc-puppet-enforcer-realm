@@ -16,6 +16,7 @@
 
 package pcc.puppet.enforcer.keycloak.domain.service;
 
+import com.github.slugify.Slugify;
 import io.micrometer.observation.annotation.Observed;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +31,7 @@ import pcc.puppet.enforcer.keycloak.domain.KeycloakAddressClaimSetRepresentation
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientCredentials;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakCredentialRepresentation;
+import pcc.puppet.enforcer.keycloak.domain.KeycloakGroupRepresentation;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakIntrospection;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakTokenDetails;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakUserCredentials;
@@ -45,7 +47,7 @@ import reactor.core.publisher.Mono;
 @CacheConfig
 @RequiredArgsConstructor
 public class DefaultKeycloakService implements KeycloakService {
-
+  private final Slugify slg = Slugify.builder().build();
   private final KeycloakAdminClient adminClient;
   private final KeycloakProperties keycloakProperties;
 
@@ -114,6 +116,16 @@ public class DefaultKeycloakService implements KeycloakService {
                       clientRepresentation)
                   .map(response -> handleKeycloakResponse(clientId, response));
             });
+  }
+
+  @Override
+  public Mono<Optional<String>> createGroup(KeycloakGroupRepresentation group) {
+    return adminLogin()
+        .flatMap(
+            token ->
+                adminClient.createGroup(
+                    JwtTool.toBearer(token), keycloakProperties.getRealm(), group))
+        .map(response -> handleKeycloakResponse(group.getName(), response));
   }
 
   @Override

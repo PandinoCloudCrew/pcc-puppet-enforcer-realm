@@ -34,6 +34,7 @@ import pcc.puppet.enforcer.app.Project;
 import pcc.puppet.enforcer.keycloak.domain.BearerTokenResponse;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientCredentials;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation;
+import pcc.puppet.enforcer.keycloak.domain.KeycloakGroupRepresentation;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakIntrospection;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakTokenDetails;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakUserCredentials;
@@ -114,5 +115,23 @@ public interface KeycloakAdminClient {
       @NotNull @PathVariable String realm,
       @Valid @RequestBody KeycloakUserRepresentation request) {
     return createUser(USER_AGENT, authorization, realm, request);
+  }
+
+  @PostExchange(
+      value = "/admin/realms/{realm}/groups",
+      contentType = MediaType.APPLICATION_JSON_VALUE,
+      accept = MediaType.APPLICATION_JSON_VALUE)
+  Mono<ResponseEntity<Void>> createGroup(
+      @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+      @RequestHeader(AUTHORIZATION) String authorization,
+      @NotNull @PathVariable String realm,
+      @Valid @RequestBody KeycloakGroupRepresentation request);
+
+  @Observed(name = "keycloak-admin-client::create-group")
+  default Mono<ResponseEntity<Void>> createGroup(
+      @RequestHeader(AUTHORIZATION) String authorization,
+      @NotNull @PathVariable String realm,
+      @Valid @RequestBody KeycloakGroupRepresentation request) {
+    return createGroup(USER_AGENT, authorization, realm, request);
   }
 }
