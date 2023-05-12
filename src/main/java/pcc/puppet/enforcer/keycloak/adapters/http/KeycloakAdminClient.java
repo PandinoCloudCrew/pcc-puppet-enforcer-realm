@@ -28,8 +28,11 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
+import org.springframework.web.service.annotation.PutExchange;
 import pcc.puppet.enforcer.app.Project;
 import pcc.puppet.enforcer.keycloak.domain.BearerTokenResponse;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientCredentials;
@@ -39,6 +42,7 @@ import pcc.puppet.enforcer.keycloak.domain.KeycloakIntrospection;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakTokenDetails;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakUserCredentials;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakUserRepresentation;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @HttpExchange
@@ -50,19 +54,19 @@ public interface KeycloakAdminClient {
       contentType = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       accept = MediaType.APPLICATION_JSON_VALUE)
   Mono<BearerTokenResponse> token(
-      @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+      @NotNull @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
       @NotNull @PathVariable String realm,
-      @Valid @RequestBody MultiValueMap<String, String> credentials);
+      @NotNull @Valid @RequestBody MultiValueMap<String, String> credentials);
 
   @Observed(name = "keycloak-admin-client::token")
   default Mono<BearerTokenResponse> clientLogin(
-      @NotNull String realm, @Valid KeycloakClientCredentials credentials) {
+      @NotNull String realm, @NotNull @Valid KeycloakClientCredentials credentials) {
     return token(USER_AGENT, realm, credentials.toFormData());
   }
 
   @Observed(name = "keycloak-admin-client::token")
   default Mono<BearerTokenResponse> userLogin(
-      @NotNull String realm, @Valid KeycloakUserCredentials credentials) {
+      @NotNull String realm, @NotNull @Valid KeycloakUserCredentials credentials) {
     return token(USER_AGENT, realm, credentials.toFormData());
   }
 
@@ -71,13 +75,13 @@ public interface KeycloakAdminClient {
       contentType = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       accept = MediaType.APPLICATION_JSON_VALUE)
   Mono<KeycloakTokenDetails> introspect(
-      @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+      @NotNull @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
       @NotNull @PathVariable String realm,
-      @Valid @RequestBody MultiValueMap<String, String> introspection);
+      @NotNull @Valid @RequestBody MultiValueMap<String, String> introspection);
 
   @Observed(name = "keycloak-admin-client::introspect")
   default Mono<KeycloakTokenDetails> introspect(
-      @NotNull String realm, @Valid KeycloakIntrospection introspection) {
+      @NotNull String realm, @NotNull @Valid KeycloakIntrospection introspection) {
     return introspect(USER_AGENT, realm, introspection.toFormData());
   }
 
@@ -93,9 +97,9 @@ public interface KeycloakAdminClient {
 
   @Observed(name = "keycloak-admin-client::create-client")
   default Mono<ResponseEntity<Void>> createClient(
-      @RequestHeader(AUTHORIZATION) String authorization,
-      @NotNull @PathVariable String realm,
-      @Valid @RequestBody KeycloakClientRepresentation request) {
+      @NotNull String authorization,
+      @NotNull String realm,
+      @NotNull @Valid KeycloakClientRepresentation request) {
     return createClient(USER_AGENT, authorization, realm, request);
   }
 
@@ -111,9 +115,9 @@ public interface KeycloakAdminClient {
 
   @Observed(name = "keycloak-admin-client::create-user")
   default Mono<ResponseEntity<Void>> createUser(
-      @RequestHeader(AUTHORIZATION) String authorization,
-      @NotNull @PathVariable String realm,
-      @Valid @RequestBody KeycloakUserRepresentation request) {
+      @NotNull String authorization,
+      @NotNull String realm,
+      @NotNull @Valid KeycloakUserRepresentation request) {
     return createUser(USER_AGENT, authorization, realm, request);
   }
 
@@ -129,9 +133,56 @@ public interface KeycloakAdminClient {
 
   @Observed(name = "keycloak-admin-client::create-group")
   default Mono<ResponseEntity<Void>> createGroup(
-      @RequestHeader(AUTHORIZATION) String authorization,
-      @NotNull @PathVariable String realm,
-      @Valid @RequestBody KeycloakGroupRepresentation request) {
+      @NotNull String authorization,
+      @NotNull String realm,
+      @NotNull @Valid KeycloakGroupRepresentation request) {
     return createGroup(USER_AGENT, authorization, realm, request);
+  }
+
+  @GetExchange(value = "/admin/realms/{realm}/users", accept = MediaType.APPLICATION_JSON_VALUE)
+  Flux<KeycloakUserRepresentation> findUserByUsername(
+      @NotNull @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+      @NotNull @RequestHeader(AUTHORIZATION) String authorization,
+      @NotNull @PathVariable String realm,
+      @NotNull @RequestParam String username);
+
+  @Observed(name = "keycloak-admin-client::find-user-by-username")
+  default Flux<KeycloakUserRepresentation> findUserByUsername(
+      @NotNull String authorization, @NotNull String realm, @NotNull String username) {
+    return findUserByUsername(USER_AGENT, authorization, realm, username);
+  }
+
+  @GetExchange(
+      value = "/admin/realms/{realm}/group-by-path/{groupPath}",
+      accept = MediaType.APPLICATION_JSON_VALUE)
+  Mono<KeycloakGroupRepresentation> findGroupByPath(
+      @NotNull @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+      @NotNull @RequestHeader(AUTHORIZATION) String authorization,
+      @NotNull @PathVariable String realm,
+      @NotNull @PathVariable String groupPath);
+
+  @Observed(name = "keycloak-admin-client::find-group-by-path")
+  default Mono<KeycloakGroupRepresentation> findGroupByPath(
+      @NotNull String authorization, @NotNull String realm, @NotNull String groupPath) {
+    return findGroupByPath(USER_AGENT, authorization, realm, groupPath);
+  }
+
+  @PutExchange(
+      value = "/admin/realms/{realm}/users/{userId}/groups/{groupId}",
+      accept = MediaType.APPLICATION_JSON_VALUE)
+  Mono<ResponseEntity<Void>> addUserToGroup(
+      @NotNull @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+      @NotNull @RequestHeader(AUTHORIZATION) String authorization,
+      @NotNull @PathVariable String realm,
+      @NotNull @PathVariable String userId,
+      @NotNull @PathVariable String groupId);
+
+  @Observed(name = "keycloak-admin-client::add-user-to-group")
+  default Mono<ResponseEntity<Void>> addUserToGroup(
+      @NotNull String authorization,
+      @NotNull String realm,
+      @NotNull String userId,
+      @NotNull String groupId) {
+    return addUserToGroup(USER_AGENT, authorization, realm, userId, groupId);
   }
 }

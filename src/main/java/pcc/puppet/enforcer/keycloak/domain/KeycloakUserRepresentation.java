@@ -16,6 +16,7 @@
 
 package pcc.puppet.enforcer.keycloak.domain;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import lombok.Builder;
@@ -36,5 +37,9 @@ public class KeycloakUserRepresentation {
   private String email;
   private boolean emailVerified;
   private boolean enabled;
+  private boolean totp;
+  private int notBefore;
+  private Map<String, String> access;
   private List<KeycloakCredentialRepresentation> credentials;
+  private Instant createdTimestamp;
 }
