@@ -26,9 +26,6 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 public class KeycloakClientRepresentation {
 
-  public static final String CLIENT_NAME = "name";
-  public static final String CLIENT_ID = "clientId";
-  public static final String CLIENT_SECRET = "secret";
   @NotNull private String name;
   @NotNull private String description;
   @NotNull private Boolean serviceAccountsEnabled;

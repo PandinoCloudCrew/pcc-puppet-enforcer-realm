@@ -27,7 +27,9 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 public class KeycloakGroupRepresentation {
 
+  private String id;
   private String name;
   private String path;
   @Singular private Map<String, String[]> attributes;
+  private KeycloakGroupRepresentation[] subGroups;
 }

@@ -16,11 +16,9 @@
 
 package pcc.puppet.enforcer.keycloak.domain.service;
 
-import com.github.slugify.Slugify;
 import io.micrometer.observation.annotation.Observed;
 import java.util.List;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.http.ResponseEntity;
@@ -45,21 +43,32 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Service
 @CacheConfig
-@RequiredArgsConstructor
 public class DefaultKeycloakService implements KeycloakService {
-  private final Slugify slg = Slugify.builder().build();
+
   private final KeycloakAdminClient adminClient;
   private final KeycloakProperties keycloakProperties;
+  private final String rootClientId;
+  private final String rootClientSecret;
+  private final String rootRealm;
+
+  public DefaultKeycloakService(
+      KeycloakAdminClient adminClient, KeycloakProperties keycloakProperties) {
+    this.adminClient = adminClient;
+    this.keycloakProperties = keycloakProperties;
+    this.rootClientId = keycloakProperties.getClientId();
+    this.rootClientSecret = keycloakProperties.getClientSecret();
+    this.rootRealm = keycloakProperties.getRealm();
+  }
 
   @Override
   @Observed(name = "default-keycloak-service::token")
   public Mono<BearerTokenResponse> adminLogin() {
     KeycloakClientCredentials credentials =
         KeycloakClientCredentials.builder()
-            .clientId(keycloakProperties.getClientId())
-            .clientSecret(keycloakProperties.getClientSecret())
+            .clientId(rootClientId)
+            .clientSecret(rootClientSecret)
             .build();
-    return adminClient.clientLogin(keycloakProperties.getRealm(), credentials);
+    return adminClient.clientLogin(rootRealm, credentials);
   }
 
   @Override
@@ -68,10 +77,10 @@ public class DefaultKeycloakService implements KeycloakService {
     KeycloakIntrospection introspection =
         KeycloakIntrospection.builder()
             .token(token)
-            .clientId(keycloakProperties.getClientId())
-            .clientSecret(keycloakProperties.getClientSecret())
+            .clientId(rootClientId)
+            .clientSecret(rootClientSecret)
             .build();
-    return adminClient.introspect(keycloakProperties.getRealm(), introspection);
+    return adminClient.introspect(rootRealm, introspection);
   }
 
   @Override
@@ -79,7 +88,7 @@ public class DefaultKeycloakService implements KeycloakService {
   public Mono<BearerTokenResponse> clientLogin(String clientId, String clientSecret) {
     KeycloakClientCredentials credentials =
         KeycloakClientCredentials.builder().clientId(clientId).clientSecret(clientSecret).build();
-    return adminClient.clientLogin(keycloakProperties.getRealm(), credentials);
+    return adminClient.clientLogin(rootRealm, credentials);
   }
 
   @Override
@@ -90,41 +99,23 @@ public class DefaultKeycloakService implements KeycloakService {
             .password(password)
             .clientId(keycloakProperties.getAdminClientId())
             .build();
-    return adminClient.userLogin(keycloakProperties.getRealm(), credentials);
+    return adminClient.userLogin(rootRealm, credentials);
   }
 
   @Override
   @Observed(name = "default-keycloak-service::create-client")
-  public Mono<Optional<String>> createClient(
-      String name, String description, String clientId, String clientSecret) {
+  public Mono<Optional<String>> createClient(KeycloakClientRepresentation client) {
     return adminLogin()
-        .flatMap(
-            tokenResponse -> {
-              KeycloakClientRepresentation clientRepresentation =
-                  KeycloakClientRepresentation.builder()
-                      .clientId(clientId)
-                      .secret(clientSecret)
-                      .name(name)
-                      .description(description)
-                      .serviceAccountsEnabled(Boolean.TRUE)
-                      .build();
-              log.debug("create keycloak client {}", clientId);
-              return adminClient
-                  .createClient(
-                      JwtTool.toBearer(tokenResponse),
-                      keycloakProperties.getRealm(),
-                      clientRepresentation)
-                  .map(response -> handleKeycloakResponse(clientId, response));
-            });
+        .map(JwtTool::toBearer)
+        .flatMap(auth -> adminClient.createClient(auth, rootRealm, client))
+        .map(response -> handleKeycloakResponse(client.getClientId(), response));
   }
 
   @Override
   public Mono<Optional<String>> createGroup(KeycloakGroupRepresentation group) {
     return adminLogin()
-        .flatMap(
-            token ->
-                adminClient.createGroup(
-                    JwtTool.toBearer(token), keycloakProperties.getRealm(), group))
+        .map(JwtTool::toBearer)
+        .flatMap(auth -> adminClient.createGroup(auth, rootRealm, group))
         .map(response -> handleKeycloakResponse(group.getName(), response));
   }
 
@@ -137,16 +128,35 @@ public class DefaultKeycloakService implements KeycloakService {
       String username,
       String password) {
     return clientLogin(clientId, clientSecret)
+        .map(JwtTool::toBearer)
         .flatMap(
-            tokenResponse -> {
-              KeycloakUserRepresentation userRepresentation =
-                  getUserRepresentation(createEvent, username, password);
-              return adminClient.createUser(
-                  JwtTool.toBearer(tokenResponse),
-                  keycloakProperties.getRealm(),
-                  userRepresentation);
-            })
+            auth ->
+                adminClient.createUser(
+                    auth, rootRealm, getUserRepresentation(createEvent, username, password)))
         .map(response -> handleKeycloakResponse(username, response));
+  }
+
+  @Override
+  public Mono<KeycloakUserRepresentation> findUserByUsername(String username) {
+    return adminLogin()
+        .map(JwtTool::toBearer)
+        .flatMapMany(auth -> adminClient.findUserByUsername(auth, rootRealm, username))
+        .single();
+  }
+
+  @Override
+  public Mono<KeycloakGroupRepresentation> findGroupByPath(String path) {
+    return adminLogin()
+        .map(JwtTool::toBearer)
+        .flatMap(auth -> adminClient.findGroupByPath(auth, rootRealm, path));
+  }
+
+  @Override
+  public Mono<Optional<String>> attachUserToGroup(String userId, String groupId) {
+    return adminLogin()
+        .map(JwtTool::toBearer)
+        .flatMap(auth -> adminClient.addUserToGroup(auth, rootRealm, userId, groupId))
+        .map(response -> handleKeycloakResponse(userId, response));
   }
 
   private static Optional<String> handleKeycloakResponse(

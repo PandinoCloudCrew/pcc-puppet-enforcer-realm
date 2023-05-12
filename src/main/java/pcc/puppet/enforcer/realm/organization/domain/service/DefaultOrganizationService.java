@@ -62,13 +62,12 @@ public class DefaultOrganizationService implements OrganizationService {
     organization.setId(DomainFactory.id());
     KeycloakClientRepresentation client = getKeycloakClientRepresentation(organization);
     return keycloakService
-        .createClient(
-            client.getName(), client.getDescription(), client.getClientId(), client.getSecret())
+        .createClient(client)
         .flatMap(created -> secretService.createClientSecret(organization.getId(), client))
         .flatMap(credentials -> saveContactInformation(requester, createCommand, organization))
         .flatMap(contactInformation -> saveOrganization(organization, contactInformation))
         .flatMap(this::createGroup)
-        //        .flatMap(this::linkServiceAccountToGroup)
+        .flatMap(this::linkServiceAccountToGroup)
         .map(inputMapper::domainToEvent);
   }
 
@@ -80,8 +79,14 @@ public class DefaultOrganizationService implements OrganizationService {
 
   @Observed(name = "default-organization-service::link-service-account-to-group")
   private Mono<Organization> linkServiceAccountToGroup(Organization organization) {
-    KeycloakGroupRepresentation group = keycloakService.groupFromOrganization(organization);
-    return keycloakService.createGroup(group).map(response -> organization);
+    String username = "service-account-" + organization.getId();
+    return keycloakService
+        .findUserByUsername(username)
+        .zipWith(keycloakService.findGroupByPath(organization.getId()))
+        .flatMap(
+            tuple ->
+                keycloakService.attachUserToGroup(tuple.getT1().getId(), tuple.getT2().getId()))
+        .map(response -> organization);
   }
 
   @Observed(name = "default-organization-service::save-contact-information")
