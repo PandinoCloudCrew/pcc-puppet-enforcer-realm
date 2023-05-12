@@ -139,6 +139,26 @@ public interface KeycloakAdminClient {
     return createGroup(USER_AGENT, authorization, realm, request);
   }
 
+  @PostExchange(
+      value = "/admin/realms/{realm}/groups/{parentGroupId}/children",
+      contentType = MediaType.APPLICATION_JSON_VALUE,
+      accept = MediaType.APPLICATION_JSON_VALUE)
+  Mono<ResponseEntity<Void>> createChildGroup(
+      @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+      @RequestHeader(AUTHORIZATION) String authorization,
+      @NotNull @PathVariable String realm,
+      @NotNull @PathVariable String parentGroupId,
+      @Valid @RequestBody KeycloakGroupRepresentation request);
+
+  @Observed(name = "keycloak-admin-client::create-child-group")
+  default Mono<ResponseEntity<Void>> createChildGroup(
+      @NotNull String authorization,
+      @NotNull String realm,
+      @NotNull String parentGroupId,
+      @NotNull @Valid KeycloakGroupRepresentation request) {
+    return createChildGroup(USER_AGENT, authorization, realm, parentGroupId, request);
+  }
+
   @GetExchange(value = "/admin/realms/{realm}/users", accept = MediaType.APPLICATION_JSON_VALUE)
   Flux<KeycloakUserRepresentation> findUserByUsername(
       @NotNull @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,

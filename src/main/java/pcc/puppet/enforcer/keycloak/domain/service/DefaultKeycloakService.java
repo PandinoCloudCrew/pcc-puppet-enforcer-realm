@@ -120,6 +120,15 @@ public class DefaultKeycloakService implements KeycloakService {
   }
 
   @Override
+  public Mono<Optional<String>> createChildGroup(
+      String parentGroupId, KeycloakGroupRepresentation group) {
+    return adminLogin()
+        .map(JwtTool::toBearer)
+        .flatMap(auth -> adminClient.createChildGroup(auth, rootRealm, parentGroupId, group))
+        .map(response -> handleKeycloakResponse(group.getName(), response));
+  }
+
+  @Override
   @Observed(name = "default-keycloak-service::create-user")
   public Mono<Optional<String>> createUser(
       String clientId,

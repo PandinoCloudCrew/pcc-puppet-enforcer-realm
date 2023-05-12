@@ -21,6 +21,8 @@ import io.micrometer.tracing.annotation.SpanTag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import pcc.puppet.enforcer.keycloak.domain.KeycloakGroupRepresentation;
+import pcc.puppet.enforcer.keycloak.domain.service.KeycloakService;
 import pcc.puppet.enforcer.realm.common.contact.domain.service.ContactInformationService;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import pcc.puppet.enforcer.realm.department.adapters.mapper.DepartmentOutputMapper;
@@ -41,6 +43,7 @@ public class DefaultDepartmentService implements DepartmentService {
   private final DepartmentInputMapper inputMapper;
   private final DepartmentRepository repository;
   private final ContactInformationService contactInformationService;
+  private final KeycloakService keycloakService;
 
   @Override
   @Observed(name = "default-department-service::create")
@@ -50,12 +53,21 @@ public class DefaultDepartmentService implements DepartmentService {
     department.setId(DomainFactory.id());
     return contactInformationService
         .save(requester, department.getId(), createCommand.getContactId())
-        .flatMap(
-            contactInformation -> {
-              department.setContactId(contactInformation);
-              return repository.save(department);
-            })
+        .map(department::setContact)
+        .flatMap(repository::save)
+        .flatMap(this::createGroup)
         .map(outputMapper::domainToEvent);
+  }
+
+  @Observed(name = "default-department-service::create-group")
+  private Mono<Department> createGroup(Department department) {
+    return keycloakService
+        .findGroupByPath(department.getOrganizationId())
+        .flatMap(
+            group ->
+                keycloakService.createChildGroup(
+                    group.getId(), KeycloakGroupRepresentation.fromDepartment(department)))
+        .map(response -> department);
   }
 
   @Override
@@ -64,16 +76,9 @@ public class DefaultDepartmentService implements DepartmentService {
       @SpanTag String requester, @SpanTag String departmentId) {
     return contactInformationService
         .findByOwnerId(departmentId)
-        .flatMap(
-            contactInformation ->
-                repository
-                    .findById(departmentId)
-                    .map(
-                        department -> {
-                          department.setContactId(contactInformation);
-                          return department;
-                        })
-                    .map(outputMapper::domainToPresenter));
+        .zipWith(repository.findById(departmentId))
+        .map(tuple -> tuple.getT2().setContact(tuple.getT1()))
+        .map(outputMapper::domainToPresenter);
   }
 
   @Override

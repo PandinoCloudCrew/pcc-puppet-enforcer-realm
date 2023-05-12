@@ -16,11 +16,14 @@
 
 package pcc.puppet.enforcer.keycloak.domain;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Singular;
 import lombok.extern.jackson.Jacksonized;
+import pcc.puppet.enforcer.realm.department.domain.Department;
+import pcc.puppet.enforcer.realm.organization.domain.Organization;
 
 @Data
 @Builder
@@ -30,6 +33,69 @@ public class KeycloakGroupRepresentation {
   private String id;
   private String name;
   private String path;
-  @Singular private Map<String, String[]> attributes;
+  private Map<String, String[]> attributes;
   private KeycloakGroupRepresentation[] subGroups;
+
+  @Data
+  @Builder
+  @Jacksonized
+  public static class Attributes {
+    private String id;
+    private String type;
+    private String name;
+    private String parentId;
+    private String country;
+    private String city;
+    private String createdBy;
+    private String createdAt;
+
+    public Map<String, String[]> toMap() {
+      Map<String, String[]> attributes = new HashMap<>();
+      attributes.put("id", new String[] {id});
+      attributes.put("type", new String[] {type});
+      attributes.put("name", new String[] {name});
+      attributes.put("parentId", new String[] {parentId});
+      attributes.put("country", new String[] {country});
+      attributes.put("city", new String[] {city});
+      attributes.put("createdBy", new String[] {createdBy});
+      attributes.put("createdAt", new String[] {createdAt});
+      return attributes;
+    }
+  }
+
+  public static KeycloakGroupRepresentation fromOrganization(Organization organization) {
+    return KeycloakGroupRepresentation.builder()
+        .name(organization.getId())
+        .path(organization.getId())
+        .attributes(
+            Attributes.builder()
+                .id(organization.getId())
+                .name(organization.getName())
+                .type("ORGANIZATION")
+                .parentId(Optional.ofNullable(organization.getParentId()).orElse(""))
+                .country(organization.getCountry())
+                .city(organization.getCity())
+                .createdAt(organization.getCreatedAt().toString())
+                .createdBy(organization.getCreatedBy())
+                .build()
+                .toMap())
+        .build();
+  }
+
+  public static KeycloakGroupRepresentation fromDepartment(Department department) {
+    return KeycloakGroupRepresentation.builder()
+        .name(department.getId())
+        .path(department.getId())
+        .attributes(
+            Attributes.builder()
+                .id(department.getId())
+                .name(department.getName())
+                .type("DEPARTMENT")
+                .parentId(Optional.ofNullable(department.getParentId()).orElse(""))
+                .createdAt(department.getCreatedAt().toString())
+                .createdBy(department.getCreatedBy())
+                .build()
+                .toMap())
+        .build();
+  }
 }
