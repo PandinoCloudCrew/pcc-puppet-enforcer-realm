@@ -73,8 +73,9 @@ public class DefaultOrganizationService implements OrganizationService {
 
   @Observed(name = "default-organization-service::create-group")
   private Mono<Organization> createGroup(Organization organization) {
-    KeycloakGroupRepresentation group = keycloakService.groupFromOrganization(organization);
-    return keycloakService.createGroup(group).map(response -> organization);
+    return keycloakService
+        .createGroup(KeycloakGroupRepresentation.fromOrganization(organization))
+        .map(response -> organization);
   }
 
   @Observed(name = "default-organization-service::link-service-account-to-group")
