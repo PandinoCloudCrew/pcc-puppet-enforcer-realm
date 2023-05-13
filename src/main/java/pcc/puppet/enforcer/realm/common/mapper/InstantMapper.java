@@ -23,8 +23,7 @@ import pcc.puppet.enforcer.realm.common.format.DateFormat;
 
 @Generated(
     value = "pcc.puppet.enforcer.realm.common.mapper.InstantMapper",
-    date = "2023-05-12T20:17:02-0500"
-)
+    date = "2023-05-12T20:17:02-0500")
 public class InstantMapper {
 
   public String asString(Instant timestamp) {

@@ -38,8 +38,6 @@ import pcc.puppet.enforcer.keycloak.domain.BearerTokenResponse;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientCredentials;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakGroupRepresentation;
-import pcc.puppet.enforcer.keycloak.domain.KeycloakIntrospection;
-import pcc.puppet.enforcer.keycloak.domain.KeycloakTokenDetails;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakUserCredentials;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakUserRepresentation;
 import reactor.core.publisher.Flux;
@@ -68,21 +66,6 @@ public interface KeycloakAdminClient {
   default Mono<BearerTokenResponse> userLogin(
       @NotNull String realm, @NotNull @Valid KeycloakUserCredentials credentials) {
     return token(USER_AGENT, realm, credentials.toFormData());
-  }
-
-  @PostExchange(
-      value = "/realms/{realm}/protocol/openid-connect/token/introspect",
-      contentType = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-      accept = MediaType.APPLICATION_JSON_VALUE)
-  Mono<KeycloakTokenDetails> introspect(
-      @NotNull @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
-      @NotNull @PathVariable String realm,
-      @NotNull @Valid @RequestBody MultiValueMap<String, String> introspection);
-
-  @Observed(name = "keycloak-admin-client::introspect")
-  default Mono<KeycloakTokenDetails> introspect(
-      @NotNull String realm, @NotNull @Valid KeycloakIntrospection introspection) {
-    return introspect(USER_AGENT, realm, introspection.toFormData());
   }
 
   @PostExchange(

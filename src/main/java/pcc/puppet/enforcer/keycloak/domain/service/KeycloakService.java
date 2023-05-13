@@ -20,7 +20,6 @@ import java.util.Optional;
 import pcc.puppet.enforcer.keycloak.domain.BearerTokenResponse;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakGroupRepresentation;
-import pcc.puppet.enforcer.keycloak.domain.KeycloakTokenDetails;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakUserRepresentation;
 import reactor.core.publisher.Mono;
 
@@ -30,8 +29,6 @@ public interface KeycloakService {
   Mono<BearerTokenResponse> clientLogin(String clientId, String clientSecret);
 
   Mono<BearerTokenResponse> userLogin(String username, String password);
-
-  Mono<KeycloakTokenDetails> introspect(String token);
 
   Mono<Optional<String>> createClient(KeycloakClientRepresentation client);
 

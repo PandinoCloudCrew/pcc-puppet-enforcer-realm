@@ -27,8 +27,6 @@ import pcc.puppet.enforcer.keycloak.domain.BearerTokenResponse;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientCredentials;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakGroupRepresentation;
-import pcc.puppet.enforcer.keycloak.domain.KeycloakIntrospection;
-import pcc.puppet.enforcer.keycloak.domain.KeycloakTokenDetails;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakUserCredentials;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakUserRepresentation;
 import pcc.puppet.enforcer.keycloak.ports.configuration.KeycloakProperties;
@@ -64,18 +62,6 @@ public class DefaultKeycloakService implements KeycloakService {
             .clientSecret(rootClientSecret)
             .build();
     return adminClient.clientLogin(rootRealm, credentials);
-  }
-
-  @Override
-  @Observed(name = "default-keycloak-service::introspect")
-  public Mono<KeycloakTokenDetails> introspect(String token) {
-    KeycloakIntrospection introspection =
-        KeycloakIntrospection.builder()
-            .token(token)
-            .clientId(rootClientId)
-            .clientSecret(rootClientSecret)
-            .build();
-    return adminClient.introspect(rootRealm, introspection);
   }
 
   @Override
