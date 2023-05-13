@@ -90,7 +90,7 @@ public class DefaultConsumerPassportService implements ConsumerPassportService {
                       memberCreateEvent -> {
                         consumerPassportEvent.setMemberId(memberCreateEvent.getId());
                         consumerPassportEvent.setUsername(memberCreateEvent.getUsername());
-                        return consumerPassportEvent;
+                        return consumerPassportEvent.member(memberCreateEvent);
                       })
                   .flatMap(
                       passportCreated ->

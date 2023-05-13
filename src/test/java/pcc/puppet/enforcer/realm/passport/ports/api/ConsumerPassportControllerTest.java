@@ -16,6 +16,7 @@
 
 package pcc.puppet.enforcer.realm.passport.ports.api;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static pcc.puppet.enforcer.realm.TestDomainGenerator.REQUESTER_ID;
 
@@ -75,5 +76,14 @@ class ConsumerPassportControllerTest {
     ConsumerPassportCreateEvent passportCreateEvent =
         client.createConsumerPassport(REQUESTER_ID, passportCreateCommand).block();
     assertNotNull(passportCreateEvent);
+    assertNotNull(passportCreateEvent.getUsername());
+    assertNotNull(passportCreateEvent.getMemberId());
+    assertNotNull(passportCreateEvent.getOrganization());
+    assertNotNull(passportCreateEvent.getDepartment());
+    assertNotNull(passportCreateEvent.getMember());
+    assertNotNull(passportCreateEvent.getAccessRefreshToken());
+
+    assertEquals(passportCreateCommand.getFirstName(), passportCreateEvent.getMember().getContactId().getFirstName());
+    assertEquals(passportCreateCommand.getLastName(), passportCreateEvent.getMember().getContactId().getLastName());
   }
 }
