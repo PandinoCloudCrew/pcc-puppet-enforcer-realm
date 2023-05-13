@@ -35,10 +35,13 @@ public class KeycloakGroupRepresentation {
 
   @PodamStrategyValue(ObjectIdStrategy.class)
   private String id;
+
   @PodamStrategyValue(CompanyNameStrategy.class)
   private String name;
+
   @PodamStrategyValue(ObjectIdStrategy.class)
   private String path;
+
   private Map<String, String[]> attributes;
   private KeycloakGroupRepresentation[] subGroups;
 
@@ -67,6 +70,7 @@ public class KeycloakGroupRepresentation {
       attributes.put("createdAt", new String[] {fromNull(createdAt)});
       return attributes;
     }
+
     private static String fromNull(String value) {
       return Optional.ofNullable(value).orElse("");
     }
