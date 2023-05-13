@@ -51,14 +51,14 @@ public class KeycloakGroupRepresentation {
 
     public Map<String, String[]> toMap() {
       Map<String, String[]> attributes = new HashMap<>();
-      attributes.put("id", new String[] {id});
-      attributes.put("type", new String[] {type});
-      attributes.put("name", new String[] {name});
-      attributes.put("parentId", new String[] {parentId});
-      attributes.put("country", new String[] {country});
-      attributes.put("city", new String[] {city});
-      attributes.put("createdBy", new String[] {createdBy});
-      attributes.put("createdAt", new String[] {createdAt});
+      attributes.put("id", new String[] {fromNull(id)});
+      attributes.put("type", new String[] {fromNull(type)});
+      attributes.put("name", new String[] {fromNull(name)});
+      attributes.put("parentId", new String[] {fromNull(parentId)});
+      attributes.put("country", new String[] {fromNull(country)});
+      attributes.put("city", new String[] {fromNull(city)});
+      attributes.put("createdBy", new String[] {fromNull(createdBy)});
+      attributes.put("createdAt", new String[] {fromNull(createdAt)});
       return attributes;
     }
   }
@@ -72,7 +72,7 @@ public class KeycloakGroupRepresentation {
                 .id(organization.getId())
                 .name(organization.getName())
                 .type("ORGANIZATION")
-                .parentId(Optional.ofNullable(organization.getParentId()).orElse(""))
+                .parentId(organization.getParentId())
                 .country(organization.getCountry())
                 .city(organization.getCity())
                 .createdAt(organization.getCreatedAt().toString())
@@ -80,6 +80,10 @@ public class KeycloakGroupRepresentation {
                 .build()
                 .toMap())
         .build();
+  }
+
+  private static String fromNull(String value) {
+    return Optional.ofNullable(value).orElse("");
   }
 
   public static KeycloakGroupRepresentation fromDepartment(Department department) {
@@ -91,7 +95,7 @@ public class KeycloakGroupRepresentation {
                 .id(department.getId())
                 .name(department.getName())
                 .type("DEPARTMENT")
-                .parentId(Optional.ofNullable(department.getParentId()).orElse(""))
+                .parentId(department.getParentId())
                 .createdAt(department.getCreatedAt().toString())
                 .createdBy(department.getCreatedBy())
                 .build()
