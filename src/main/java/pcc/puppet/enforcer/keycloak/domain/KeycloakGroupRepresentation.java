@@ -22,16 +22,22 @@ import java.util.Optional;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
+import pcc.puppet.enforcer.realm.common.generator.values.CompanyNameStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.ObjectIdStrategy;
 import pcc.puppet.enforcer.realm.department.domain.Department;
 import pcc.puppet.enforcer.realm.organization.domain.Organization;
+import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
 @Jacksonized
 public class KeycloakGroupRepresentation {
 
+  @PodamStrategyValue(ObjectIdStrategy.class)
   private String id;
+  @PodamStrategyValue(CompanyNameStrategy.class)
   private String name;
+  @PodamStrategyValue(ObjectIdStrategy.class)
   private String path;
   private Map<String, String[]> attributes;
   private KeycloakGroupRepresentation[] subGroups;
@@ -61,6 +67,9 @@ public class KeycloakGroupRepresentation {
       attributes.put("createdAt", new String[] {fromNull(createdAt)});
       return attributes;
     }
+    private static String fromNull(String value) {
+      return Optional.ofNullable(value).orElse("");
+    }
   }
 
   public static KeycloakGroupRepresentation fromOrganization(Organization organization) {
@@ -80,10 +89,6 @@ public class KeycloakGroupRepresentation {
                 .build()
                 .toMap())
         .build();
-  }
-
-  private static String fromNull(String value) {
-    return Optional.ofNullable(value).orElse("");
   }
 
   public static KeycloakGroupRepresentation fromDepartment(Department department) {
