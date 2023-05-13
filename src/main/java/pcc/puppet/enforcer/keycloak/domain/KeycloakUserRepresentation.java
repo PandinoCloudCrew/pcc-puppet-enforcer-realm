@@ -23,6 +23,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Singular;
 import lombok.extern.jackson.Jacksonized;
+import pcc.puppet.enforcer.realm.member.domain.Member;
 
 @Data
 @Builder
@@ -42,4 +43,42 @@ public class KeycloakUserRepresentation {
   private Map<String, String> access;
   private List<KeycloakCredentialRepresentation> credentials;
   private Instant createdTimestamp;
+
+  public static KeycloakUserRepresentation fromMember(Member member) {
+    return KeycloakUserRepresentation.builder()
+        .firstName(member.getContactId().getFirstName())
+        .lastName(member.getContactId().getLastName())
+        .email(member.getContactId().getEmail())
+        .username(member.getUsername())
+        .credentials(
+            List.of(
+                KeycloakCredentialRepresentation.builder()
+                    .type("password")
+                    .temporary(false)
+                    .value(member.getPassword())
+                    .build()))
+        .emailVerified(true)
+        .enabled(true)
+        .attributes(
+            KeycloakUserInfoRepresentation.builder()
+                .website(member.getId())
+                .phoneNumber(member.getContactId().getPhoneNumber())
+                .phoneNumberVerified(true)
+                .email(member.getContactId().getEmail())
+                .emailVerified(true)
+                .locale(member.getContactId().getLocale())
+                .zoneinfo(member.getContactId().getZoneId())
+                .address(
+                    KeycloakAddressClaimSetRepresentation.builder()
+                        .locality(member.getContactId().getCity())
+                        .country(member.getContactId().getCountry())
+                        .build())
+                .build()
+                .asAttributes())
+        .attribute("memberId", member.getId())
+        .attribute("organizationId", member.getOrganizationId())
+        .attribute("departmentId", member.getDepartmentId())
+        .attribute("currency", member.getContactId().getCurrency())
+        .build();
+  }
 }

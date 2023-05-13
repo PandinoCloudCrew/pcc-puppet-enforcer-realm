@@ -22,7 +22,6 @@ import pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakGroupRepresentation;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakTokenDetails;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakUserRepresentation;
-import pcc.puppet.enforcer.realm.passport.ports.event.ConsumerPassportCreateEvent;
 import reactor.core.publisher.Mono;
 
 public interface KeycloakService {
@@ -41,15 +40,14 @@ public interface KeycloakService {
   Mono<Optional<String>> createChildGroup(String parentGroupId, KeycloakGroupRepresentation group);
 
   Mono<Optional<String>> createUser(
-      String clientId,
-      String clientSecret,
-      ConsumerPassportCreateEvent createEvent,
-      String username,
-      String password);
+      String clientId, String clientSecret, KeycloakUserRepresentation userRepresentation);
 
   Mono<KeycloakUserRepresentation> findUserByUsername(String username);
 
   Mono<KeycloakGroupRepresentation> findGroupByPath(String path);
+
+  Mono<KeycloakGroupRepresentation> findChildGroupByPath(
+      String organizationId, String departmentId);
 
   Mono<Optional<String>> attachUserToGroup(String userId, String groupId);
 }

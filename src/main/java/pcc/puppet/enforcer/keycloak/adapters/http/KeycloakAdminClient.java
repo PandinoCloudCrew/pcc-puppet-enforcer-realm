@@ -187,6 +187,25 @@ public interface KeycloakAdminClient {
     return findGroupByPath(USER_AGENT, authorization, realm, groupPath);
   }
 
+  @GetExchange(
+      value = "/admin/realms/{realm}/group-by-path/{organizationId}/{departmentId}",
+      accept = MediaType.APPLICATION_JSON_VALUE)
+  Mono<KeycloakGroupRepresentation> findChildGroupByPath(
+      @NotNull @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+      @NotNull @RequestHeader(AUTHORIZATION) String authorization,
+      @NotNull @PathVariable String realm,
+      @NotNull @PathVariable String organizationId,
+      @NotNull @PathVariable String departmentId);
+
+  @Observed(name = "keycloak-admin-client::find-child-group-by-path")
+  default Mono<KeycloakGroupRepresentation> findChildGroupByPath(
+      @NotNull String authorization,
+      @NotNull String realm,
+      @NotNull String organizationId,
+      @NotNull String departmentId) {
+    return findChildGroupByPath(USER_AGENT, authorization, realm, organizationId, departmentId);
+  }
+
   @PutExchange(
       value = "/admin/realms/{realm}/users/{userId}/groups/{groupId}",
       accept = MediaType.APPLICATION_JSON_VALUE)

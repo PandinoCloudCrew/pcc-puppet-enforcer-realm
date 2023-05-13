@@ -21,6 +21,8 @@ import io.micrometer.tracing.annotation.SpanTag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import pcc.puppet.enforcer.keycloak.domain.KeycloakUserRepresentation;
+import pcc.puppet.enforcer.keycloak.domain.service.KeycloakService;
 import pcc.puppet.enforcer.realm.common.contact.domain.service.ContactInformationService;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import pcc.puppet.enforcer.realm.member.adapters.mapper.MemberOutputMapper;
@@ -30,6 +32,8 @@ import pcc.puppet.enforcer.realm.member.domain.Member;
 import pcc.puppet.enforcer.realm.member.ports.command.MemberCreateCommand;
 import pcc.puppet.enforcer.realm.member.ports.event.MemberCreateEvent;
 import pcc.puppet.enforcer.realm.member.ports.mapper.MemberInputMapper;
+import pcc.puppet.enforcer.realm.organization.domain.OrganizationCredentials;
+import pcc.puppet.enforcer.vault.domain.KVSecretService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -42,6 +46,8 @@ public class DefaultMemberService implements MemberService {
   private final MemberOutputMapper outputMapper;
   private final MemberInputMapper inputMapper;
   private final ContactInformationService contactInformationService;
+  private final KeycloakService keycloakService;
+  private final KVSecretService secretService;
 
   @Override
   @Observed(name = "default-member-service::create")
@@ -51,12 +57,35 @@ public class DefaultMemberService implements MemberService {
     member.setId(DomainFactory.id());
     return contactInformationService
         .save(requester, member.getId(), createCommand.getContactId())
-        .flatMap(
-            contactInformation -> {
-              member.setContactId(contactInformation);
-              return repository.save(member);
-            })
+        .map(member::setContact)
+        .flatMap(repository::save)
+        .zipWith(secretService.getCredentials(member.getOrganizationId()))
+        .flatMap(tuple -> createUser(tuple.getT1(), tuple.getT2()))
+        .flatMap(this::linkMemberToGroup)
         .map(inputMapper::domainToEvent);
+  }
+
+  @Observed(name = "default-member-service::create-user")
+  private Mono<Member> createUser(Member member, OrganizationCredentials credentials) {
+    return keycloakService
+        .createUser(
+            credentials.getClientId(),
+            credentials.getClientSecret(),
+            KeycloakUserRepresentation.fromMember(member))
+        .map(response -> member);
+  }
+
+  @Observed(name = "default-member-service::link-member-to-group")
+  private Mono<Member> linkMemberToGroup(Member member) {
+    return keycloakService
+        .findUserByUsername(member.getUsername())
+        .zipWith(
+            keycloakService.findChildGroupByPath(
+                member.getOrganizationId(), member.getDepartmentId()))
+        .flatMap(
+            tuple ->
+                keycloakService.attachUserToGroup(tuple.getT1().getId(), tuple.getT2().getId()))
+        .map(response -> member);
   }
 
   @Override
@@ -64,16 +93,9 @@ public class DefaultMemberService implements MemberService {
   public Mono<MemberPresenter> findById(@SpanTag String requester, @SpanTag String memberId) {
     return contactInformationService
         .findByOwnerId(memberId)
-        .flatMap(
-            contactInformation ->
-                repository
-                    .findById(memberId)
-                    .map(
-                        member -> {
-                          member.setContactId(contactInformation);
-                          return member;
-                        })
-                    .map(outputMapper::domainToPresenter));
+        .zipWith(repository.findById(memberId))
+        .map(tuple -> tuple.getT2().setContact(tuple.getT1()))
+        .map(outputMapper::domainToPresenter);
   }
 
   @Override
