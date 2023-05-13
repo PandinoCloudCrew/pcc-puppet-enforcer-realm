@@ -18,9 +18,14 @@ package pcc.puppet.enforcer.realm.common.generator;
 
 import com.github.f4b6a3.ulid.Ulid;
 import lombok.experimental.UtilityClass;
+import pcc.puppet.enforcer.keycloak.domain.KeycloakGroupRepresentation;
+import pcc.puppet.enforcer.keycloak.domain.KeycloakGroupRepresentation.Attributes;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakTokenDetails;
+import pcc.puppet.enforcer.keycloak.domain.KeycloakUserRepresentation;
 import pcc.puppet.enforcer.realm.department.ports.command.DepartmentCreateCommand;
+import pcc.puppet.enforcer.realm.member.domain.Member;
 import pcc.puppet.enforcer.realm.member.ports.command.MemberCreateCommand;
+import pcc.puppet.enforcer.realm.organization.domain.Organization;
 import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
 import pcc.puppet.enforcer.realm.passport.ports.command.ConsumerPassportCreateCommand;
 import uk.co.jemos.podam.api.PodamFactory;
@@ -53,6 +58,18 @@ public class DomainFactory {
 
   public KeycloakTokenDetails keycloakTokenDetails() {
     return getPojoWithFullData(KeycloakTokenDetails.class);
+  }
+  public KeycloakUserRepresentation keycloakUserRepresentation() {
+    Member member = getPojoWithFullData(Member.class);
+    KeycloakUserRepresentation user = KeycloakUserRepresentation.fromMember(member);
+    user.setId(member.getId());
+    return user;
+  }
+  public KeycloakGroupRepresentation keycloakGroupRepresentation() {
+    Organization organization = getPojoWithFullData(Organization.class);
+    KeycloakGroupRepresentation group = KeycloakGroupRepresentation.fromOrganization(organization);
+    group.setId(organization.getId());
+    return group;
   }
 
   private <T> T getPojoWithFullData(Class<T> classType) {

@@ -32,27 +32,37 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import pcc.puppet.enforcer.realm.common.contact.domain.ContactInformation;
+import pcc.puppet.enforcer.realm.common.generator.values.ObjectIdStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.PasswordStrategy;
+import pcc.puppet.enforcer.realm.common.generator.values.UsernameStrategy;
+import uk.co.jemos.podam.common.PodamStrategyValue;
 
 @Data
 @Builder
 @Document
 @Jacksonized
 public class Member {
-  @Id private String id;
+  @Id
+  @PodamStrategyValue(ObjectIdStrategy.class)
+  private String id;
 
   @NotNull
   @Indexed(background = true)
+  @PodamStrategyValue(ObjectIdStrategy.class)
   private String organizationId;
 
   @NotNull
   @Indexed(background = true)
+  @PodamStrategyValue(ObjectIdStrategy.class)
   private String departmentId;
 
   @NotNull
   @Indexed(background = true)
+  @PodamStrategyValue(UsernameStrategy.class)
   private String username;
 
-  @NotNull private String password;
+  @NotNull
+  @PodamStrategyValue(PasswordStrategy.class) private String password;
 
   @NotNull @DocumentReference private ContactInformation contactId;
 
