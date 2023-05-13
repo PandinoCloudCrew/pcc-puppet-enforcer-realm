@@ -18,16 +18,17 @@ package pcc.puppet.enforcer.realm.common.mapper;
 
 import java.time.Instant;
 import java.util.Objects;
+import javax.annotation.processing.Generated;
 import pcc.puppet.enforcer.realm.common.format.DateFormat;
 
+@Generated(
+    value = "pcc.puppet.enforcer.realm.common.mapper.InstantMapper",
+    date = "2023-05-12T20:17:02-0500"
+)
 public class InstantMapper {
 
   public String asString(Instant timestamp) {
     if (Objects.isNull(timestamp)) return null;
     return DateFormat.FORMATTER.format(timestamp);
-  }
-
-  public Instant asInstant(String timestamp) {
-    return Instant.from(DateFormat.FORMATTER.parse(timestamp));
   }
 }
