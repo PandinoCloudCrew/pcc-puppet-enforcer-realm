@@ -35,14 +35,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.service.annotation.GetExchange;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakGroupRepresentation;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakTokenDetails;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakUserRepresentation;
 import pcc.puppet.enforcer.realm.common.generator.DomainFactory;
 import pcc.puppet.enforcer.realm.common.util.JwtTool;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Profile("test")
@@ -93,9 +91,7 @@ public class KeycloakController {
     return Mono.just(Optional.of(request.getDescription()));
   }
 
-  @PostMapping(
-      value = "/admin/realms/{realm}/groups",
-      consumes = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping(value = "/admin/realms/{realm}/groups", consumes = MediaType.APPLICATION_JSON_VALUE)
   public Mono<ResponseEntity<Void>> createGroup(
       @NotNull @RequestHeader(AUTHORIZATION) String authorization,
       @NotNull @PathVariable String realm,
@@ -125,17 +121,16 @@ public class KeycloakController {
     return Mono.just(ResponseEntity.ok().build());
   }
 
-  @GetMapping(
-      value = "/admin/realms/{realm}/users",
-      produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/admin/realms/{realm}/users", produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<ResponseEntity<KeycloakUserRepresentation>> findUserByUsername(
       @NotNull @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
       @NotNull @RequestHeader(AUTHORIZATION) String authorization,
       @NotNull @PathVariable String realm,
       @NotNull @RequestParam String username) {
-     return Mono.just(ResponseEntity.ok()
-         .header("X-Served-By", "findUserByUsername")
-         .body(DomainFactory.keycloakUserRepresentation()));
+    return Mono.just(
+        ResponseEntity.ok()
+            .header("X-Served-By", "findUserByUsername")
+            .body(DomainFactory.keycloakUserRepresentation()));
   }
 
   @GetMapping(

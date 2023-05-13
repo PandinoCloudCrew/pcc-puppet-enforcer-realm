@@ -62,7 +62,8 @@ public class Member {
   private String username;
 
   @NotNull
-  @PodamStrategyValue(PasswordStrategy.class) private String password;
+  @PodamStrategyValue(PasswordStrategy.class)
+  private String password;
 
   @NotNull @DocumentReference private ContactInformation contactId;
 

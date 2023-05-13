@@ -29,7 +29,6 @@ import pcc.puppet.enforcer.realm.department.adapters.http.DepartmentClient;
 import pcc.puppet.enforcer.realm.department.ports.command.DepartmentCreateCommand;
 import pcc.puppet.enforcer.realm.department.ports.event.DepartmentCreateEvent;
 import pcc.puppet.enforcer.realm.member.adapters.http.MemberClient;
-import pcc.puppet.enforcer.realm.member.domain.Member;
 import pcc.puppet.enforcer.realm.member.ports.command.MemberCreateCommand;
 import pcc.puppet.enforcer.realm.member.ports.event.MemberCreateEvent;
 import pcc.puppet.enforcer.realm.organization.adapters.http.OrganizationClient;
@@ -87,11 +86,12 @@ public class DefaultConsumerPassportService implements ConsumerPassportService {
                               passportCommand,
                               createContactInformationCommand))
                   .doOnError(throwable -> log.error("error creating member", throwable))
-                  .map(memberCreateEvent -> {
-                    consumerPassportEvent.setMemberId(memberCreateEvent.getId());
-                    consumerPassportEvent.setUsername(memberCreateEvent.getUsername());
-                    return consumerPassportEvent;
-                  })
+                  .map(
+                      memberCreateEvent -> {
+                        consumerPassportEvent.setMemberId(memberCreateEvent.getId());
+                        consumerPassportEvent.setUsername(memberCreateEvent.getUsername());
+                        return consumerPassportEvent;
+                      })
                   .flatMap(
                       passportCreated ->
                           keycloakService.userLogin(
