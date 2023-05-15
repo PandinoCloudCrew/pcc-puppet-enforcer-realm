@@ -83,7 +83,11 @@ class ConsumerPassportControllerTest {
     assertNotNull(passportCreateEvent.getMember());
     assertNotNull(passportCreateEvent.getAccessRefreshToken());
 
-    assertEquals(passportCreateCommand.getFirstName(), passportCreateEvent.getMember().getContactId().getFirstName());
-    assertEquals(passportCreateCommand.getLastName(), passportCreateEvent.getMember().getContactId().getLastName());
+    assertEquals(
+        passportCreateCommand.getFirstName(),
+        passportCreateEvent.getMember().getContactId().getFirstName());
+    assertEquals(
+        passportCreateCommand.getLastName(),
+        passportCreateEvent.getMember().getContactId().getLastName());
   }
 }
