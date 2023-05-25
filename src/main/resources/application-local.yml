@@ -57,9 +57,18 @@ management:
       probability: 1.0
     propagation:
       type: w3c
-  zipkin:
+  otlp:
     tracing:
-      endpoint: ${zipkin-url}
+      endpoint: http://mbp.lan:4318/v1/traces
+      headers:
+        track-id: track-id
+        X-Org-Id: X-Org-Id
+        X-Dept-Id: X-Dept-Id
+        X-Member-Id: X-Member-Id
+    metrics:
+      export:
+        enabled: true
+        url: http://mbp.lan:4318/v1/metrics
 
 provider:
   keycloak:
