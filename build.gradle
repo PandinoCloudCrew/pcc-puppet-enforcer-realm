@@ -69,6 +69,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-reactor-resilience4j")
     implementation("org.springframework.cloud:spring-cloud-starter-vault-config")
+    implementation("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
     implementation("org.passay:passay:$passayVersion")
     implementation("org.mapstruct:mapstruct:$mapstructProcessorVersion")
     implementation("net.datafaker:datafaker:$datafakerVersion")

@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.jackson.Jacksonized;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -28,6 +29,7 @@ import org.springframework.util.MultiValueMap;
 @Builder
 @Jacksonized
 @JsonIgnoreProperties(ignoreUnknown = true)
+@EqualsAndHashCode
 public class KeycloakClientCredentials {
 
   @Builder.Default

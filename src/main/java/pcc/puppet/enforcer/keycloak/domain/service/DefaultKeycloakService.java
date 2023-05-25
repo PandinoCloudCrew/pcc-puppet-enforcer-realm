@@ -16,7 +16,10 @@
 
 package pcc.puppet.enforcer.keycloak.domain.service;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import io.micrometer.observation.annotation.Observed;
+import java.time.Duration;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
@@ -37,6 +40,7 @@ import reactor.core.publisher.Mono;
 @Service
 @CacheConfig
 public class DefaultKeycloakService implements KeycloakService {
+  private final LoadingCache<KeycloakClientCredentials, BearerTokenResponse> availableAdminToken;
 
   private final KeycloakAdminClient adminClient;
   private final KeycloakProperties keycloakProperties;
@@ -51,17 +55,41 @@ public class DefaultKeycloakService implements KeycloakService {
     this.rootClientId = keycloakProperties.getClientId();
     this.rootClientSecret = keycloakProperties.getClientSecret();
     this.rootRealm = keycloakProperties.getRealm();
+    this.availableAdminToken =
+        Caffeine.newBuilder()
+            .maximumSize(10)
+            .expireAfterWrite(Duration.ofMinutes(3))
+            .refreshAfterWrite(Duration.ofMinutes(2))
+            .build(key -> adminTokenCache(adminCredentials()));
+  }
+
+  private KeycloakClientCredentials adminCredentials() {
+    return KeycloakClientCredentials.builder()
+        .clientId(rootClientId)
+        .clientSecret(rootClientSecret)
+        .build();
+  }
+
+  private BearerTokenResponse adminTokenCache(KeycloakClientCredentials credentials) {
+    return this.availableAdminToken.getIfPresent(credentials);
   }
 
   @Override
   @Observed(name = "default-keycloak-service::token")
   public Mono<BearerTokenResponse> adminLogin() {
-    KeycloakClientCredentials credentials =
-        KeycloakClientCredentials.builder()
-            .clientId(rootClientId)
-            .clientSecret(rootClientSecret)
-            .build();
-    return adminClient.clientLogin(rootRealm, credentials);
+    KeycloakClientCredentials credentials = adminCredentials();
+    return Optional.ofNullable(adminTokenCache(credentials))
+        .map(Mono::just)
+        .orElseGet(
+            () ->
+                adminClient
+                    .clientLogin(rootRealm, credentials)
+                    .map(
+                        token -> {
+                          log.info("Token has been requested.");
+                          this.availableAdminToken.put(credentials, token);
+                          return token;
+                        }));
   }
 
   @Override
