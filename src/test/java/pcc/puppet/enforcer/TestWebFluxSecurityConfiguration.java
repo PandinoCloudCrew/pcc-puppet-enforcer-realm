@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity.CsrfSpec;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @Configuration
@@ -32,7 +33,8 @@ public class TestWebFluxSecurityConfiguration {
 
   @Bean
   SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-    http.csrf().disable().authorizeExchange().pathMatchers("/**").permitAll();
+    http.csrf(CsrfSpec::disable)
+        .authorizeExchange(configurer -> configurer.pathMatchers("/**").permitAll());
     return http.build();
   }
 }

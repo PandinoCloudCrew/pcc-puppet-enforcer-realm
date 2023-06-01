@@ -16,12 +16,10 @@
 
 package pcc.puppet.enforcer.app.configuration.keycloak;
 
-import java.util.Collection;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import pcc.puppet.enforcer.keycloak.ports.configuration.KeycloakProperties;
 import reactor.core.publisher.Mono;
@@ -30,14 +28,14 @@ import reactor.core.publisher.Mono;
 public class KeycloakConfiguration {
 
   @Bean
-  Converter<Jwt, Collection<GrantedAuthority>> keycloakGrantedAuthoritiesConverter(
+  KeycloakGrantedAuthoritiesConverter keycloakGrantedAuthoritiesConverter(
       KeycloakProperties properties) {
     return new KeycloakGrantedAuthoritiesConverter(properties.getAdminClientId());
   }
 
   @Bean
   Converter<Jwt, Mono<AbstractAuthenticationToken>> keycloakJwtAuthenticationConverter(
-      Converter<Jwt, Collection<GrantedAuthority>> converter) {
+      KeycloakGrantedAuthoritiesConverter converter) {
     return new ReactiveKeycloakJwtAuthenticationConverter(converter);
   }
 }
