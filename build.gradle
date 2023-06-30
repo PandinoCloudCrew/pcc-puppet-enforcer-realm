@@ -183,8 +183,9 @@ sonarqube {
 
 jacocoTestReport {
     reports {
-        xml.enabled = true
-        html.enabled = true
+        xml.required = true
+        csv.required = true
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
     }
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
