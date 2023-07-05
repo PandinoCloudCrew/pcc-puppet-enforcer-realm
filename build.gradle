@@ -143,6 +143,7 @@ tasks {
 
 spotless {
     java {
+        targetExclude("$buildDir/**/*.java")
         importOrder()
         removeUnusedImports()
         googleJavaFormat() // has its own section below
