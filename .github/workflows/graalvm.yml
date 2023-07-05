@@ -16,16 +16,21 @@ jobs:
             ~/.m2/repository
           key: ${{ runner.os }}-gradle-test-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle-test-
-      - name: Setup GraalVM CE
-        uses: DeLaGuardo/setup-graalvm@5.0
+      - uses: graalvm/setup-graalvm@v1
         with:
-          graalvm-version: 22.2.0.java17
+          java-version: '17.0.7'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Display Versions
+        run: |
+          echo "GRAALVM_HOME: $GRAALVM_HOME"
+          echo "JAVA_HOME: $JAVA_HOME"
+          java --version
+          native-image --version
       - name: Ignore Gradlew changes
         run: git update-index --assume-unchanged gradlew
       - name: Make gradlew executable
         run: chmod +x ./gradlew
-      - name: Install Native Image
-        run: gu install native-image
       - name: lowercase repository name
         env:
           DOCKER_IMAGE_UPPERCASE: ${{ secrets.DOCKER_REGISTRY_URL }}/${{ github.repository }}
@@ -39,6 +44,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Native And Push Docker Image
         env:
-          TESTCONTAINERS_RYUK_DISABLED: true
+          BP_NATIVE_IMAGE: true
         run: |
-          ./gradlew check dockerPushNative --no-daemon
+          ./gradlew check bootBuildImage --publishImage
