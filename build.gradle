@@ -143,6 +143,11 @@ tasks {
 
 spotless {
     java {
+        target project.fileTree(project.projectDir) {
+            include '**/*.java'
+            exclude '**/generated-src/**'
+            exclude '**/build/**'
+        }
         targetExclude("$buildDir/**/*.java")
         importOrder()
         removeUnusedImports()
