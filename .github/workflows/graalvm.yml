@@ -33,7 +33,7 @@ jobs:
         run: chmod +x ./gradlew
       - name: lowercase repository name
         env:
-          DOCKER_IMAGE_UPPERCASE: ${{ secrets.DOCKER_REGISTRY_URL }}/${{ github.repository }}
+          DOCKER_IMAGE_UPPERCASE: ${{ secrets.DOCKER_REGISTRY_URL }}/${{ github.repository }}-native
         run: |
           echo "DOCKER_IMAGE=${DOCKER_IMAGE_UPPERCASE,,}" >>${GITHUB_ENV}
       - name: Docker login
