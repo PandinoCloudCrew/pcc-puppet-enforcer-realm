@@ -44,6 +44,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Native And Push Docker Image
         env:
+          REGISTRY_USERNAME: ${{ github.actor }}
+          REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          REGISTRY_URL: ${{ secrets.DOCKER_REGISTRY_URL }}
           BP_NATIVE_IMAGE: true
         run: |
           ./gradlew check bootBuildImage --publishImage
