@@ -3,8 +3,8 @@ import java.time.Instant
 plugins {
     id("java")
     id("jacoco")
-    id("org.springframework.boot") version "3.1.1"
-    id("io.spring.dependency-management") version "1.1.0"
+    id("org.springframework.boot") version "3.1.2"
+    id("io.spring.dependency-management") version "1.1.2"
     id("com.diffplug.spotless") version "6.20.0"
     id("com.gorylenko.gradle-git-properties") version "2.4.1"
     id("com.palantir.git-version") version "3.0.0"
@@ -55,9 +55,6 @@ ext {
 }
 
 dependencies {
-    annotationProcessor("org.projectlombok:lombok")
-    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-    annotationProcessor("org.mapstruct:mapstruct-processor:$mapstructProcessorVersion")
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-cache")
@@ -80,6 +77,9 @@ dependencies {
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
     runtimeOnly("ch.qos.logback:logback-classic")
     compileOnly("org.projectlombok:lombok")
+    annotationProcessor("org.projectlombok:lombok")
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+    annotationProcessor("org.mapstruct:mapstruct-processor:$mapstructProcessorVersion")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation("org.springframework.restdocs:spring-restdocs-webtestclient")
