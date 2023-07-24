@@ -16,7 +16,7 @@
 
 package pcc.puppet.enforcer.keycloak.domain;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
@@ -24,23 +24,19 @@ import lombok.extern.jackson.Jacksonized;
 @Data
 @Builder
 @Jacksonized
-public class BearerTokenResponse {
+public class BearerTokenStatus {
 
-  @JsonProperty("access_token")
-  private String accessToken;
+  public BearerTokenStatus(BearerTokenResponse bearerTokenResponse) {
+    this.bearerTokenResponse = bearerTokenResponse;
+    issueDate = Instant.now();
+    expirationDate = issueDate.plusSeconds(bearerTokenResponse.getExpiresIn());
+  }
 
-  @JsonProperty("expires_in")
-  private int expiresIn;
+  private final BearerTokenResponse bearerTokenResponse;
+  private Instant issueDate;
+  private Instant expirationDate;
 
-  @JsonProperty("refresh_expires_in")
-  private int refreshExpiresIn;
-
-  @JsonProperty("token_type")
-  private String tokenType;
-
-  @JsonProperty("not-before-policy")
-  private String notBeforePolicy;
-
-  @JsonProperty("scope")
-  private String scope;
+  public boolean isExpired() {
+    return expirationDate.isAfter(Instant.now());
+  }
 }

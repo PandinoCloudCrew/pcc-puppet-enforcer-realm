@@ -18,6 +18,7 @@ plugins {
 version = gitVersion()
 group = "pcc.puppet.enforcer"
 sourceCompatibility = "$javaVersion"
+description = "Handle authentication, authorization and organizational structure for clients"
 
 configurations {
     compileOnly {
@@ -57,7 +58,6 @@ ext {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
@@ -66,7 +66,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-reactor-resilience4j")
     implementation("org.springframework.cloud:spring-cloud-starter-vault-config")
-    implementation("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
     implementation("org.passay:passay:$passayVersion")
     implementation("org.mapstruct:mapstruct:$mapstructProcessorVersion")
     implementation("net.datafaker:datafaker:$datafakerVersion")
@@ -129,13 +128,18 @@ tasks {
             }
 
             environment = [
-                    'BP_OCI_SOURCE'  : "https://github.com/PandinoCloudCrew/pcc-puppet-enforcer-realm",
-                    'BP_OCI_VERSION' : "$project.version",
-                    'BP_OCI_REVISION': details.gitHash,
-                    'BP_OCI_VENDOR'  : "PandinoCloudCrew",
-                    'BP_OCI_TITLE'   : "$project.name",
-                    'BP_OCI_LICENSES': "Apache-2.0",
-                    'BP_OCI_CREATED' : Instant.now().toString()
+                    'BP_OCI_SOURCE'       : "https://github.com/PandinoCloudCrew/pcc-puppet-enforcer-realm",
+                    'BP_OCI_VERSION'      : "$project.version",
+                    'BP_OCI_REVISION'     : details.gitHash,
+                    'BP_OCI_VENDOR'       : "PandinoCloudCrew",
+                    'BP_OCI_TITLE'        : "$project.name",
+                    'BP_OCI_DESCRIPTION'  : "$project.description",
+                    'BP_OCI_LICENSES'     : "Apache-2.0",
+                    'BP_OCI_AUTHORS'      : "dev@pandino.co",
+                    'BP_IMAGE_LABELS'     : "realm",
+                    'BP_OCI_DOCUMENTATION': "https://docs.pandino.co/pcc/puppet-enforcer/realm",
+                    'BP_OCI_URL'          : "https://pandino.co",
+                    'BP_OCI_CREATED'      : Instant.now().toString()
             ]
         }
     }

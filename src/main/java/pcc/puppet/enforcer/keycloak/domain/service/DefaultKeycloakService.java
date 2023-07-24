@@ -16,17 +16,17 @@
 
 package pcc.puppet.enforcer.keycloak.domain.service;
 
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.LoadingCache;
 import io.micrometer.observation.annotation.Observed;
-import java.time.Duration;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import pcc.puppet.enforcer.keycloak.adapters.http.KeycloakAdminClient;
 import pcc.puppet.enforcer.keycloak.domain.BearerTokenResponse;
+import pcc.puppet.enforcer.keycloak.domain.BearerTokenStatus;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientCredentials;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakClientRepresentation;
 import pcc.puppet.enforcer.keycloak.domain.KeycloakGroupRepresentation;
@@ -38,9 +38,8 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
-@CacheConfig
 public class DefaultKeycloakService implements KeycloakService {
-  private final LoadingCache<KeycloakClientCredentials, BearerTokenResponse> availableAdminToken;
+  private final Map<KeycloakClientCredentials, BearerTokenResponse> availableAdminToken;
 
   private final KeycloakAdminClient adminClient;
   private final KeycloakProperties keycloakProperties;
@@ -55,12 +54,7 @@ public class DefaultKeycloakService implements KeycloakService {
     this.rootClientId = keycloakProperties.getClientId();
     this.rootClientSecret = keycloakProperties.getClientSecret();
     this.rootRealm = keycloakProperties.getRealm();
-    this.availableAdminToken =
-        Caffeine.newBuilder()
-            .maximumSize(10)
-            .expireAfterWrite(Duration.ofMinutes(3))
-            .refreshAfterWrite(Duration.ofMinutes(2))
-            .build(key -> adminTokenCache(adminCredentials()));
+    this.availableAdminToken = new ConcurrentHashMap<>();
   }
 
   private KeycloakClientCredentials adminCredentials() {
@@ -71,7 +65,11 @@ public class DefaultKeycloakService implements KeycloakService {
   }
 
   private BearerTokenResponse adminTokenCache(KeycloakClientCredentials credentials) {
-    return this.availableAdminToken.getIfPresent(credentials);
+    BearerTokenResponse token = this.availableAdminToken.getOrDefault(credentials, null);
+    if (Objects.isNull(token)) return null;
+    BearerTokenStatus bearerTokenStatus = new BearerTokenStatus(token);
+    if (bearerTokenStatus.isExpired()) return null;
+    return token;
   }
 
   @Override
