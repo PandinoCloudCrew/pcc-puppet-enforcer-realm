@@ -22,7 +22,7 @@ import pcc.puppet.enforcer.realm.common.contact.ports.command.CreateContactInfor
 import pcc.puppet.enforcer.realm.common.contact.ports.event.CreateContactInformationEvent;
 import pcc.puppet.enforcer.realm.common.mapper.InstantMapper;
 
-@Mapper(uses = InstantMapper.class)
+@Mapper(componentModel = "spring", uses = InstantMapper.class)
 public interface ContactInformationInputMapper {
   ContactInformation commandToDomain(CreateContactInformationCommand command);
 

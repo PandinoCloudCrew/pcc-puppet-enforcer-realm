@@ -23,7 +23,9 @@ import pcc.puppet.enforcer.realm.organization.domain.Organization;
 import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
 import pcc.puppet.enforcer.realm.organization.ports.event.OrganizationCreateEvent;
 
-@Mapper(uses = {ContactInformationInputMapper.class, InstantMapper.class})
+@Mapper(
+    componentModel = "spring",
+    uses = {ContactInformationInputMapper.class, InstantMapper.class})
 public interface OrganizationInputMapper {
 
   Organization commandToDomain(OrganizationCreateCommand command);

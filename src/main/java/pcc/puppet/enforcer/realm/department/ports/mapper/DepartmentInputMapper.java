@@ -22,7 +22,9 @@ import pcc.puppet.enforcer.realm.common.mapper.InstantMapper;
 import pcc.puppet.enforcer.realm.department.domain.Department;
 import pcc.puppet.enforcer.realm.department.ports.command.DepartmentCreateCommand;
 
-@Mapper(uses = {ContactInformationInputMapper.class, InstantMapper.class})
+@Mapper(
+    componentModel = "spring",
+    uses = {ContactInformationInputMapper.class, InstantMapper.class})
 public interface DepartmentInputMapper {
   Department commandToDomain(DepartmentCreateCommand command);
 }

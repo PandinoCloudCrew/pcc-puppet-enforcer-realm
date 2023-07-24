@@ -23,7 +23,9 @@ import pcc.puppet.enforcer.realm.department.adapters.presenter.DepartmentPresent
 import pcc.puppet.enforcer.realm.department.domain.Department;
 import pcc.puppet.enforcer.realm.department.ports.event.DepartmentCreateEvent;
 
-@Mapper(uses = {ContactInformationOutputMapper.class, InstantMapper.class})
+@Mapper(
+    componentModel = "spring",
+    uses = {ContactInformationOutputMapper.class, InstantMapper.class})
 public interface DepartmentOutputMapper {
 
   DepartmentCreateEvent domainToEvent(Department command);

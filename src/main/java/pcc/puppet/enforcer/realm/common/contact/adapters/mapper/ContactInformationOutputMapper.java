@@ -21,7 +21,7 @@ import pcc.puppet.enforcer.realm.common.contact.adapters.presenter.ContactInform
 import pcc.puppet.enforcer.realm.common.contact.domain.ContactInformation;
 import pcc.puppet.enforcer.realm.common.mapper.InstantMapper;
 
-@Mapper(uses = InstantMapper.class)
+@Mapper(componentModel = "spring", uses = InstantMapper.class)
 public interface ContactInformationOutputMapper {
   ContactInformationPresenter domainToPresenter(ContactInformation command);
 }

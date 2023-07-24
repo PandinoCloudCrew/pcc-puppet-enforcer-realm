@@ -23,7 +23,9 @@ import pcc.puppet.enforcer.realm.member.domain.Member;
 import pcc.puppet.enforcer.realm.member.ports.command.MemberCreateCommand;
 import pcc.puppet.enforcer.realm.member.ports.event.MemberCreateEvent;
 
-@Mapper(uses = {ContactInformationInputMapper.class, InstantMapper.class})
+@Mapper(
+    componentModel = "spring",
+    uses = {ContactInformationInputMapper.class, InstantMapper.class})
 public interface MemberInputMapper {
   Member commandToDomain(MemberCreateCommand command);
 

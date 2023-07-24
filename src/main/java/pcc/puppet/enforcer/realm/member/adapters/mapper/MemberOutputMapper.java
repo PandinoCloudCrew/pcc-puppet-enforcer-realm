@@ -22,7 +22,9 @@ import pcc.puppet.enforcer.realm.common.mapper.InstantMapper;
 import pcc.puppet.enforcer.realm.member.adapters.presenter.MemberPresenter;
 import pcc.puppet.enforcer.realm.member.domain.Member;
 
-@Mapper(uses = {ContactInformationOutputMapper.class, InstantMapper.class})
+@Mapper(
+    componentModel = "spring",
+    uses = {ContactInformationOutputMapper.class, InstantMapper.class})
 public interface MemberOutputMapper {
   MemberPresenter domainToPresenter(Member command);
 }
