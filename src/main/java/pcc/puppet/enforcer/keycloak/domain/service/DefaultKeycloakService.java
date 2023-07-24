@@ -22,7 +22,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.el.parser.Token;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import pcc.puppet.enforcer.keycloak.adapters.http.KeycloakAdminClient;
