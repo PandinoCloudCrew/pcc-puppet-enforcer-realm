@@ -19,8 +19,10 @@ package pcc.puppet.enforcer.realm.common.mapper;
 import java.time.Instant;
 import java.util.Objects;
 import javax.annotation.processing.Generated;
+import org.springframework.stereotype.Component;
 import pcc.puppet.enforcer.realm.common.format.DateFormat;
 
+@Component
 @Generated(
     value = "pcc.puppet.enforcer.realm.common.mapper.InstantMapper",
     date = "2023-05-12T20:17:02-0500")
