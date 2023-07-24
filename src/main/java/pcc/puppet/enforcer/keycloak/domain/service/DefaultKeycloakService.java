@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.el.parser.Token;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import pcc.puppet.enforcer.keycloak.adapters.http.KeycloakAdminClient;
@@ -39,7 +40,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Service
 public class DefaultKeycloakService implements KeycloakService {
-  private final Map<KeycloakClientCredentials, BearerTokenResponse> availableAdminToken;
+  private final Map<KeycloakClientCredentials, BearerTokenStatus> availableAdminToken;
 
   private final KeycloakAdminClient adminClient;
   private final KeycloakProperties keycloakProperties;
@@ -65,11 +66,9 @@ public class DefaultKeycloakService implements KeycloakService {
   }
 
   private BearerTokenResponse adminTokenCache(KeycloakClientCredentials credentials) {
-    BearerTokenResponse token = this.availableAdminToken.getOrDefault(credentials, null);
-    if (Objects.isNull(token)) return null;
-    BearerTokenStatus bearerTokenStatus = new BearerTokenStatus(token);
-    if (bearerTokenStatus.isExpired()) return null;
-    return token;
+    BearerTokenStatus token = this.availableAdminToken.getOrDefault(credentials, null);
+    if (Objects.isNull(token) || token.isExpired()) return null;
+    return token.getBearerTokenResponse();
   }
 
   @Override
@@ -85,7 +84,7 @@ public class DefaultKeycloakService implements KeycloakService {
                     .map(
                         token -> {
                           log.info("Token has been requested.");
-                          this.availableAdminToken.put(credentials, token);
+                          this.availableAdminToken.put(credentials, new BearerTokenStatus(token));
                           return token;
                         }));
   }

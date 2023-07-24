@@ -17,13 +17,9 @@
 package pcc.puppet.enforcer.keycloak.domain;
 
 import java.time.Instant;
-import lombok.Builder;
 import lombok.Data;
-import lombok.extern.jackson.Jacksonized;
 
 @Data
-@Builder
-@Jacksonized
 public class BearerTokenStatus {
 
   public BearerTokenStatus(BearerTokenResponse bearerTokenResponse) {
