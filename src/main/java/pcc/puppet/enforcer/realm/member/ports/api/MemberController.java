@@ -16,6 +16,8 @@
 
 package pcc.puppet.enforcer.realm.member.ports.api;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.DEPARTMENT;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.ORGANIZATION;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
@@ -43,13 +45,15 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @RestController
-@RequestMapping("${spring.http.services.pcc-realm-member.path}")
+@RequestMapping(value = "${spring.http.services.pcc-realm-member.path}")
 @RequiredArgsConstructor
 public class MemberController implements MemberOperations {
   private final MemberService memberService;
 
   @Override
-  @PostMapping
+  @PostMapping(
+      produces = {APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE},
+      consumes = {APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE})
   @Observed(name = "member-controller::member-create")
   public Mono<MemberCreateEvent> memberCreate(
       @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,
@@ -61,7 +65,9 @@ public class MemberController implements MemberOperations {
   }
 
   @Override
-  @GetMapping(value = "/{memberId}")
+  @GetMapping(
+      value = "/{memberId}",
+      produces = {APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE})
   @Observed(name = "member-controller::find-member")
   public Mono<MemberPresenter> findMember(
       @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,
@@ -72,7 +78,9 @@ public class MemberController implements MemberOperations {
   }
 
   @Override
-  @GetMapping(value = "/organization/{parentOrganizationId}")
+  @GetMapping(
+      value = "/organization/{parentOrganizationId}",
+      produces = {APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE})
   @Observed(name = "member-controller::find-organization-members")
   public Flux<MemberPresenter> findOrganizationMembers(
       @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,
@@ -83,7 +91,9 @@ public class MemberController implements MemberOperations {
   }
 
   @Override
-  @GetMapping(value = "/department/{parentDepartmentId}")
+  @GetMapping(
+      value = "/department/{parentDepartmentId}",
+      produces = {APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE})
   @Observed(name = "member-controller::find-department-members")
   public Flux<MemberPresenter> findDepartmentMembers(
       @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,

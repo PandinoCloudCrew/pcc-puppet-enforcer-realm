@@ -16,6 +16,8 @@
 
 package pcc.puppet.enforcer.realm.passport.ports.api;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
 import io.micrometer.observation.annotation.Observed;
@@ -38,12 +40,14 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("${spring.http.services.pcc-realm-passport.path}")
+@RequestMapping(value = "${spring.http.services.pcc-realm-passport.path}")
 public class ConsumerPassportController implements ConsumerPassportOperations {
 
   private final ConsumerPassportService passportService;
 
-  @PostMapping
+  @PostMapping(
+      produces = {APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE},
+      consumes = {APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE})
   @Observed(name = "consumer-passport-controller::create-consumer-passport")
   public Mono<ConsumerPassportCreateEvent> createConsumerPassport(
       @NotNull @SpanTag(REQUESTER) @RequestHeader(REQUESTER) String requester,

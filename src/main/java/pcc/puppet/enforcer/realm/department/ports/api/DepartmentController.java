@@ -16,6 +16,8 @@
 
 package pcc.puppet.enforcer.realm.department.ports.api;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.ORGANIZATION;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
@@ -43,15 +45,15 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @RestController
-@RequestMapping("${spring.http.services.pcc-realm-department.path}")
+@RequestMapping(value = "${spring.http.services.pcc-realm-department.path}")
 @RequiredArgsConstructor
 public class DepartmentController implements DepartmentOperations {
   private final DepartmentService departmentService;
 
   @Override
   @PostMapping(
-      consumes = MediaType.APPLICATION_JSON_VALUE,
-      produces = MediaType.APPLICATION_JSON_VALUE)
+      produces = {APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE},
+      consumes = {APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE})
   @Observed(name = "department-controller::department-create")
   public Mono<DepartmentCreateEvent> departmentCreate(
       @SpanTag(REQUESTER) @NotNull @RequestHeader(REQUESTER) String requester,

@@ -16,6 +16,8 @@
 
 package pcc.puppet.enforcer.realm.organization.ports.api;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 import static pcc.puppet.enforcer.realm.configuration.HttpHeaders.REQUESTER;
 
 import io.micrometer.observation.annotation.Observed;
@@ -44,13 +46,15 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @RestController
-@RequestMapping("${spring.http.services.pcc-realm-organization.path}")
+@RequestMapping(value = "${spring.http.services.pcc-realm-organization.path}")
 @RequiredArgsConstructor
 public class OrganizationController implements OrganizationOperations {
   private final OrganizationService organizationService;
   private final KeycloakService keycloakService;
 
-  @PostMapping
+  @PostMapping(
+      produces = {APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE},
+      consumes = {APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE})
   @Observed(name = "organization-controller::organization-create")
   public Mono<OrganizationCreateEvent> organizationCreate(
       @NotNull @SpanTag(REQUESTER) @RequestHeader(REQUESTER) String requester,
@@ -59,7 +63,9 @@ public class OrganizationController implements OrganizationOperations {
     return organizationService.create(requester, createCommand);
   }
 
-  @GetMapping(value = "/{organizationId}")
+  @GetMapping(
+      value = "/{organizationId}",
+      produces = {APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE})
   @Observed(name = "organization-controller::find-organization")
   public Mono<OrganizationPresenter> findOrganization(
       @NotNull @SpanTag(REQUESTER) @RequestHeader(REQUESTER) String requester,
@@ -67,7 +73,9 @@ public class OrganizationController implements OrganizationOperations {
     return organizationService.findById(requester, organizationId);
   }
 
-  @GetMapping(value = "/{organizationId}/child")
+  @GetMapping(
+      value = "/{organizationId}/child",
+      produces = {APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE})
   @Observed(name = "organization-controller::find-child-organizations")
   public Flux<OrganizationPresenter> findChildOrganizations(
       @NotNull @SpanTag(REQUESTER) @RequestHeader(REQUESTER) String requester,
@@ -75,7 +83,10 @@ public class OrganizationController implements OrganizationOperations {
     return organizationService.findByParentId(requester, organizationId);
   }
 
-  @PostMapping(value = "/{organizationId}/login")
+  @PostMapping(
+      value = "/{organizationId}/login",
+      produces = {APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE},
+      consumes = {APPLICATION_JSON_VALUE, APPLICATION_PROBLEM_JSON_VALUE})
   @Observed(name = "organization-controller::organization-login")
   public Mono<BearerTokenResponse> organizationLogin(
       @NotNull @SpanTag @PathVariable String organizationId,
