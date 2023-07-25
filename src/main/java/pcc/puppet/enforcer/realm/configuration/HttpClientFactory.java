@@ -17,10 +17,12 @@
 package pcc.puppet.enforcer.realm.configuration;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClient.Builder;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 import pcc.puppet.enforcer.keycloak.adapters.http.KeycloakAdminClient;
@@ -31,63 +33,67 @@ import pcc.puppet.enforcer.realm.passport.adapters.gateway.rest_countries.RestCo
 import pcc.puppet.enforcer.realm.passport.adapters.http.ConsumerPassportClient;
 import reactor.netty.http.client.HttpClient;
 
+@Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class HttpClientFactory {
 
   private final HttpServiceConfiguration serviceConfiguration;
 
-  @Bean
-  public HttpClient httpClient() {
-    return HttpClient.create().followRedirect(true).compress(true).wiretap(true);
+  public HttpClient httpClient(String baseUrl) {
+    return HttpClient.create().baseUrl(baseUrl).followRedirect(true).compress(true).wiretap(true);
   }
 
   @Bean
-  public KeycloakAdminClient keycloakAdminClient(WebClient.Builder builder, HttpClient httpClient) {
-    HttpServiceProxyFactory factory =
-        getFactory(builder, httpClient, serviceConfiguration.getProviderKeycloak().getUri());
+  public KeycloakAdminClient keycloakAdminClient(Builder builder) {
+    String baseUrl = serviceConfiguration.getProviderKeycloak().getUri();
+    log.info("created KeycloakAdminClient with host: " + baseUrl);
+    HttpServiceProxyFactory factory = getFactory(builder, httpClient(baseUrl), baseUrl);
     return factory.createClient(KeycloakAdminClient.class);
   }
 
   @Bean
-  public DepartmentClient departmentClient(WebClient.Builder builder, HttpClient httpClient) {
-    HttpServiceProxyFactory factory =
-        getFactory(builder, httpClient, serviceConfiguration.getPccRealmDepartment().getUri());
+  public DepartmentClient departmentClient(Builder builder) {
+    String baseUrl = serviceConfiguration.getPccRealmDepartment().getUri();
+    log.info("created DepartmentClient with host: " + baseUrl);
+    HttpServiceProxyFactory factory = getFactory(builder, httpClient(baseUrl), baseUrl);
     return factory.createClient(DepartmentClient.class);
   }
 
   @Bean
-  public OrganizationClient organizationClient(WebClient.Builder builder, HttpClient httpClient) {
-    HttpServiceProxyFactory factory =
-        getFactory(builder, httpClient, serviceConfiguration.getPccRealmOrganization().getUri());
+  public OrganizationClient organizationClient(Builder builder) {
+    String baseUrl = serviceConfiguration.getPccRealmOrganization().getUri();
+    log.info("created OrganizationClient with host: " + baseUrl);
+    HttpServiceProxyFactory factory = getFactory(builder, httpClient(baseUrl), baseUrl);
     return factory.createClient(OrganizationClient.class);
   }
 
   @Bean
-  public MemberClient memberClient(WebClient.Builder builder, HttpClient httpClient) {
-    HttpServiceProxyFactory factory =
-        getFactory(builder, httpClient, serviceConfiguration.getPccRealmMember().getUri());
+  public MemberClient memberClient(Builder builder) {
+    String baseUrl = serviceConfiguration.getPccRealmMember().getUri();
+    log.info("created MemberClient with host: " + baseUrl);
+    HttpServiceProxyFactory factory = getFactory(builder, httpClient(baseUrl), baseUrl);
     return factory.createClient(MemberClient.class);
   }
 
   @Bean
-  public ConsumerPassportClient consumerPassportClient(
-      WebClient.Builder builder, HttpClient httpClient) {
-    HttpServiceProxyFactory factory =
-        getFactory(builder, httpClient, serviceConfiguration.getPccRealmPassport().getUri());
+  public ConsumerPassportClient consumerPassportClient(Builder builder) {
+    String baseUrl = serviceConfiguration.getPccRealmPassport().getUri();
+    log.info("created ConsumerPassportClient with host: " + baseUrl);
+    HttpServiceProxyFactory factory = getFactory(builder, httpClient(baseUrl), baseUrl);
     return factory.createClient(ConsumerPassportClient.class);
   }
 
   @Bean
-  public RestCountriesApiClient restCountriesApiClient(
-      WebClient.Builder builder, HttpClient httpClient) {
-    HttpServiceProxyFactory factory =
-        getFactory(builder, httpClient, serviceConfiguration.getProviderRestCountries().getUri());
+  public RestCountriesApiClient restCountriesApiClient(Builder builder) {
+    String baseUrl = serviceConfiguration.getProviderRestCountries().getUri();
+    log.info("created RestCountriesApiClient with host: " + baseUrl);
+    HttpServiceProxyFactory factory = getFactory(builder, httpClient(baseUrl), baseUrl);
     return factory.createClient(RestCountriesApiClient.class);
   }
 
   private static HttpServiceProxyFactory getFactory(
-      WebClient.Builder builder, HttpClient httpClient, String url) {
+      Builder builder, HttpClient httpClient, String url) {
     WebClient webClient =
         builder.baseUrl(url).clientConnector(new ReactorClientHttpConnector(httpClient)).build();
     return HttpServiceProxyFactory.builder()
