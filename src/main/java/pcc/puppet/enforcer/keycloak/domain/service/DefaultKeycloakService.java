@@ -66,7 +66,10 @@ public class DefaultKeycloakService implements KeycloakService {
 
   private BearerTokenResponse adminTokenCache(KeycloakClientCredentials credentials) {
     BearerTokenStatus token = this.availableAdminToken.getOrDefault(credentials, null);
-    if (Objects.isNull(token) || token.isExpired()) return null;
+    if (Objects.isNull(token) || token.isExpired()) {
+      log.debug("Token has expired");
+      return null;
+    }
     return token.getBearerTokenResponse();
   }
 

@@ -33,6 +33,6 @@ public class BearerTokenStatus {
   private Instant expirationDate;
 
   public boolean isExpired() {
-    return expirationDate.isAfter(Instant.now());
+    return expirationDate.isBefore(Instant.now());
   }
 }
