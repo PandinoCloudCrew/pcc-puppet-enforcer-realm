@@ -34,16 +34,6 @@ spring:
       provider-vault:
         url: ${provider-vault-url}
 
-  r2dbc:
-    name: ${r2dbc-database}
-    url: ${r2dbc-uri}
-    username: ${jdbc-username}
-    password: ${jdbc-password}
-    pool:
-      enabled: true
-      initial-size: 10
-      max-size: 50
-
 management:
   tracing:
     baggage:
@@ -65,10 +55,6 @@ management:
         X-Org-Id: X-Org-Id
         X-Dept-Id: X-Dept-Id
         X-Member-Id: X-Member-Id
-    metrics:
-      export:
-        enabled: true
-        url: http://mbp.lan:4318/v1/metrics
 
 provider:
   keycloak:
