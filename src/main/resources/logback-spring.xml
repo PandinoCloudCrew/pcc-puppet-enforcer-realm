@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+
+  <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+  <springProperty name="APP_NAME" source="spring.application.name"/>
+  <springProperty name="LOKI_URL" source="provider.loki.url"/>
+
+  <springProfile name="default">
+    <root level="${logging.level.root}">
+      <appender-ref ref="CONSOLE"/>
+    </root>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder>
+        <pattern>[${APP_NAME}] [%t] [%-5p] [%X{traceId}] [%X{spanId}] [%X{track-id}] [%logger{15}] [%m]%n</pattern>
+      </encoder>
+    </appender>
+  </springProfile>
+
+  <springProfile name="k8s">
+    <root>
+      <appender-ref ref="LOKI"/>
+    </root>
+    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+      <metricsEnabled>true</metricsEnabled>
+      <verbose>true</verbose>
+      <http>>
+        <url>${LOKI_URL}</url>
+      </http>
+      <format>
+        <label>
+          <pattern>
+            app=${APP_NAME}
+            host=${HOSTNAME}
+            level=%level
+            namespace_name=${NAMESCAPE_NAME}
+            pod_name=${POD_NAME}
+          </pattern>
+          <pairSeparator>regex:(\n|//[^\n]+)+</pairSeparator>
+          <readMarkers>true</readMarkers>
+        </label>
+        <message>
+          <pattern>l=%level h=${HOSTNAME} c=%logger{20} t=%thread | %msg %ex</pattern>
+        </message>
+        <sortByTime>true</sortByTime>
+      </format>
+    </appender>
+  </springProfile>
+</configuration>

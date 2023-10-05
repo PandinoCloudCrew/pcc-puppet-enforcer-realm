@@ -10,6 +10,10 @@ spring:
     name: pcc-puppet-enforcer-realm
   main:
     web-application-type: reactive
+  data:
+    mongodb:
+      auto-index-creation: true
+      uri: ${mongo-uri}
 
   cloud:
     vault:
@@ -20,6 +24,68 @@ spring:
           enabled: true
           min-renewal: 1m
 
+  security:
+    oauth2:
+      resourceserver:
+        jwk:
+          jwk-set-uri: ${provider-keycloak-url}/realms/${keycloak-realm}/.well-known/openid-configuration
+          issuer-uri: ${provider-keycloak-url}/realms/${keycloak-realm}
+        jwt:
+          issuer: ${provider-keycloak-url}/realms/${keycloak-realm}
+  http:
+    services:
+      pcc-realm-organization:
+        url: ${pcc-realm-organization-url}
+        path: ${pcc-realm-organization-path}
+      pcc-realm-department:
+        url: ${pcc-realm-department-url}
+        path: ${pcc-realm-department-path}
+      pcc-realm-member:
+        url: ${pcc-realm-member-url}
+        path: ${pcc-realm-member-path}
+      pcc-realm-passport:
+        url: ${pcc-realm-passport-url}
+        path: ${pcc-realm-passport-path}
+      provider-rest-countries:
+        url: ${provider-rest-countries-url}
+        path: ${provider-rest-countries-path}
+      provider-keycloak:
+        url: ${provider-keycloak-url}
+      provider-vault:
+        url: ${provider-vault-url}
+
+management:
+  tracing:
+    baggage:
+      correlation:
+        enabled: true
+        fields:
+          - track-id
+      remote-fields:
+        - track-id
+    sampling:
+      probability: 1.0
+    propagation:
+      type: w3c
+  otlp:
+    tracing:
+      endpoint: ${otlp-collector}
+      headers:
+        track-id: track-id
+        X-Org-Id: X-Org-Id
+        X-Dept-Id: X-Dept-Id
+        X-Member-Id: X-Member-Id
+
+provider:
+  loki:
+    url: ${otlp-logs-collector}
+  keycloak:
+    adminClientId: ${keycloak-admin-clientId}
+    clientId: ${keycloak-clientId}
+    clientSecret: ${keycloak-clientSecret}
+    realm: ${keycloak-realm}
+
+
 logging:
   pattern:
     console: "[${spring.application.name}] [%t] [%-5p] [%X{traceId}] [%X{spanId}] [%X{track-id}] [%logger{15}] [%m]%n"
@@ -27,3 +93,4 @@ logging:
     reactor.netty.http.client: INFO
     io.micrometer: INFO
     pcc: DEBUG
+    root: info

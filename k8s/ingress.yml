@@ -1,17 +1,18 @@
-apiVersion: traefik.containo.us/v1alpha1
-kind: IngressRoute
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
   name: pcc-puppet-enforcer-realm-ingress
   namespace: pcc-puppet-enforcer
 spec:
-  entryPoints:
-    - websecure
-  routes:
-    - kind: Rule
-      match: Host(`realm.pcc.local`)
-      priority: 10
-      services:
-        - name: pcc-puppet-enforcer-realm-service
-          port: 9900
-  tls:
-    certResolver: default
+  ingressClassName: nginx
+  rules:
+    - host: realm.apps.pandino.co
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pcc-puppet-enforcer-realm-service
+                port:
+                  number: 9900

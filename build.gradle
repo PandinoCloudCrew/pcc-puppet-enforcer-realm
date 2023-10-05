@@ -55,6 +55,7 @@ ext {
 }
 
 dependencies {
+    implementation("com.github.loki4j:loki-logback-appender:$lokiAppenderVersion")
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
@@ -177,7 +178,6 @@ sonarqube {
     properties {
         property "sonar.host.url", "https://sonar.ops.pandino.co/"
         property "sonar.language", "java"
-        property "sonar.sourceEncoding", "UTF-8"
         property "sonar.exclusions", [
                 "**/pcc/puppet/enforcer/app/**",
                 "**/pcc/puppet/enforcer/realm/configuration/**"
@@ -185,8 +185,6 @@ sonarqube {
         property "sonar.organization", "pandino-cloud-crew"
         property "sonar.projectName", "PandinoCloudCrew_$rootProject.name"
         property "sonar.projectKey", "$rootProject.name"
-        property "sonar.java.binaries", "${buildDir}/classes"
-        property "sonar.sourceEncoding", "UTF-8"
     }
 }
 
