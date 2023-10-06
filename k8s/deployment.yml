@@ -30,7 +30,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value: local
+              value: k8s
             - name: OTEL_METRICS_EXPORTER
               value: none
             - name: SPRING_CLOUD_VAULT_AUTHENTICATION

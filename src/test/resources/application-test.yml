@@ -45,3 +45,7 @@ logging:
     io.micrometer: INFO
     pcc: DEBUG
     web: DEBUG
+
+management:
+  server:
+    port: -1
