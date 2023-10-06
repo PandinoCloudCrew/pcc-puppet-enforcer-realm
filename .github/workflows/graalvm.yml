@@ -18,7 +18,7 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle-test-
       - uses: graalvm/setup-graalvm@v1
         with:
-          java-version: '21'
+          java-version: '17.0.8'
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Display Versions
