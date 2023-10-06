@@ -75,6 +75,31 @@ management:
         X-Org-Id: X-Org-Id
         X-Dept-Id: X-Dept-Id
         X-Member-Id: X-Member-Id
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: info,env,health,loggers,prometheus,refresh,metrics
+  endpoint:
+    info:
+      enabled: true
+    env:
+      enabled: true
+      show-values: when_authorized
+    health:
+      enabled: true
+      show-details: when_authorized
+    loggers:
+      enabled: true
+    prometheus:
+      enabled: true
+    refresh:
+      enabled: true
+    metrics:
+      enabled: true
+  server:
+    port: 9901
+    base-path: /system
 
 provider:
   loki:
