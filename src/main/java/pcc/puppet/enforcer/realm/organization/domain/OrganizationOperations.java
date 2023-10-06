@@ -17,7 +17,7 @@
 package pcc.puppet.enforcer.realm.organization.domain;
 
 import jakarta.validation.constraints.NotNull;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import pcc.puppet.enforcer.keycloak.domain.BearerTokenResponse;
 import pcc.puppet.enforcer.realm.organization.adapters.presenter.OrganizationPresenter;
 import pcc.puppet.enforcer.realm.organization.ports.command.OrganizationCreateCommand;
