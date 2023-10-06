@@ -35,8 +35,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoders;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import reactor.core.publisher.Mono;
 
@@ -48,18 +46,18 @@ public class WebFluxSecurityConfiguration {
 
   @Value("${spring.security.oauth2.resourceserver.jwk.issuer-uri}")
   private String issuerUri;
+
   @Bean
   public ReactiveAuthenticationManager userDetailsService() {
-    UserDetails admin = User.builder()
-        .username("admin")
-        .password("{noop}admin")
-        .roles("ADMIN")
-        .build();
-    return new UserDetailsRepositoryReactiveAuthenticationManager(new MapReactiveUserDetailsService(admin));
+    UserDetails admin =
+        User.builder().username("admin").password("{noop}admin").roles("ADMIN").build();
+    return new UserDetailsRepositoryReactiveAuthenticationManager(
+        new MapReactiveUserDetailsService(admin));
   }
+
   @Bean
   @Order(1)
-  SecurityWebFilterChain basicSecurityFilterChain( ServerHttpSecurity http) {
+  SecurityWebFilterChain basicSecurityFilterChain(ServerHttpSecurity http) {
     http.csrf(CsrfSpec::disable)
         .authorizeExchange(
             authorizeExchangeSpec ->
@@ -71,6 +69,7 @@ public class WebFluxSecurityConfiguration {
         .httpBasic(httpBasicSpec -> httpBasicSpec.authenticationManager(userDetailsService()));
     return http.build();
   }
+
   @Bean
   @Order(2)
   SecurityWebFilterChain springSecurityFilterChain(
@@ -78,10 +77,7 @@ public class WebFluxSecurityConfiguration {
       Converter<Jwt, Mono<AbstractAuthenticationToken>> jwtAuthenticationConverter) {
     http.csrf(CsrfSpec::disable)
         .authorizeExchange(
-            authorizeExchangeSpec ->
-                authorizeExchangeSpec
-                    .anyExchange()
-                    .authenticated())
+            authorizeExchangeSpec -> authorizeExchangeSpec.anyExchange().authenticated())
         .oauth2ResourceServer(
             auth2ResourceServerSpec ->
                 auth2ResourceServerSpec.jwt(
