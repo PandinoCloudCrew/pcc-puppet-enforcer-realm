@@ -6,33 +6,11 @@
 | [![Coverage](https://sonar.ops.pandino.co/api/project_badges/measure?project=pcc-puppet-enforcer-realm&metric=coverage&token=sqb_728ba6c59c6ba8ac8269f1528c19cf6538c592f7)](https://sonar.ops.pandino.co/summary/new_code?id=pcc-puppet-enforcer-realm)                | [![CodeScene Code Health](https://codescene.io/projects/29004/status-badges/code-health)](https://codescene.io/projects/29004)       | [![Sonar Code Coverage](https://github.com/PandinoCloudCrew/pcc-puppet-enforcer-realm/actions/workflows/check-coverage.yml/badge.svg)](https://github.com/PandinoCloudCrew/pcc-puppet-enforcer-realm/actions/workflows/check-coverage.yml) |
 | [![Technical Debt](https://sonar.ops.pandino.co/api/project_badges/measure?project=pcc-puppet-enforcer-realm&metric=sqale_index&token=sqb_728ba6c59c6ba8ac8269f1528c19cf6538c592f7)](https://sonar.ops.pandino.co/summary/new_code?id=pcc-puppet-enforcer-realm)       | [![CodeScene System Mastery](https://codescene.io/projects/29004/status-badges/system-mastery)](https://codescene.io/projects/29004) | [![Release](https://github.com/PandinoCloudCrew/pcc-puppet-enforcer-realm/actions/workflows/release.yml/badge.svg)](https://github.com/PandinoCloudCrew/pcc-puppet-enforcer-realm/actions/workflows/release.yml)                           |
 | [![Code Smells](https://sonar.ops.pandino.co/api/project_badges/measure?project=pcc-puppet-enforcer-realm&metric=code_smells&token=sqb_728ba6c59c6ba8ac8269f1528c19cf6538c592f7)](https://sonar.ops.pandino.co/summary/new_code?id=pcc-puppet-enforcer-realm)          | [![CodeScene Missed Goals](https://codescene.io/projects/29004/status-badges/missed-goals)](https://codescene.io/projects/29004)     |                                                                                                                                                                                                                                            |
+## Update dependencies
 
-## Micronaut 3.6.1 Documentation
-
-- [User Guide](https://docs.micronaut.io/3.6.1/guide/index.html)
-- [API Reference](https://docs.micronaut.io/3.6.1/api/index.html)
-- [Configuration Reference](https://docs.micronaut.io/3.6.1/guide/configurationreference.html)
-- [Micronaut Guides](https://guides.micronaut.io/index.html)
-
----
-
-## Push To Docker Registry Workflow
-
-Workflow file: [`.github/workflows/gradle.yml`](.github/workflows/gradle.yml)
-
-### Workflow description
-
-For pushes to the `master` branch, the workflow will:
-
-1. Setup the build environment with respect to the selected java/graalvm version.
-2. Login to docker registry based on provided configuration.
-3. Build, tag and push Docker image
-4. with Micronaut application to the Docker container image.
-
-### Dependencies on other GitHub Actions
-
-- [Docker login](`https://github.com/docker/login-action`)(`docker/login`)
-- [Setup GraalVM](`https://github.com/DeLaGuardo/setup-graalvm`)(`DeLaGuardo/setup-graalvm`)
+```bash
+gradle dependencyUpdates -Drevision=release
+```
 
 ### Setup
 
@@ -45,42 +23,6 @@ Add the following GitHub secrets:
 | DOCKER_REPOSITORY_PATH | Path to the docker image repository inside the registry, e.g. for the image `foo/bar/micronaut:0.1` it is `foo/bar`. |
 | DOCKER_REGISTRY_URL    | Docker registry url.                                                                                                 |
 
-#### Configuration examples
-
-Specifics on how to configure public cloud docker registries like DockerHub, Google Container
-Registry (GCR), AWS Container Registry (ECR),
-Oracle Cloud Infrastructure Registry (OCIR) and many more can be found
-in [docker/login-action](https://github.com/docker/login-action)
-documentation.
-
-#### Google Container Registry (GCR)
-
-Create service account with permission to edit GCR or use predefined Storage Admin role.
-
-- `DOCKER_USERNAME` - set exactly to `_json_key`
-- `DOCKER_PASSWORD` - content of the service account json key file
-- `DOCKER_REPOSITORY_PATH` - `<project-id>/pcc-puppet-enforcer-realm`
-- `DOCKER_REGISTRY_URL` - `gcr.io`
-
->
-See [docker/login-action for GCR](https://github.com/docker/login-action#google-container-registry-gcr)
-
-## Push GraalVM Native Image To Docker Registry Workflow
-
-Workflow file: [`.github/workflows/graalvm.yml`](.github/workflows/graalvm.yml)
-
-### Workflow description
-
-For pushes to the `master` branch, the workflow will:
-
-1. Setup the build environment with respect to the selected java/graalvm version.
-2. Login to docker registry based on provided configuration.
-3. Build, tag and push Docker image with Micronaut application to the Docker container image.
-
-### Dependencies on other GitHub Actions
-
-- [Docker login](`https://github.com/docker/login-action`)(`docker/login`)
-- [Setup GraalVM](`https://github.com/DeLaGuardo/setup-graalvm`)(`DeLaGuardo/setup-graalvm`)
 
 ### Setup
 
@@ -93,28 +35,6 @@ Add the following GitHub secrets:
 | DOCKER_REPOSITORY_PATH | Path to the docker image repository inside the registry, e.g. for the image `foo/bar/micronaut:0.1` it is `foo/bar`. |
 | DOCKER_REGISTRY_URL    | Docker registry url.                                                                                                 |
 
-#### Configuration examples
-
-Specifics on how to configure public cloud docker registries like DockerHub, Google Container
-Registry (GCR), AWS Container Registry (ECR),
-Oracle Cloud Infrastructure Registry (OCIR) and many more can be found
-in [docker/login-action](https://github.com/docker/login-action)
-documentation.
-
-#### Google Container Registry (GCR)
-
-Create service account with permission to edit GCR or use predefined Storage Admin role.
-
-- `DOCKER_USERNAME` - set exactly to `_json_key`
-- `DOCKER_PASSWORD` - content of the service account json key file
-- `DOCKER_REPOSITORY_PATH` - `<project-id>/pcc-puppet-enforcer-realm`
-- `DOCKER_REGISTRY_URL` - `gcr.io`
-
->
-See [docker/login-action for GCR](https://github.com/docker/login-action#google-container-registry-gcr)
-
-- [Jib Gradle Plugin](https://plugins.gradle.org/plugin/com.google.cloud.tools.jib)
-- [Shadow Gradle Plugin](https://plugins.gradle.org/plugin/com.github.johnrengelman.shadow)
 
 # Vault Configuration
 
