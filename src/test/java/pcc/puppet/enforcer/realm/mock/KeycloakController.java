@@ -18,10 +18,10 @@ package pcc.puppet.enforcer.realm.mock;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.util.Map;
 import java.util.Optional;
-import jakarta.validation.Valid;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

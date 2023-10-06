@@ -19,8 +19,8 @@ package pcc.puppet.enforcer.keycloak.adapters.http;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 import io.micrometer.observation.annotation.Observed;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

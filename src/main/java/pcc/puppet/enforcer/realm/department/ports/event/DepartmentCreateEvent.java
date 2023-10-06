@@ -17,8 +17,8 @@
 package pcc.puppet.enforcer.realm.department.ports.event;
 
 import jakarta.annotation.Nullable;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
