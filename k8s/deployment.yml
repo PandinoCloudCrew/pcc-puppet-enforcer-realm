@@ -74,7 +74,7 @@ spec:
               port: 9901
               httpHeaders:
                 - name: Authorization
-                  value: YWRtaW46YWRtaW4=
+                  value: Basic YWRtaW46YWRtaW4=
             initialDelaySeconds: 15
             periodSeconds: 5
             timeoutSeconds: 10

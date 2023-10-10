@@ -20,18 +20,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.annotation.Order;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.authentication.ReactiveAuthenticationManager;
-import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity.CsrfSpec;
-import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoders;
@@ -48,36 +42,22 @@ public class WebFluxSecurityConfiguration {
   private String issuerUri;
 
   @Bean
-  public ReactiveAuthenticationManager userDetailsService() {
-    UserDetails admin =
-        User.builder().username("admin").password("{noop}admin").roles("ADMIN").build();
-    return new UserDetailsRepositoryReactiveAuthenticationManager(
-        new MapReactiveUserDetailsService(admin));
-  }
-
-  @Bean
-  @Order(1)
-  SecurityWebFilterChain basicSecurityFilterChain(ServerHttpSecurity http) {
-    http.csrf(CsrfSpec::disable)
-        .authorizeExchange(
-            authorizeExchangeSpec ->
-                authorizeExchangeSpec
-                    .pathMatchers("/system/**")
-                    .hasAnyAuthority("ADMIN")
-                    .anyExchange()
-                    .authenticated())
-        .httpBasic(httpBasicSpec -> httpBasicSpec.authenticationManager(userDetailsService()));
-    return http.build();
-  }
-
-  @Bean
-  @Order(2)
   SecurityWebFilterChain springSecurityFilterChain(
       ServerHttpSecurity http,
       Converter<Jwt, Mono<AbstractAuthenticationToken>> jwtAuthenticationConverter) {
     http.csrf(CsrfSpec::disable)
         .authorizeExchange(
-            authorizeExchangeSpec -> authorizeExchangeSpec.anyExchange().authenticated())
+            authorizeExchangeSpec ->
+                authorizeExchangeSpec
+                    .pathMatchers("/info").permitAll()
+                    .pathMatchers("/env").permitAll()
+                    .pathMatchers("/health").permitAll()
+                    .pathMatchers("/loggers").permitAll()
+                    .pathMatchers("/prometheus").permitAll()
+                    .pathMatchers("/refresh").permitAll()
+                    .pathMatchers("/metrics").permitAll()
+                    .anyExchange()
+                    .authenticated())
         .oauth2ResourceServer(
             auth2ResourceServerSpec ->
                 auth2ResourceServerSpec.jwt(

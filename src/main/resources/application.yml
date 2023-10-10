@@ -14,7 +14,6 @@ spring:
     mongodb:
       auto-index-creation: true
       uri: ${mongo-uri}
-
   cloud:
     vault:
       kv:
@@ -77,18 +76,18 @@ management:
         X-Member-Id: X-Member-Id
   endpoints:
     web:
-      base-path: /
       exposure:
         include: info,env,health,loggers,prometheus,refresh,metrics
+      base-path: /
   endpoint:
     info:
       enabled: true
     env:
       enabled: true
-      show-values: when_authorized
+      show-values: always
     health:
       enabled: true
-      show-details: when_authorized
+      show-details: always
     loggers:
       enabled: true
     prometheus:
@@ -102,8 +101,6 @@ management:
     base-path: /system
 
 provider:
-  loki:
-    url: ${otlp-logs-collector}
   keycloak:
     adminClientId: ${keycloak-admin-clientId}
     clientId: ${keycloak-clientId}
@@ -112,10 +109,9 @@ provider:
 
 
 logging:
-  pattern:
-    console: "[${spring.application.name}] [%t] [%-5p] [%X{traceId}] [%X{spanId}] [%X{track-id}] [%logger{15}] [%m]%n"
   level:
+    io.springframework.security: DEBUG
     reactor.netty.http.client: INFO
     io.micrometer: INFO
     pcc: DEBUG
-    root: info
+    root: INFO

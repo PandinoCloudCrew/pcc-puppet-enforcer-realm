@@ -16,3 +16,22 @@ spec:
                 name: pcc-puppet-enforcer-realm-service
                 port:
                   number: 9900
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pcc-puppet-enforcer-realm-ingress-b
+  namespace: pcc-puppet-enforcer
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: api.realm.pcc.fyi
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pcc-puppet-enforcer-realm-service
+                port:
+                  number: 9900
