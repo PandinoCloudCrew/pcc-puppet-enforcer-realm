@@ -49,13 +49,20 @@ public class WebFluxSecurityConfiguration {
         .authorizeExchange(
             authorizeExchangeSpec ->
                 authorizeExchangeSpec
-                    .pathMatchers("/info").permitAll()
-                    .pathMatchers("/env").permitAll()
-                    .pathMatchers("/health").permitAll()
-                    .pathMatchers("/loggers").permitAll()
-                    .pathMatchers("/prometheus").permitAll()
-                    .pathMatchers("/refresh").permitAll()
-                    .pathMatchers("/metrics").permitAll()
+                    .pathMatchers("/info")
+                    .permitAll()
+                    .pathMatchers("/env")
+                    .permitAll()
+                    .pathMatchers("/health")
+                    .permitAll()
+                    .pathMatchers("/loggers")
+                    .permitAll()
+                    .pathMatchers("/prometheus")
+                    .permitAll()
+                    .pathMatchers("/refresh")
+                    .permitAll()
+                    .pathMatchers("/metrics")
+                    .permitAll()
                     .anyExchange()
                     .authenticated())
         .oauth2ResourceServer(
